@@ -2,7 +2,6 @@ package launcher;
 
 import javax.swing.JFrame;
 
-import game.GameState;
 import game.Level;
 import game.Logic;
 import game.TileLayer;
@@ -17,21 +16,16 @@ public class DemoLauncher extends Launcher {
     public static void main(String[] args) {
         try {
             
-            Launcher launcher = new DemoLauncher();
+            DemoLauncher launcher = new DemoLauncher();
             
             // Create demo level
-            TileLayer foreground = new TileLayer(new int[][] {
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            });
+            TileLayer foreground = new TileLayer(new int[40][30]);
+            // Generate some random blocks
+            for (int i = 0; i < 50; i++) {
+                int x = (int) (Math.random() * foreground.getNumTilesX());
+                int y = (int) (Math.random() * foreground.getNumTilesY());
+                foreground.setTile(x, y, 1);
+            }
             Level level = new Level(foreground);
             
             Logic logic = new Logic(level);
@@ -61,6 +55,11 @@ public class DemoLauncher extends Launcher {
      */
     private static final String WINDOW_TITLE = "Demo";
 
+    /**
+     * Panel to which the game is drawn.
+     */
+    private GamePanel gamePanel;
+    
     public DemoLauncher() {
         super(DISPLAY_WIDTH, DISPLAY_HEIGHT);
     }
@@ -68,10 +67,10 @@ public class DemoLauncher extends Launcher {
     @Override
     protected void createDisplay(int width, int height) {
         
-        GamePanel panel = new GamePanel(width, height);
+        gamePanel = new GamePanel(this, width, height);
         
         JFrame frame = new JFrame(WINDOW_TITLE);
-        frame.setContentPane(panel);
+        frame.setContentPane(gamePanel);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -81,12 +80,21 @@ public class DemoLauncher extends Launcher {
 
     @Override
     public int getDisplayWidth() {
-        return DISPLAY_WIDTH;
+        return gamePanel.getWidth();
     }
 
     @Override
     public int getDisplayHeight() {
-        return DISPLAY_HEIGHT;
+        return gamePanel.getHeight();
+    }
+    
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    @Override
+    protected void render() {
+        gamePanel.repaint();
     }
     
 }

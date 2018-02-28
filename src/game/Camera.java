@@ -121,7 +121,7 @@ public class Camera {
     /**
      * Creates a Camera focused on an area of the game world of the given size.
      *
-     * @param viewport Target rectangle, in world units.
+     * @param viewport Target rectangle, in pixels.
      * @param displayWidth Width of the display, in pixels.
      * @param level
      */
@@ -138,7 +138,7 @@ public class Camera {
      * target rectangle will be adjusted such that the aspect ratio is
      * maintained.
      * 
-     * @param viewport Target rectangle, in world units.
+     * @param viewport Target rectangle, in pixels.
      * @param displayWidth Width of the display, in pixels.
      */
     public void fillViewport(Rectangle viewport, int displayWidth) {

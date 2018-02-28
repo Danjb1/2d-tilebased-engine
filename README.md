@@ -1,4 +1,4 @@
-# 2D Game Engine
+# 2D Tile-Based Engine
 
 A 2D tile-based game engine using axis-aligned bounding boxes.
 
@@ -6,35 +6,46 @@ A 2D tile-based game engine using axis-aligned bounding boxes.
 
 **:balloon: Ultra-lightweight**
 
-Handles state management, physics, entities and camera tracking out-of-the-box, with no external dependencies.
+Handles state management, physics, entities and camera tracking out-of-the-box,
+with no external dependencies.
  
 **:mount_fuji: Slope support**
 
-Supports 45 degree floor and ceiling slopes, and new tile types can easily be added.
+Supports 45 degree floor and ceiling slopes, and new tile types can easily be
+added.
 
 **:electric_plug: Extendible component-based entity system**
 
-Entities can easily be extended with additional properties and behaviour using a flexible component-based system.
+Entities can easily be extended with additional properties and behaviour using a
+flexible component-based system.
 
 **:books: Easily integrate with any GUI / rendering / input library**
 
-Window creation, rendering and input handling are abstracted; the engine is not tied to any existing libraries.
+Window creation, rendering and input handling are abstracted; the engine is not
+tied to any existing libraries.
 
 ## Getting Started
 
+A demo project using the Java Swing library is included, but the basic steps are
+detailed below.
+
 ### Initialise Display
 
-Write your own implementation for `Launcher.createDisplay()` to create a
-window using your preferred library.
+Extend `Launcher` and provide your own implementations for the various
+display methods to create and manage a window using your preferred library.
 
-### Handle Input
+### Create a State
 
-Write your own implementation for `State.pollInput()` to get the user's
-input using your preferred library.
+In your `main` method, instantiate your launcher, set up an initial state,
+and call `launcher.start()`.
 
-### Create a Level
+A basic game state should instantiate the `Logic` and call its `update()`
+method every frame.
 
-Create your own level and feed it into the logic in `Launcher.main`.
+### Implement Rendering
+
+Write your own implementation for your state's `render()` method to render
+the level and any Entities with graphical components attached to them.
 
 ### Add Entities
 
@@ -47,10 +58,10 @@ Components can be added to Entities to add new properties and behaviour. For
 example, you might add a graphical component to an Entity to allow it to be
 rendered.
 
-### Implement Rendering
+### Handle Input
 
-Write your own implementation for `GameState.render()` to render the level
-and any Entities with graphical components attached to them.
+Write your own implementation for your state's `pollInput()` method to get
+the user's input using your preferred library.
 
 ### Camera Tracking
 

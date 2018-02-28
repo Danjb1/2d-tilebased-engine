@@ -197,6 +197,11 @@ public class GameUtils {
     /**
      * Convert from world units to pixels.
      * 
+     * <p>Note that a pixel in this context is not necessarily the same as a
+     * pixel of the screen. The size of a pixel is actually determined by the
+     * camera; a camera with a higher zoom level will "see" all pixels at a
+     * larger scale.
+     * 
      * @param worldUnits
      * @return
      */

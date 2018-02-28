@@ -40,6 +40,25 @@ public abstract class Launcher {
     }
 
     /**
+     * Creates the display.
+     */
+    protected abstract void createDisplay(int width, int height);
+
+    /**
+     * Gets the width of the display, in pixels.
+     * 
+     * @return
+     */
+    public abstract int getDisplayWidth();
+
+    /**
+     * Gets the height of the display, in pixels.
+     * 
+     * @return
+     */
+    public abstract int getDisplayHeight();
+
+    /**
      * Starts the game loop and runs until the game exits.
      */
     public void start() {
@@ -93,8 +112,13 @@ public abstract class Launcher {
     private void tick(int delta) {
         state.pollInput();
         state.update(delta);
-        state.render();
+        render();
     }
+
+    /**
+     * Renders the current State.
+     */
+    protected abstract void render();
 
     /**
      * Causes the Launcher to exit after processing the current frame.
@@ -137,24 +161,5 @@ public abstract class Launcher {
     public void setState(State state) {
         this.state = state;
     }
-
-    /**
-     * Creates the display.
-     */
-    protected abstract void createDisplay(int width, int height);
-
-    /**
-     * Gets the width of the display, in pixels.
-     * 
-     * @return
-     */
-    public abstract int getDisplayWidth();
-
-    /**
-     * Gets the height of the display, in pixels.
-     * 
-     * @return
-     */
-    public abstract int getDisplayHeight();
 
 }
