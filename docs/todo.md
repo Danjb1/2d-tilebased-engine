@@ -1,7 +1,19 @@
 # To Do
 
- - Add input handling to demo code
+ - Demo project:
+ 
+     - [ ] Slopes
+     
+     - [ ] Level reader
+ 
+ - Improve documentation
+ 
+     - [ ] Viewport
+     
+     - [ ] worldToPx
+     
+     - [ ] worldToScreen
 
- - Add sample entity to demo code
+ - Move more code from demo project to engine?
 
  - Add unit tests

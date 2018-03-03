@@ -2,6 +2,8 @@
 
 A 2D tile-based game engine using axis-aligned bounding boxes.
 
+![Screenshot](docs/demo.png "Screenshot")
+
 ## Features
 
 **:balloon: Ultra-lightweight**
@@ -31,37 +33,44 @@ detailed below.
 
 ### Initialise Display
 
-Extend `Launcher` and provide your own implementations for the various
-display methods to create and manage a window using your preferred library.
+Extend `Launcher` and provide your own implementation for window creation and
+rendering using your preferred libraries.
+
+### Handle Input
+
+Listen for input using your preferred library, and pass events to the launcher's
+`input` field. This will make the latest input available to the current state
+each frame. 
 
 ### Create a State
 
-In your `main` method, instantiate your launcher, set up an initial state,
-and call `launcher.start()`.
+The launcher has one active `State` at any time, which is updated and rendered
+each frame. This may be a loading screen, a menu, or the game itself.
 
-A basic game state should instantiate the `Logic` and call its `update()`
-method every frame.
+A basic game state should instantiate the `Logic` and a `Camera` (if
+required), and override the following methods:
 
-### Implement Rendering
+ - `processInput()`: Process the user input from the last frame.
 
-Write your own implementation for your state's `render()` method to render
-the level and any Entities with graphical components attached to them.
+ - `update()`: Update the `Logic` and `Camera`.
+ 
+ - `render()` Tell some renderer to render the game.
+
+### Start the Game!
+
+In your `main` method, instantiate your launcher, load your initial state, and
+call `launcher.start()`.
 
 ### Add Entities
 
 To add an Entity to the world, subclass Entity and use the following:
 
-    MyEntity entity = new MyEntity(x, y, width, height);
+    MyEntity entity = new MyEntity(x, y);
     logic.addEntity(entity);
 
 Components can be added to Entities to add new properties and behaviour. For
 example, you might add a graphical component to an Entity to allow it to be
 rendered.
-
-### Handle Input
-
-Write your own implementation for your state's `pollInput()` method to get
-the user's input using your preferred library.
 
 ### Camera Tracking
 

@@ -30,8 +30,13 @@ public abstract class Launcher {
     /**
      * The current State.
      */
-    private State state;
+    protected State state;
 
+    /**
+     * Input due to be processed.
+     */
+    protected Input input = new Input();
+    
     /**
      * Constructs the Launcher.
      */
@@ -110,9 +115,17 @@ public abstract class Launcher {
      * @param delta Milliseconds elapsed since the last tick.
      */
     private void tick(int delta) {
-        state.pollInput();
+        pollInput();
         state.update(delta);
         render();
+    }
+
+    /**
+     * Polls user input and feeds it to the current State.
+     */
+    protected void pollInput() {
+        input.prepareForNextFrame();
+        state.processInput(input);
     }
 
     /**

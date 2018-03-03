@@ -1,12 +1,20 @@
 package launcher;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
 import javax.swing.JFrame;
 
+import game.GameState;
 import game.Level;
 import game.Logic;
 import game.TileLayer;
 
-public class DemoLauncher extends Launcher {
+public class DemoLauncher extends Launcher implements KeyListener,
+        MouseListener, MouseMotionListener {
 
     /**
      * Entry point for the application.
@@ -18,18 +26,10 @@ public class DemoLauncher extends Launcher {
             
             DemoLauncher launcher = new DemoLauncher();
             
-            // Create demo level
-            TileLayer foreground = new TileLayer(new int[40][30]);
-            // Generate some random blocks
-            for (int i = 0; i < 50; i++) {
-                int x = (int) (Math.random() * foreground.getNumTilesX());
-                int y = (int) (Math.random() * foreground.getNumTilesY());
-                foreground.setTile(x, y, 1);
-            }
-            Level level = new Level(foreground);
-            
+            Level level = createLevel();
             Logic logic = new Logic(level);
             launcher.setState(new GameState(launcher, logic));
+            
             launcher.start();
             
         } catch (Exception ex) {
@@ -38,6 +38,24 @@ public class DemoLauncher extends Launcher {
         }
     }
     
+    private static Level createLevel() {
+        TileLayer foreground = new TileLayer(new int[40][30]);
+        
+        // Generate a floor
+        for (int x = 0; x < foreground.getNumTilesX(); x++) {
+            foreground.setTile(x, foreground.getNumTilesY() - 1, 1);
+        }
+        
+        // Generate some random blocks
+        for (int i = 0; i < 50; i++) {
+            int x = (int) (Math.random() * foreground.getNumTilesX());
+            int y = (int) (Math.random() * foreground.getNumTilesY());
+            foreground.setTile(x, y, 1);
+        }
+        
+        return new Level(foreground);
+    }
+
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -58,7 +76,7 @@ public class DemoLauncher extends Launcher {
     /**
      * Panel to which the game is drawn.
      */
-    private GamePanel gamePanel;
+    private Display gamePanel;
     
     public DemoLauncher() {
         super(DISPLAY_WIDTH, DISPLAY_HEIGHT);
@@ -67,7 +85,9 @@ public class DemoLauncher extends Launcher {
     @Override
     protected void createDisplay(int width, int height) {
         
-        gamePanel = new GamePanel(this, width, height);
+        gamePanel = new Display(this, width, height);
+        gamePanel.addMouseListener(this);
+        gamePanel.addMouseMotionListener(this);
         
         JFrame frame = new JFrame(WINDOW_TITLE);
         frame.setContentPane(gamePanel);
@@ -76,6 +96,8 @@ public class DemoLauncher extends Launcher {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
+        frame.addKeyListener(this);
     }
 
     @Override
@@ -88,7 +110,7 @@ public class DemoLauncher extends Launcher {
         return gamePanel.getHeight();
     }
     
-    public GamePanel getGamePanel() {
+    public Display getGamePanel() {
         return gamePanel;
     }
 
@@ -96,5 +118,71 @@ public class DemoLauncher extends Launcher {
     protected void render() {
         gamePanel.repaint();
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // KeyListener methods
+    ////////////////////////////////////////////////////////////////////////////
     
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        input.addKeyEvent(new Input.KeyEvent(
+                e.getKeyCode(),
+                e.getKeyChar(),
+                Input.EventType.PRESSED));
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        input.addKeyEvent(new Input.KeyEvent(
+                e.getKeyCode(),
+                e.getKeyChar(),
+                Input.EventType.RELEASED));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // MouseListener methods
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        input.addMouseEvent(new Input.MouseEvent(
+                e.getButton(),
+                e.getX(),
+                e.getY(),
+                Input.EventType.PRESSED));
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        input.addMouseEvent(new Input.MouseEvent(
+                e.getButton(),
+                e.getX(),
+                e.getY(),
+                Input.EventType.RELEASED));
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
+    ////////////////////////////////////////////////////////////////////////////
+    // MouseMotionListener methods
+    ////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public void mouseDragged(MouseEvent e) {}
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        input.setMousePos(e.getX(), e.getY());
+    }
+
 }

@@ -1,10 +1,15 @@
-package launcher;
+package game;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 import game.Camera;
+import game.GameUtils.DirectionX;
 import game.Logic;
+import game.entities.Player;
+import launcher.DemoLauncher;
+import launcher.Input;
 import launcher.State;
 import render.GameRenderer;
 
@@ -31,6 +36,11 @@ public class GameState extends State {
     private Camera camera;
 
     /**
+     * The player.
+     */
+    private Player player;
+    
+    /**
      * Creates a GameState.
      *
      * @param launcher
@@ -52,8 +62,34 @@ public class GameState extends State {
 
         // Initialise GameRenderer
         renderer = new GameRenderer(launcher.getGamePanel(), logic, camera);
+        
+        // Add our Player
+        player = new Player(GameUtils.worldUnits(5), GameUtils.worldUnits(5));
+        new EntityGraphic(Color.RED).attachTo(player);
+        logic.addEntity(player);
+        
+        // Track the Player
+        camera.trackEntity(player);
     }
-
+    
+    @Override
+    public void processInput(Input input) {
+        
+        // Horizontal movement
+        if (input.isKeyDown(KeyEvent.VK_A)) {
+            player.setDir(DirectionX.LEFT);
+        } else if (input.isKeyDown(KeyEvent.VK_D)) {
+            player.setDir(DirectionX.RIGHT);
+        } else {
+            player.setDir(DirectionX.NONE);
+        }
+        
+        // Jumping
+        if (input.isKeyDown(KeyEvent.VK_SPACE)) {
+            player.jump();
+        }
+    }
+    
     @Override
     public void update(int delta) {
         logic.update(delta);

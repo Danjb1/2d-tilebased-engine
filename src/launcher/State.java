@@ -14,10 +14,12 @@ public abstract class State {
     }
 
     /**
-     * Handles any user input.
+     * Processes the given Input.
+     * 
+     * @param input
      */
-    public void pollInput(){
-        // TODO
+    public void processInput(Input input) {
+        // Perform any Input processing here
     }
 
     /**
@@ -25,12 +27,16 @@ public abstract class State {
      *
      * @param delta
      */
-    public abstract void update(int delta);
+    public void update(int delta) {
+        // Perform any Logic processing here
+    }
 
     /**
      * Draws to the display.
      */
-    public abstract void render();
+    public void render() {
+        // Perform any rendering here
+    }
 
     /**
      * Called when this State is being left.

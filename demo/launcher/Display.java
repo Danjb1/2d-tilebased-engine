@@ -3,13 +3,14 @@ package launcher;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
 import game.Camera;
 import game.GameUtils;
 
-public class GamePanel extends JPanel {
+public class Display extends JPanel {
 
     /**
      * Auto-generated.
@@ -22,7 +23,7 @@ public class GamePanel extends JPanel {
 
     private float pixelScale;
 
-    public GamePanel(DemoLauncher launcher, int width, int height) {
+    public Display(DemoLauncher launcher, int width, int height) {
         this.launcher = launcher;
         
         setPreferredSize(new Dimension(width, height));
@@ -46,6 +47,23 @@ public class GamePanel extends JPanel {
         return gfx;
     }
     
+    public int worldToScreenX(Camera camera, float worldUnits) {
+        
+        
+        Rectangle2D.Float cameraTarget = camera.getTarget();
+        worldUnits -= cameraTarget.x;
+
+        return worldToScreen(worldUnits);
+    }
+
+    public int worldToScreenY(Camera camera, float worldUnits) {
+        
+        Rectangle2D.Float cameraTarget = camera.getTarget();
+        worldUnits -= cameraTarget.y;
+
+        return worldToScreen(worldUnits);
+    }
+
     public int worldToScreen(float worldUnits) {
         return (int) (GameUtils.worldToPx(worldUnits) * pixelScale);
     }

@@ -431,11 +431,51 @@ public class Camera {
     }
 
     /**
+     * Gets the index of the first visible tile in the x-axis.
+     * 
+     * @return
+     */
+    public int getFirstVisibleTileX() {
+        return Math.max((int) (target.x / Tile.WIDTH), 0);
+    }
+
+    /**
+     * Gets the index of the first visible tile in the y-axis.
+     * 
+     * @return
+     */
+    public int getFirstVisibleTileY() {
+        return Math.max((int) (target.y / Tile.HEIGHT), 0);
+    }
+
+    /**
+     * Gets the index of the last visible tile in the x-axis.
+     * 
+     * @param minTileX
+     * @return
+     */
+    public int getLastVisibleTileX(int minTileX) {
+        return Math.min(minTileX + getNumVisibleTilesX(),
+                level.getNumTilesX() - 1);
+    }
+
+    /**
+     * Gets the index of the last visible tile in the y-axis.
+     * 
+     * @param minTileY
+     * @return
+     */
+    public int getLastVisibleTileY(int minTileY) {
+        return Math.min(minTileY + getNumVisibleTilesY(),
+                level.getNumTilesY() - 1);
+    }
+
+    /**
      * Gets the maximum number of tiles that may be visible in the x-axis.
      * 
      * @return
      */
-    public int getNumVisibleTilesX() {
+    private int getNumVisibleTilesX() {
         /*
          * To find the number of tiles needed to cover the camera, we divide
          * the camera width by the width of a tile.
@@ -455,7 +495,7 @@ public class Camera {
      * 
      * @return
      */
-    public int getNumVisibleTilesY() {
+    private int getNumVisibleTilesY() {
         // See comment in getNumVisibleTilesX().
         return (int) (target.height / Tile.HEIGHT) + 2;
     }

@@ -1,20 +1,23 @@
 package render;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 
 import game.Camera;
+import game.EntityGraphic;
+import game.GameState;
 import game.Level;
 import game.Logic;
+import game.TileGraphic;
 import game.TileLayer;
+import game.entities.Entity;
+import game.physics.Hitbox;
 import game.tiles.Tile;
-import launcher.GamePanel;
-import launcher.GameState;
-import launcher.TileGraphic;
+import launcher.Display;
 
 public class GameRenderer {
 
-    private GamePanel gamePanel;
+    private Display gamePanel;
     
     private Logic logic;
     
@@ -22,7 +25,7 @@ public class GameRenderer {
     
     private Graphics2D gfx;
 
-    public GameRenderer(GamePanel gamePanel, Logic logic, Camera camera) {
+    public GameRenderer(Display gamePanel, Logic logic, Camera camera) {
         this.gamePanel = gamePanel;
         this.logic = logic;
         this.camera = camera;
@@ -30,7 +33,11 @@ public class GameRenderer {
 
     public void render(GameState game) {
         gfx = (Graphics2D) gamePanel.getRenderTarget();
-        renderLevel(logic.getLevel());
+
+        if (gfx != null) {
+            renderLevel(logic.getLevel());
+            renderEntities(logic.getEntities().values());
+        }
     }
 
     private void renderLevel(Level level) {
@@ -39,44 +46,57 @@ public class GameRenderer {
         int[][] tiles = foreground.getTiles();
         
         // Determine which tiles are on-screen
-        Rectangle2D.Float cameraTarget = camera.getTarget();
-        int minTileX = Math.max((int) (cameraTarget.x / Tile.WIDTH), 0);
-        int minTileY = Math.max((int) (cameraTarget.y / Tile.HEIGHT), 0);
-        int maxTileX = Math.min(minTileX + camera.getNumVisibleTilesX(),
-                level.getNumTilesX() - 1);
-        int maxTileY = Math.min(minTileY + camera.getNumVisibleTilesY(),
-                level.getNumTilesY() - 1);
+        int minTileX = camera.getFirstVisibleTileX();
+        int minTileY = camera.getFirstVisibleTileY();
+        int maxTileX = camera.getLastVisibleTileX(minTileX);
+        int maxTileY = camera.getLastVisibleTileY(minTileY);
         
-        float drawStartX = minTileX * Tile.WIDTH;
-        float drawX = drawStartX;
-        float drawY = minTileY * Tile.HEIGHT;
-
         for (int y = minTileY; y <= maxTileY; y++){
             for (int x = minTileX; x <= maxTileX; x++){
-                renderTile(x, y, drawX, drawY, tiles);
-                drawX += Tile.WIDTH;
+                renderTile(x, y, tiles);
             }
-            
-            // Next row
-            drawX = drawStartX;
-            drawY += Tile.HEIGHT;
         }
     }
 
-    private void renderTile(int x, int y, float drawX, float drawY,
-            int[][] tiles) {
+    private void renderTile(int x, int y, int[][] tiles) {
         
         int tileId = tiles[x][y];
         Tile tile = logic.getTile(tileId);
         TileGraphic tileGfx = (TileGraphic) tile.getComponent(TileGraphic.KEY);
         
-        if (gfx != null) {
+        if (tileGfx != null) {
             gfx.setColor(tileGfx.getColour());
-            gfx.fillRect(
-                    gamePanel.worldToScreen(drawX),
-                    gamePanel.worldToScreen(drawY),
-                    gamePanel.worldToScreen(Tile.WIDTH),
-                    gamePanel.worldToScreen(Tile.HEIGHT));
+            
+            int drawX = gamePanel.worldToScreenX(camera, x * Tile.WIDTH);
+            int drawY = gamePanel.worldToScreenY(camera, y * Tile.HEIGHT);
+            int width = gamePanel.worldToScreen(Tile.WIDTH);
+            int height = gamePanel.worldToScreen(Tile.HEIGHT);
+            
+            gfx.fillRect(drawX, drawY, width, height);
+        }
+    }
+
+    private void renderEntities(Collection<Entity> entities) {
+        for (Entity entity : entities) {
+            renderEntity(entity);
+        }
+    }
+
+    private void renderEntity(Entity entity) {
+
+        EntityGraphic entityGfx = 
+                (EntityGraphic) entity.getComponent(EntityGraphic.KEY);
+
+        if (entityGfx != null) {
+            gfx.setColor(entityGfx.getColour());
+
+            Hitbox hitbox = entity.getHitbox();
+            int drawX = gamePanel.worldToScreenX(camera, hitbox.getLeft());
+            int drawY = gamePanel.worldToScreenY(camera, hitbox.getTop());
+            int width = gamePanel.worldToScreen(hitbox.getWidth());
+            int height = gamePanel.worldToScreen(hitbox.getHeight());
+            
+            gfx.fillRect(drawX, drawY, width, height);
         }
     }
 

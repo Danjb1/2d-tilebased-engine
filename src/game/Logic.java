@@ -213,6 +213,15 @@ public class Logic {
     }
 
     /**
+     * Gets the collection of Entities present in the game world.
+     * 
+     * @return
+     */
+    public Map<Integer, Entity> getEntities() {
+        return entities;
+    }
+
+    /**
      * Gets the Tile with the given ID.
      * 
      * @param tileId
