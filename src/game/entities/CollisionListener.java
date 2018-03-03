@@ -4,7 +4,7 @@ import game.Component;
 
 /**
  * Component that gives Entities the ability to collide with each other.
- * 
+ *
  * @author Dan Bryce
  */
 public abstract class CollisionListener extends Component {
@@ -20,7 +20,7 @@ public abstract class CollisionListener extends Component {
      * Entity.
      *
      * <p>This is used to prevent us checking for collisions unnecessarily.
-     * 
+     *
      * @param e
      * @return
      */
@@ -30,7 +30,7 @@ public abstract class CollisionListener extends Component {
 
     /**
      * Handle a collision between this component's parent and another Entity.
-     * 
+     *
      * @param other The Entity with which this component's parent collided.
      */
     public abstract void collidedWith(Entity other);

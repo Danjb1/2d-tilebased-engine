@@ -5,7 +5,7 @@ import game.physics.CollisionResult;
 
 /**
  * Class representing a Tile within the foreground layer of the Level.
- * 
+ *
  * <p>ForegroundTiles support collision, whereas Tiles exist at a purely
  * abstract level.
  *
@@ -42,7 +42,7 @@ public abstract class ForegroundTile extends Tile {
 
     /**
      * Creates a ForegroundTile with the given ID.
-     * 
+     *
      * @param id
      */
     public ForegroundTile(int id) {
@@ -67,7 +67,7 @@ public abstract class ForegroundTile extends Tile {
     /**
      * Determines whether or not Entities can collide with this Tile when
      * attempting to move according to the given CollisionResult.
-     * 
+     *
      * @param result
      * @param logic
      * @param tileX
@@ -81,7 +81,7 @@ public abstract class ForegroundTile extends Tile {
 
     /**
      * Modifies the given CollisionResult after a collision with this Tile.
-     * 
+     *
      * @param collision
      */
     public void collisionOccurredX(CollisionResult collision){
@@ -90,7 +90,7 @@ public abstract class ForegroundTile extends Tile {
 
     /**
      * Modifies the given CollisionResult after a collision with this Tile.
-     * 
+     *
      * @param collision
      */
     public void collisionOccurredY(CollisionResult collision){

@@ -4,7 +4,7 @@ import game.tiles.Tile;
 
 /**
  * A level which, when loaded into the logic, defines the game world.
- * 
+ *
  * @author Dan Bryce
  */
 public class Level {
@@ -26,7 +26,7 @@ public class Level {
 
     /**
      * Creates a Level.
-     * 
+     *
      * @param foreground
      */
     public Level(TileLayer foreground) {
@@ -45,7 +45,7 @@ public class Level {
 
     /**
      * Determines if a tile co-ordinate is valid.
-     * 
+     *
      * @param tileX
      * @return
      */
@@ -64,7 +64,7 @@ public class Level {
 
     /**
      * Gets the level width, in tiles.
-     * 
+     *
      * @return
      */
     public int getNumTilesX() {
@@ -73,7 +73,7 @@ public class Level {
 
     /**
      * Gets the level height, in tiles.
-     * 
+     *
      * @return
      */
     public int getNumTilesY() {
@@ -82,7 +82,7 @@ public class Level {
 
     /**
      * Gets the level width, in world units.
-     * 
+     *
      * @return
      */
     public int getWorldWidth() {
@@ -91,7 +91,7 @@ public class Level {
 
     /**
      * Gets the level height, in world units.
-     * 
+     *
      * @return
      */
     public int getWorldHeight() {
@@ -100,7 +100,7 @@ public class Level {
 
     /**
      * Gets the foreground layer.
-     * 
+     *
      * @return
      */
     public TileLayer getForeground() {

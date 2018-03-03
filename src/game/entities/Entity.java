@@ -29,7 +29,7 @@ public abstract class Entity extends ComponentOwner implements HitboxListener {
 
     /**
      * Unique identifier used to refer to this Entity.
-     * 
+     *
      * <p>Assigned by the logic when the Entity is added to the world.
      */
     protected int id = -1;
@@ -100,7 +100,7 @@ public abstract class Entity extends ComponentOwner implements HitboxListener {
          * will be zero once the update is finished, which may be useful to
          * know.
          */
-        
+
         if (isAffectedByGravity()){
             hitbox.applyGravity(delta);
         }
@@ -179,7 +179,7 @@ public abstract class Entity extends ComponentOwner implements HitboxListener {
 
     /**
      * Gets this Entity's unique ID.
-     * 
+     *
      * @return
      */
     public int getEntityId(){

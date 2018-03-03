@@ -13,46 +13,56 @@ import game.Level;
 import game.Logic;
 import game.TileLayer;
 
+/**
+ * Example Launcher implementation.
+ *
+ * @author Dan Bryce
+ */
 public class DemoLauncher extends Launcher implements KeyListener,
         MouseListener, MouseMotionListener {
 
     /**
      * Entry point for the application.
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) {
         try {
-            
+
             DemoLauncher launcher = new DemoLauncher();
-            
+
             Level level = createLevel();
             Logic logic = new Logic(level);
             launcher.setState(new GameState(launcher, logic));
-            
+
             launcher.start();
-            
+
         } catch (Exception ex) {
             Logger.log(ex);
             System.exit(-1);
         }
     }
-    
+
+    /**
+     * Creates a demo level.
+     *
+     * @return
+     */
     private static Level createLevel() {
         TileLayer foreground = new TileLayer(new int[40][30]);
-        
+
         // Generate a floor
         for (int x = 0; x < foreground.getNumTilesX(); x++) {
             foreground.setTile(x, foreground.getNumTilesY() - 1, 1);
         }
-        
+
         // Generate some random blocks
         for (int i = 0; i < 50; i++) {
             int x = (int) (Math.random() * foreground.getNumTilesX());
             int y = (int) (Math.random() * foreground.getNumTilesY());
             foreground.setTile(x, y, 1);
         }
-        
+
         return new Level(foreground);
     }
 
@@ -76,53 +86,53 @@ public class DemoLauncher extends Launcher implements KeyListener,
     /**
      * Panel to which the game is drawn.
      */
-    private Display gamePanel;
-    
+    private Display display;
+
     public DemoLauncher() {
         super(DISPLAY_WIDTH, DISPLAY_HEIGHT);
     }
 
     @Override
     protected void createDisplay(int width, int height) {
-        
-        gamePanel = new Display(this, width, height);
-        gamePanel.addMouseListener(this);
-        gamePanel.addMouseMotionListener(this);
-        
+
+        display = new Display(this, width, height);
+        display.addMouseListener(this);
+        display.addMouseMotionListener(this);
+
         JFrame frame = new JFrame(WINDOW_TITLE);
-        frame.setContentPane(gamePanel);
+        frame.setContentPane(display);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        
+
         frame.addKeyListener(this);
     }
 
     @Override
     public int getDisplayWidth() {
-        return gamePanel.getWidth();
+        return display.getWidth();
     }
 
     @Override
     public int getDisplayHeight() {
-        return gamePanel.getHeight();
+        return display.getHeight();
     }
-    
+
     public Display getGamePanel() {
-        return gamePanel;
+        return display;
     }
 
     @Override
     protected void render() {
-        gamePanel.repaint();
+        display.repaint();
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // KeyListener methods
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public void keyTyped(KeyEvent e) {}
 
@@ -145,7 +155,7 @@ public class DemoLauncher extends Launcher implements KeyListener,
     ////////////////////////////////////////////////////////////////////////////
     // MouseListener methods
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {}
 
@@ -176,7 +186,7 @@ public class DemoLauncher extends Launcher implements KeyListener,
     ////////////////////////////////////////////////////////////////////////////
     // MouseMotionListener methods
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public void mouseDragged(MouseEvent e) {}
 

@@ -2,9 +2,13 @@ package game.entities;
 
 import game.GameUtils;
 import game.GameUtils.DirectionX;
-import game.entities.Entity;
 import game.physics.Physics;
 
+/**
+ * Example Entity that can move and jump.
+ *
+ * @author Dan Bryce
+ */
 public class Player extends Entity {
 
     /**
@@ -31,15 +35,15 @@ public class Player extends Entity {
      * Jump speed, in world units per second.
      */
     private static final float JUMP_SPEED = GameUtils.worldUnits(10);
-    
+
     /**
      * Horizontal direction of travel.
      */
-    private DirectionX dirX = DirectionX.NONE;
-    
+    private DirectionX movementDirection = DirectionX.NONE;
+
     /**
      * Creates a Player at the given position.
-     * 
+     *
      * @param x
      * @param y
      */
@@ -55,36 +59,36 @@ public class Player extends Entity {
 
         applyAcceleration(delta);
     }
-    
+
     /**
      * Accelerates / decelerates based on the current movement direction.
-     * 
+     *
      * @param delta
      */
     private void applyAcceleration(int delta) {
-        
+
         float speedX = hitbox.getSpeedX();
-        
-        if (dirX == DirectionX.NONE) {
+
+        if (movementDirection == DirectionX.NONE) {
             // Decelerate
             speedX = Physics.applyFriction(hitbox.getSpeedX(), delta);
 
         } else {
             // Accelerate in direction of travel
             speedX = Physics.applyAcceleration(hitbox.getSpeedX(), delta,
-                    dirX.getMultiplier() * ACCELERATION);
+                    movementDirection.getMultiplier() * ACCELERATION);
         }
-        
+
         hitbox.setSpeedX(speedX);
     }
 
     /**
      * Sets the current direction of travel.
-     * 
+     *
      * @param dir
      */
-    public void setDir(DirectionX dir) {
-        this.dirX = dir;
+    public void setMovementDirection(DirectionX dir) {
+        this.movementDirection = dir;
     }
 
     /**

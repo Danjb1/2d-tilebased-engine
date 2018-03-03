@@ -15,7 +15,7 @@ import game.tiles.Tile;
 
 /**
  * The game logic.
- * 
+ *
  * <p>Applies physics to all Entities within the current level and handles
  * collisions.
  *
@@ -32,12 +32,12 @@ public class Logic {
      * All available Tile types, by ID.
      */
     private Map<Integer, Tile> tiles = new HashMap<>();
-    
+
     /**
      * The next available Entity ID.
      */
     private int nextEntityId;
-    
+
     /**
      * Map of all Entities present in the game world, keyed by their unique
      * Entity IDs.
@@ -55,7 +55,7 @@ public class Logic {
 
     /**
      * Constructs the Logic using the given Level.
-     * 
+     *
      * @param level
      */
     public Logic(Level level) {
@@ -67,7 +67,7 @@ public class Logic {
         tiles.put(ForegroundTile.ID_AIR, new Air(ForegroundTile.ID_AIR));
         tiles.put(1, new SolidBlock(1));
     }
-    
+
     /**
      * Updates the Logic using the given delta value.
      *
@@ -82,14 +82,14 @@ public class Logic {
     /**
      * Updates all of the Entities in the world, and remembers any that are
      * marked for deletion.
-     * 
-     * @param delta 
+     *
+     * @param delta
      */
     private void updateEntities(int delta) {
         for (Entity entity : entities.values()){
-            
+
             entity.update(delta);
-            
+
             if (entity.isDeleted()){
                 entitiesToDelete.add(entity.getEntityId());
             }
@@ -201,7 +201,7 @@ public class Logic {
     public Level getLevel() {
         return level;
     }
-    
+
     /**
      * Gets the Entity with the given Entity ID.
      *
@@ -214,7 +214,7 @@ public class Logic {
 
     /**
      * Gets the collection of Entities present in the game world.
-     * 
+     *
      * @return
      */
     public Map<Integer, Entity> getEntities() {
@@ -223,7 +223,7 @@ public class Logic {
 
     /**
      * Gets the Tile with the given ID.
-     * 
+     *
      * @param tileId
      * @return
      */

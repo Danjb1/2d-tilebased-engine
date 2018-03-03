@@ -1,5 +1,10 @@
 package launcher;
 
+/**
+ * Basic Logger that outputs messages to the console.
+ *
+ * @author Dan Bryce
+ */
 public class Logger {
 
     public static void log(Exception ex) {

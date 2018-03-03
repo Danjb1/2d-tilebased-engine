@@ -7,7 +7,7 @@ import game.tiles.Tile;
 
 /**
  * Utility functions.
- * 
+ *
  * @author Dan Bryce
  */
 public class GameUtils {
@@ -26,7 +26,7 @@ public class GameUtils {
     ////////////////////////////////////////////////////////////////////////////
     // Directions
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Valid directions in the x-axis.
      */
@@ -70,10 +70,10 @@ public class GameUtils {
     ////////////////////////////////////////////////////////////////////////////
     // Angles
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Gets the angle of the line from one Hitbox to another.
-     * 
+     *
      * @param h1
      * @param h2
      * @return
@@ -86,7 +86,7 @@ public class GameUtils {
 
     /**
      * Given 2 trajectories, gets the corresponding angle in degrees.
-     * 
+     *
      * @param dx
      * @param dy
      * @return
@@ -121,7 +121,7 @@ public class GameUtils {
 
     /**
      * Gets the x-component of the given angle.
-     * 
+     *
      * @param val
      * @param angle
      * @return
@@ -133,7 +133,7 @@ public class GameUtils {
 
     /**
      * Gets the y-component of the given angle.
-     * 
+     *
      * @param val
      * @param angle
      * @return
@@ -147,7 +147,7 @@ public class GameUtils {
 
     /**
      * Ensures the given angle is in the range 0-360.
-     * 
+     *
      * @param angle
      * @return
      */
@@ -177,10 +177,10 @@ public class GameUtils {
     ////////////////////////////////////////////////////////////////////////////
     // Unit conversions
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Produces a length in world units.
-     * 
+     *
      * @param val Length relative to one Tile.
      * @return
      */
@@ -196,12 +196,12 @@ public class GameUtils {
 
     /**
      * Convert from world units to pixels.
-     * 
+     *
      * <p>Note that a pixel in this context is not necessarily the same as a
      * pixel of the screen. The size of a pixel is actually determined by the
      * camera; a camera with a higher zoom level will "see" all pixels at a
      * larger scale.
-     * 
+     *
      * @param worldUnits
      * @return
      */
@@ -211,7 +211,7 @@ public class GameUtils {
 
     /**
      * Convert from pixels to world units.
-     * 
+     *
      * @param px
      * @return
      */
@@ -222,10 +222,10 @@ public class GameUtils {
     ////////////////////////////////////////////////////////////////////////////
     // Random Numbers
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Returns either -1 or 1 at random.
-     * 
+     *
      * @param i
      * @return
      */
@@ -235,7 +235,7 @@ public class GameUtils {
 
     /**
      * Returns a random double between the 2 limits.
-     * 
+     *
      * @param min
      * @param max
      * @return
@@ -247,7 +247,7 @@ public class GameUtils {
     /**
      * Returns a random double between the 2 limits, using the given random
      * number generator.
-     * 
+     *
      * @param min
      * @param max
      * @return
@@ -258,7 +258,7 @@ public class GameUtils {
 
     /**
      * Returns a random int between the 2 limits.
-     * 
+     *
      * @param min
      * @param max
      * @return
@@ -270,7 +270,7 @@ public class GameUtils {
     /**
      * Returns a random int between the 2 limits, using the given random
      * number generator.
-     * 
+     *
      * @param min
      * @param max
      * @return

@@ -40,7 +40,7 @@ public abstract class Component {
     /**
      * Adds this Component to the given ComponentOwner, as long as the type of
      * ComponentOwner matches the allowed type.
-     * 
+     *
      * <p>Results in a call to onAttach() if successful; logs a warning
      * otherwise.
      *
@@ -49,12 +49,12 @@ public abstract class Component {
      * @param parent
      */
     public final void attachTo(ComponentOwner parent) {
-        
+
         if (!permittedParentClass.isAssignableFrom(parent.getClass())){
             Logger.log("Tried to attach %s to %s", this, parent);
             return;
         }
-        
+
         onAttach(parent);
     }
 
@@ -68,7 +68,7 @@ public abstract class Component {
      */
     protected void onAttach(ComponentOwner parent) {
         this.parent = parent;
-        
+
         parent.addComponent(key, this);
     }
 

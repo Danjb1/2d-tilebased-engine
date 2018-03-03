@@ -9,7 +9,7 @@ import launcher.Logger;
 
 /**
  * Class representing a 2D grid of Tiles.
- * 
+ *
  * @author Dan Bryce
  */
 public class TileLayer {
@@ -18,7 +18,7 @@ public class TileLayer {
      * Tiles that make up this TileLayer.
      */
     private int[][] tiles;
-    
+
     /**
      * IDs of all Tiles used by this TileLayer.
      */
@@ -26,12 +26,12 @@ public class TileLayer {
 
     /**
      * Constructs a TileLayer.
-     * 
+     *
      * @param tiles
      */
     public TileLayer(int[][] tiles) {
         this.tiles = tiles;
-        
+
         // Keep track of all used tile IDs
         for (int y = 0; y < tiles[0].length; y++) {
             for (int x = 0; x < tiles.length; x++) {
@@ -42,11 +42,11 @@ public class TileLayer {
 
     /**
      * Sets the Tile at the given level co-ordinates.
-     * 
+     *
      * <p>Note that when the last of a particular tile type is removed from a
      * TileLayer, it is not removed from the set of used tile IDs. The TileLayer
      * must be recreated in order for this set to be refreshed.
-     * 
+     *
      * @param tileX
      * @param tileY
      * @param tileId
@@ -60,10 +60,10 @@ public class TileLayer {
             Logger.log("Trying to set invalid tile: %d, %d", tileX, tileY);
         }
     }
-    
+
     /**
      * Gets the ID of the Tile at the given level co-ordinates.
-     * 
+     *
      * @param tileX
      * @param tileY
      * @return
@@ -87,7 +87,7 @@ public class TileLayer {
 
     /**
      * Gets the ID of the Tile at the given world co-ordinates.
-     * 
+     *
      * @param x
      * @param y
      * @return
@@ -100,7 +100,7 @@ public class TileLayer {
 
     /**
      * Determines if the given level co-ordinate exists within this TileLayer.
-     * 
+     *
      * @param tileX
      * @param tileY
      * @return
@@ -112,7 +112,7 @@ public class TileLayer {
 
     /**
      * Gets the tiles within this TileLayer.
-     * 
+     *
      * @return
      */
     public int[][] getTiles() {
@@ -121,7 +121,7 @@ public class TileLayer {
 
     /**
      * Gets the width of this TileLayer, in tiles.
-     * 
+     *
      * @return
      */
     public int getNumTilesX() {
@@ -130,7 +130,7 @@ public class TileLayer {
 
     /**
      * Gets the height of this TileLayer, in tiles.
-     * 
+     *
      * @return
      */
     public int getNumTilesY() {
@@ -139,7 +139,7 @@ public class TileLayer {
 
     /**
      * Gets the set of all Tile IDs used by this TileLayer.
-     * 
+     *
      * @return
      */
     public Set<Integer> getUsedTileIds() {

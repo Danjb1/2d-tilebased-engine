@@ -6,10 +6,10 @@ import game.physics.Physics;
 
 /**
  * Class representing a Tile type.
- * 
+ *
  * <p>Note that an instance of this class does not represent a single tile in
  * the level, but is shared by all tiles of that type.
- * 
+ *
  * @author Dan Bryce
  */
 public abstract class Tile extends ComponentOwner {
@@ -35,7 +35,7 @@ public abstract class Tile extends ComponentOwner {
 
     /**
      * This Tile's unique identifier.
-     * 
+     *
      * <p>Note that 2 Tiles of the same type could have a different identifier.
      * For example, we might have 2 different solid block tiles that behave
      * the same, but have different graphical components.
@@ -44,7 +44,7 @@ public abstract class Tile extends ComponentOwner {
 
     /**
      * Creates a Tile with the given ID.
-     * 
+     *
      * @param id
      */
     public Tile(int id) {
@@ -53,7 +53,7 @@ public abstract class Tile extends ComponentOwner {
 
     /**
      * Gets this Tile's unique identifier.
-     * 
+     *
      * @return
      */
     public int getId() {
@@ -63,7 +63,7 @@ public abstract class Tile extends ComponentOwner {
     /**
      * Gets the left edge of the Tile containing the given x co-ordinate, in
      * world units.
-     * 
+     *
      * @param x Position in world units.
      * @return Tile edge in world units.
      */
@@ -74,7 +74,7 @@ public abstract class Tile extends ComponentOwner {
     /**
      * Gets the right edge of the Tile containing the given x co-ordinate, in
      * world units.
-     * 
+     *
      * @param x Position in world units.
      * @return Tile edge in world units.
      */
@@ -86,7 +86,7 @@ public abstract class Tile extends ComponentOwner {
     /**
      * Gets the top edge of the Tile containing the given y co-ordinate, in
      * world units.
-     * 
+     *
      * @param y Position in world units.
      * @return Tile edge in world units.
      */
@@ -97,7 +97,7 @@ public abstract class Tile extends ComponentOwner {
     /**
      * Gets the bottom edge of the Tile containing the given y co-ordinate, in
      * world units.
-     * 
+     *
      * @param y Position in world units.
      * @return Tile edge in world units.
      */
@@ -108,7 +108,7 @@ public abstract class Tile extends ComponentOwner {
 
     /**
      * Gets the x-index of the Tile containing the given x-position.
-     * 
+     *
      * @param x Position in world units.
      * @return Index of the containing Tile within the tile grid.
      */
@@ -118,7 +118,7 @@ public abstract class Tile extends ComponentOwner {
 
     /**
      * Gets the y-index of the Tile containing the given y-position.
-     * 
+     *
      * @param y Position in world units.
      * @return Index of the containing Tile within the tile grid.
      */

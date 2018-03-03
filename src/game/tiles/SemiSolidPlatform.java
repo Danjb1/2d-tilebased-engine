@@ -6,7 +6,7 @@ import game.physics.CollisionResult;
 
 /**
  * A tile that is only solid from above.
- * 
+ *
  * @author Dan Bryce
  */
 public class SemiSolidPlatform extends ForegroundTile {

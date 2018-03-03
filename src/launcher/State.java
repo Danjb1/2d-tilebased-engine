@@ -6,7 +6,7 @@ public abstract class State {
 
     /**
      * Constructs a State.
-     * 
+     *
      * @param launcher
      */
     public State(Launcher launcher) {
@@ -15,7 +15,7 @@ public abstract class State {
 
     /**
      * Processes the given Input.
-     * 
+     *
      * @param input
      */
     public void processInput(Input input) {

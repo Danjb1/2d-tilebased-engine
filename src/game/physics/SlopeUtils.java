@@ -20,7 +20,7 @@ public class SlopeUtils {
      * <p>Slope tiles are marked as non-solid, but Hitboxes that enter the solid
      * part of a slope are adjusted by this step so that they sit atop the
      * slope.
-     * 
+     *
      * @param result
      * @param logic
      */
@@ -48,7 +48,7 @@ public class SlopeUtils {
 
     /**
      * Checks for and handles Slope collision at the bottom slope node.
-     * 
+     *
      * @param result CollisionResult to update.
      * @param logic
      * @param nodeX
@@ -59,7 +59,7 @@ public class SlopeUtils {
             Logic logic, float nodeX, float nodeY) {
 
         TileLayer foreground = logic.getLevel().getForeground();
-        
+
         int tileX = (int) (nodeX / Tile.WIDTH);
         int tileY = (int) (nodeY / Tile.HEIGHT);
         int tileId = foreground.getTile(tileX, tileY);
@@ -103,7 +103,7 @@ public class SlopeUtils {
 
     /**
      * Checks for and handles Slope collision at the top slope node.
-     * 
+     *
      * @param result CollisionResult to update.
      * @param logic
      * @param nodeX
@@ -113,7 +113,7 @@ public class SlopeUtils {
             Logic logic, float nodeX, float nodeY) {
 
         TileLayer foreground = logic.getLevel().getForeground();
-        
+
         int tileX = (int) (nodeX / Tile.WIDTH);
         int tileY = (int) (nodeY / Tile.HEIGHT);
         int tileId = foreground.getTile(tileX, tileY);
@@ -149,7 +149,7 @@ public class SlopeUtils {
 
     /**
      * Updates the CollisionResult after a collision with the given floor slope.
-     * 
+     *
      * @param result
      * @param nodeX X-position of the "slope node".
      * @param tileY Tile co-ordinate of the Slope.
@@ -167,7 +167,7 @@ public class SlopeUtils {
     /**
      * Updates the CollisionResult after a collision with the given ceiling
      * slope.
-     * 
+     *
      * @param result
      * @param nodeX X-position of the "slope node".
      * @param tileY Tile co-ordinate of the Slope.
@@ -184,14 +184,14 @@ public class SlopeUtils {
 
     /**
      * Determines if the given Tile is "behind" a slope.
-     * 
+     *
      * <p>A Tile is considered to be "behind" a slope if it is:
      * <br>1) A tile immediately to the left of a left slope.
      * <br>2) A tile immediately to the right of right slope.
-     * 
+     *
      * <p>We check for (1) or (2) depending on if the given CollisionResult was
      * an attempt to move left or right, respectively.
-     * 
+     *
      * @param result
      * @param tileX
      * @param tileY
@@ -200,17 +200,17 @@ public class SlopeUtils {
      */
     public static boolean isTileBehindSlope(CollisionResult result,
             int tileX, int tileY, Logic logic) {
-        
+
         Level level = logic.getLevel();
         TileLayer foreground = level.getForeground();
-        
+
         int possibleSlopeTileX = result.getAttemptedDx() > 0 ?
                 tileX - 1 : tileX + 1;
         if (!level.doesTileExist_X(possibleSlopeTileX)){
             // Don't try to check outside the Level bounds
             return false;
         }
-        
+
         int tileId = foreground.getTile(possibleSlopeTileX, tileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
         return possibleSlopeTile instanceof Slope;
@@ -218,7 +218,7 @@ public class SlopeUtils {
 
     /**
      * Determines if the given Tile is immediately below a floor slope.
-     * 
+     *
      * @param result
      * @param tileX
      * @param tileY
@@ -227,29 +227,29 @@ public class SlopeUtils {
      */
     public static boolean isTileBelowFloorSlope(CollisionResult result,
             int tileX, int tileY, Logic logic) {
-        
+
         Level level = logic.getLevel();
         TileLayer foreground = level.getForeground();
-        
+
         int possibleSlopeTileY = tileY - 1;
         if (!level.doesTileExist_Y(possibleSlopeTileY)){
             // Don't try to check outside the Level bounds
             return false;
         }
-        
+
         int tileId = foreground.getTile(tileX, possibleSlopeTileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
         if (possibleSlopeTile instanceof Slope){
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isFloorSlope();
         }
-        
+
         return false;
     }
 
     /**
      * Determines if the given Tile is immediately above a floor slope.
-     * 
+     *
      * @param result
      * @param tileX
      * @param tileY
@@ -261,26 +261,26 @@ public class SlopeUtils {
 
         Level level = logic.getLevel();
         TileLayer foreground = level.getForeground();
-        
+
         int possibleSlopeTileY = tileY + 1;
         if (!level.doesTileExist_Y(possibleSlopeTileY)){
             // Don't try to check outside the Level bounds
             return false;
         }
-        
+
         int tileId = foreground.getTile(tileX, possibleSlopeTileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
         if (possibleSlopeTile instanceof Slope){
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isFloorSlope();
         }
-        
+
         return false;
     }
 
     /**
      * Determines if the given Tile is immediately above a ceiling slope.
-     * 
+     *
      * @param tileX
      * @param tileY
      * @param logic
@@ -288,31 +288,31 @@ public class SlopeUtils {
      */
     private static boolean isTileAboveCeilingSlope(int tileX, int tileY,
             Logic logic) {
-        
+
         Level level = logic.getLevel();
         TileLayer foreground = level.getForeground();
-        
+
         int possibleSlopeTileY = tileY + 1;
         if (!level.doesTileExist_Y(possibleSlopeTileY)){
             // Don't try to check outside the Level bounds
             return false;
         }
-        
+
         int tileId = foreground.getTile(tileX, possibleSlopeTileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
         if (possibleSlopeTile instanceof Slope){
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isCeilingSlope();
         }
-        
+
         return false;
     }
 
     /**
      * Determines if the given Tile is "at the bottom of" a floor slope.
-     * 
+     *
      * <p>This is true for tiles that are diagonally underneath a floor slope.
-     * 
+     *
      * @param result
      * @param tileX
      * @param tileY
@@ -324,7 +324,7 @@ public class SlopeUtils {
 
         Level level = logic.getLevel();
         TileLayer foreground = level.getForeground();
-        
+
         int possibleSlopeTileX = result.getAttemptedDx() > 0 ?
                 tileX - 1 : tileX + 1;
         if (!level.doesTileExist_X(possibleSlopeTileX) ||
@@ -332,22 +332,22 @@ public class SlopeUtils {
             // Don't try to check outside the Level bounds
             return false;
         }
-        
+
         int tileId = foreground.getTile(possibleSlopeTileX, tileY - 1);
         Tile possibleSlopeTile = logic.getTile(tileId);
         if (possibleSlopeTile instanceof Slope){
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isFloorSlope();
         }
-        
+
         return false;
     }
 
     /**
      * Determines if the given Tile is "at the top of" a ceiling slope.
-     * 
+     *
      * <p>This is true for tiles that are diagonally above a ceiling slope.
-     * 
+     *
      * @param result
      * @param tileX
      * @param tileY
@@ -359,7 +359,7 @@ public class SlopeUtils {
 
         Level level = logic.getLevel();
         TileLayer foreground = level.getForeground();
-        
+
         int possibleSlopeTileX = result.getAttemptedDx() > 0 ?
                 tileX - 1 : tileX + 1;
         if (!level.doesTileExist_X(possibleSlopeTileX)||
@@ -367,14 +367,14 @@ public class SlopeUtils {
             // Don't try to check outside the Level bounds
             return false;
         }
-        
+
         int tileId = foreground.getTile(possibleSlopeTileX, tileY + 1);
         Tile possibleSlopeTile = logic.getTile(tileId);
         if (possibleSlopeTile instanceof Slope){
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isCeilingSlope();
         }
-        
+
         return false;
     }
 

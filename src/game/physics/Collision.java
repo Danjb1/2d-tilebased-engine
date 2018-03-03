@@ -26,7 +26,7 @@ public class Collision implements Comparable<Collision> {
 
     /**
      * Constructor for a Collision.
-     * 
+     *
      * @param hitboxPos
      *          Position of the relevant hitbox edge before the collision (x or y).
      *          Used to calculate the distance to the collision.
@@ -43,7 +43,7 @@ public class Collision implements Comparable<Collision> {
 
     /**
      * Allows this Collision to be sorted relative to other Collisions.
-     * 
+     *
      * Collisions are sorted by distance; nearer Collisions first.
      */
     @Override

@@ -11,10 +11,10 @@ public abstract class Slope extends ForegroundTile {
 
     /*
      * Slope flag constants.
-     * 
+     *
      * These can be used (with the '&' operator) to create conditions that apply
      * only to certain Slope tiles, e.g.
-     * 
+     *
      *     if (slope.getSlopeFlags() & SLOPE_LEFT > 0)
      */
     public static final int SLOPE_LEFT          = 0xff000000;
@@ -31,16 +31,16 @@ public abstract class Slope extends ForegroundTile {
      * Slope flags of this Slope tile.
      */
     protected int slopeFlags;
-    
+
     /**
      * Constructs a Slope with the given Slope flags.
-     * 
+     *
      * @param id
      * @param slopeFlags
      */
     protected Slope(int id, int slopeFlags) {
         super(id);
-        
+
         this.slopeFlags = slopeFlags;
     }
 
@@ -62,9 +62,9 @@ public abstract class Slope extends ForegroundTile {
 
     /**
      * Gets the y-position of the Slope at the given x-position.
-     * 
+     *
      * <p>Positions range from 0 - Tile.SIZE.
-     * 
+     *
      * @param distIntoTileX
      * @return
      */
@@ -72,9 +72,9 @@ public abstract class Slope extends ForegroundTile {
 
     /**
      * Determines if a point is inside the solid part of this Slope.
-     * 
+     *
      * <p>The point is relative to the top-left of the Tile.
-     * 
+     *
      * @param x Position from 0 - Tile.WIDTH.
      * @param y Position from 0 - Tile.HEIGHT.
      * @return
@@ -112,7 +112,7 @@ public abstract class Slope extends ForegroundTile {
     ////////////////////////////////////////////////////////////////////////////
     // Slope Subclasses
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Left Slope
      *

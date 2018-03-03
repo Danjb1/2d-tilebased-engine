@@ -21,7 +21,7 @@ public class CollisionResult {
      * All Collisions that have occurred in the y-axis.
      */
     private List<Collision> collisionsY = new ArrayList<>();
-    
+
     /**
      * Nearest Collisions detected by this CollisionResult.
      */
@@ -31,7 +31,7 @@ public class CollisionResult {
      * Hitbox involved in this Collision.
      */
     private Hitbox hitbox;
-    
+
     /**
      * Attempted movement distance.
      */
@@ -55,7 +55,7 @@ public class CollisionResult {
     /**
      * Creates a CollisionResult by attempting to move the given Hitbox by the
      * given distances.
-     * 
+     *
      * @param hitbox
      * @param dx
      * @param dy
@@ -70,7 +70,7 @@ public class CollisionResult {
 
     /**
      * Returns the original hitbox used in the collision detection.
-     * 
+     *
      * @return
      */
     public Hitbox getHitbox() {
@@ -83,7 +83,7 @@ public class CollisionResult {
      * <p>Before resolveCollisions_X() is called, this will return the new left
      * position of the Hitbox assuming no collisions; afterwards, it will
      * return the new position with the nearest collision applied.
-     * 
+     *
      * @return
      */
     public float getLeft() {
@@ -94,7 +94,7 @@ public class CollisionResult {
      * Getter for the new Hitbox right.
      *
      * See {@link #getLeft}.
-     * 
+     *
      * @return
      */
     public float getRight() {
@@ -105,7 +105,7 @@ public class CollisionResult {
      * Getter for the new Hitbox centre.
      *
      * See {@link #getLeft}.
-     * 
+     *
      * @return
      */
     public float getCentreX() {
@@ -116,7 +116,7 @@ public class CollisionResult {
      * Getter for the new Hitbox centre.
      *
      * See {@link #getLeft}.
-     * 
+     *
      * @return
      */
     public float getCentreY() {
@@ -127,7 +127,7 @@ public class CollisionResult {
      * Getter for the new Hitbox top.
      *
      * See {@link #getLeft}.
-     * 
+     *
      * @return
      */
     public float getTop() {
@@ -138,7 +138,7 @@ public class CollisionResult {
      * Getter for the new Hitbox bottom.
      *
      * See {@link #getLeft}.
-     * 
+     *
      * @return
      */
     public float getBottom() {
@@ -149,7 +149,7 @@ public class CollisionResult {
      * Returns the nearest Collision in the x-axis.
      *
      * <p>This must be called after resolveCollisions_X().
-     * 
+     *
      * @return
      */
     public Collision getNearestCollisionX() {
@@ -160,7 +160,7 @@ public class CollisionResult {
      * Returns the nearest Collision in the y-axis.
      *
      * <p>This must be called after resolveCollisions_Y().
-     * 
+     *
      * @return
      */
     public Collision getNearestCollisionY() {
@@ -169,7 +169,7 @@ public class CollisionResult {
 
     /**
      * Adds a Collision in the x-axis.
-     * 
+     *
      * @param collision
      */
     public void addCollision_X(Collision collision){
@@ -178,7 +178,7 @@ public class CollisionResult {
 
     /**
      * Adds a Collision in the y-axis.
-     * 
+     *
      * @param collision
      */
     public void addCollision_Y(Collision collision){
@@ -187,7 +187,7 @@ public class CollisionResult {
 
     /**
      * Adds the given Collision in the x-axis, overriding all other Collisions.
-     * 
+     *
      * @param collision
      */
     public void setCollision_X(Collision collision) {
@@ -197,7 +197,7 @@ public class CollisionResult {
 
     /**
      * Adds the given Collision in the y-axis, overriding all other Collisions.
-     * 
+     *
      * @param collision
      */
     public void setCollision_Y(Collision collision) {
@@ -207,7 +207,7 @@ public class CollisionResult {
 
     /**
      * Getter for the attempted movement distance in the x-axis.
-     * 
+     *
      * @return
      */
     public float getAttemptedDx() {
@@ -216,7 +216,7 @@ public class CollisionResult {
 
     /**
      * Getter for the attempted movement distance in the y-axis.
-     * 
+     *
      * @return
      */
     public float getAttemptedDy() {
@@ -228,7 +228,7 @@ public class CollisionResult {
      *
      * <p>When moving left, the colliding edge is the left of the Hitbox, and
      * when moving right it is the right of the Hitbox.
-     * 
+     *
      * @return
      */
     public float getCollisionEdgeX() {
@@ -242,7 +242,7 @@ public class CollisionResult {
      *
      * <p>When moving up, the colliding edge is the top of the Hitbox, and when
      * moving down it is the bottom of the Hitbox.
-     * 
+     *
      * @return
      */
     public float getCollisionEdgeY() {
@@ -253,7 +253,7 @@ public class CollisionResult {
 
     /**
      * Determines if the nearest y-Collision was with a Slope.
-     * 
+     *
      * @return
      */
     public boolean isCollisionWithSlope() {
@@ -263,7 +263,7 @@ public class CollisionResult {
 
     /**
      * Determines if the nearest y-Collision was with a floor Slope.
-     * 
+     *
      * @return
      */
     private boolean isCollisionWithFloorSlope() {
@@ -273,7 +273,7 @@ public class CollisionResult {
 
     /**
      * Determines if the nearest y-Collision was with a ceiling Slope.
-     * 
+     *
      * @return
      */
     private boolean isCollisionWithCeilingSlope() {
@@ -283,7 +283,7 @@ public class CollisionResult {
 
     /**
      * Determines if a Collision occurred in the x-axis.
-     * 
+     *
      * @return
      */
     public boolean hasCollisionOccurredX() {
@@ -292,7 +292,7 @@ public class CollisionResult {
 
     /**
      * Determines if a Collision occurred in the y-axis.
-     * 
+     *
      * @return
      */
     public boolean hasCollisionOccurredY() {
@@ -306,11 +306,11 @@ public class CollisionResult {
      * no more collisions can be added.
      */
     public void resolveCollisions_X() {
-        
+
         if (collisionsX.isEmpty()){
             return;
         }
-        
+
         collisionsX.sort(null);
         nearestCollisionX = collisionsX.get(0);
         collisionsX.clear(); // No longer needed
@@ -331,11 +331,11 @@ public class CollisionResult {
      * See {@link #resolveCollisions_X}.
      */
     public void resolveCollisions_Y() {
-        
+
         if (collisionsY.isEmpty()){
             return;
         }
-        
+
         collisionsY.sort(null);
         nearestCollisionY = collisionsY.get(0);
         collisionsY.clear(); // No longer needed
@@ -362,7 +362,7 @@ public class CollisionResult {
 
     /**
      * Determines if this collision was with the left edge of the Hitbox.
-     * 
+     *
      * @return
      */
     private boolean wasCollisionWithLeftEdge() {
@@ -372,7 +372,7 @@ public class CollisionResult {
 
     /**
      * Determines if this collision was with the right edge of the Hitbox.
-     * 
+     *
      * @return
      */
     private boolean wasCollisionWithRightEdge() {
@@ -382,11 +382,11 @@ public class CollisionResult {
 
     /**
      * Determines if this collision was with the top edge of the Hitbox.
-     * 
+     *
      * @return
      */
     private boolean wasCollisionWithTopEdge() {
-        
+
         /*
          * We have to include these special cases for floor and ceiling slopes,
          * because we cannot rely on the direction of travel alone; it is
@@ -397,13 +397,13 @@ public class CollisionResult {
             // Hitbox.
             return true;
         }
-        
+
         if (isCollisionWithFloorSlope()){
             // Collisions with floor slopes always involve the bottom edge of
             // the Hitbox.
             return false;
         }
-        
+
         // Otherwise...
         // If the Entity was moving up, the top edge must have collided
         return attempted_dy < 0;
@@ -411,11 +411,11 @@ public class CollisionResult {
 
     /**
      * Determines if this collision was with the bottom edge of the Hitbox.
-     * 
+     *
      * @return
      */
     private boolean wasCollisionWithBottomEdge() {
-        
+
         /*
          * We have to include these special cases for floor and ceiling slopes,
          * because we cannot rely on the direction of travel alone; it is
@@ -426,13 +426,13 @@ public class CollisionResult {
             // the Hitbox.
             return true;
         }
-        
+
         if (isCollisionWithCeilingSlope()){
             // Collisions with ceiling slopes always involve the top edge of the
             // Hitbox.
             return false;
         }
-        
+
         // Otherwise...
         // If the Entity was moving down, the bottom edge must have collided
         return attempted_dy > 0;
@@ -441,7 +441,7 @@ public class CollisionResult {
     /**
      * Determines if the Hitbox's y-speed should be maintained, even if a
      * collision has occurred.
-     * 
+     *
      * @return
      */
     public boolean shouldMaintainSpeedY() {
@@ -454,7 +454,7 @@ public class CollisionResult {
      * <p>If Hitboxes didn't "stick" to slopes, then with enough forward
      * momentum an Entity running down a slope would fly off the slope and then
      * fall down onto it in an arc (the "stairs effect").
-     * 
+     *
      * <p>To counter this, we ensure that a Hitbox that is on the ground remains
      * "stuck" to a slope unless some upward momentum (e.g. a jump) is applied.
      *

@@ -90,7 +90,7 @@ public abstract class Physics {
      *
      * <p>See here for the origin of this variable-timestep implementation:
      * http://gamedev.stackexchange.com/a/20962
-     * 
+     *
      * @param speedX
      * @param delta
      * @param deceleration
@@ -103,7 +103,7 @@ public abstract class Physics {
 
     /**
      * Apply some acceleration to the given speed and return the result.
-     * 
+     *
      * @param speed
      * @param delta
      * @param acceleration
@@ -116,7 +116,7 @@ public abstract class Physics {
 
     /**
      * Apply gravity to the given y-speed and return the result.
-     * 
+     *
      * @param speedY
      * @param delta
      * @param coefficient Gravity multiplier.
@@ -130,7 +130,7 @@ public abstract class Physics {
     /**
      * Gets the CollisionResult of attempting to moving the given Hitbox the
      * given distance.
-     * 
+     *
      * @param logic
      * @param hitbox
      * @param dx Attempted distance travelled in x-direction.
@@ -145,7 +145,7 @@ public abstract class Physics {
              * Entity has attempted to move further than a single Tile, which
              * can be problematic for collision detection. This can happen if
              * the game is lagging.
-             * 
+             *
              * Currently our solution is just to move as far as possible while
              * preserving the x:y ratio of the movement.
              */
@@ -185,7 +185,7 @@ public abstract class Physics {
 
     /**
      * Detects collisions in the x-direction.
-     * 
+     *
      * @param result CollisionResult to update after detecting collisions.
      * @param logic
      * @param collisionNodesY
@@ -194,7 +194,7 @@ public abstract class Physics {
             float[] collisionNodesY) {
 
         Level level = logic.getLevel();
-        
+
         // Get collision results for each node along the Entity's edge
         for (float node : collisionNodesY){
 
@@ -231,7 +231,7 @@ public abstract class Physics {
             float[] collisionNodesX) {
 
         Level level = logic.getLevel();
-        
+
         // Get collision results for each node along the Entity's edge
         for (float node : collisionNodesX){
 

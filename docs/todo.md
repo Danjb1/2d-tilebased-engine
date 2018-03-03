@@ -1,18 +1,12 @@
 # To Do
 
  - Demo project:
- 
+
      - [ ] Slopes
-     
+
      - [ ] Level reader
- 
- - Improve documentation
- 
-     - [ ] Viewport
-     
-     - [ ] worldToPx
-     
-     - [ ] worldToScreen
+
+     - [ ] Changing the viewport size
 
  - Move more code from demo project to engine?
 

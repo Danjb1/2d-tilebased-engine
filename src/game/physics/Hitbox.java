@@ -123,7 +123,7 @@ public class Hitbox {
      */
     public Hitbox(float x, float y, float width, float height,
             HitboxListener listener){
-        
+
         this.x = x;
         this.y = y;
         this.width = width;
@@ -150,7 +150,7 @@ public class Hitbox {
         /*
          * The number of nodes is equal to:
          * (edge length / Tile.SIZE) rounded up, plus 1
-         * 
+         *
          * Thus, a Hitbox whose width is equal to the width of a tile will have
          * 2 nodes, one at each corner.
          */
@@ -188,7 +188,7 @@ public class Hitbox {
         float dy = (speedY * delta) / 1000;
 
         // Move to the nearest collision
-        CollisionResult result = 
+        CollisionResult result =
                 Physics.getCollisionResult(logic, this, dx, dy);
         setPos(result.getLeft(), result.getTop());
 

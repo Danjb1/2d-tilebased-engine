@@ -36,7 +36,7 @@ public abstract class Launcher {
      * Input due to be processed.
      */
     protected Input input = new Input();
-    
+
     /**
      * Constructs the Launcher.
      */
@@ -51,14 +51,14 @@ public abstract class Launcher {
 
     /**
      * Gets the width of the display, in pixels.
-     * 
+     *
      * @return
      */
     public abstract int getDisplayWidth();
 
     /**
      * Gets the height of the display, in pixels.
-     * 
+     *
      * @return
      */
     public abstract int getDisplayHeight();
@@ -79,7 +79,7 @@ public abstract class Launcher {
             long frameStart = System.currentTimeMillis();
             int delta = (int) (frameStart - lastFrame);
             lastFrame = frameStart;
-            
+
             try {
                 tick(delta);
             } catch (Exception ex){
@@ -97,7 +97,7 @@ public abstract class Launcher {
                 Logger.log("Running behind!");
                 sleepTime = 1;
             }
-            
+
             // Sleep until next frame
             try {
                 Thread.sleep(sleepTime);
@@ -111,7 +111,7 @@ public abstract class Launcher {
 
     /**
      * Processes the current State.
-     * 
+     *
      * @param delta Milliseconds elapsed since the last tick.
      */
     private void tick(int delta) {
@@ -142,33 +142,33 @@ public abstract class Launcher {
 
     /**
      * Exits the game cleanly.
-     * 
+     *
      * @param status
      */
     private void exit(int status) {
-        
+
         Logger.log("Exiting with status: %d", status);
-        
+
         // Clean up the current State
         if (state != null){
             state.finish();
         }
-        
+
         System.exit(status);
     }
 
     /**
      * Gets the current State.
-     * 
+     *
      * @return
      */
     public State getState() {
         return state;
     }
-    
+
     /**
      * Changes the current State.
-     * 
+     *
      * @param state
      */
     public void setState(State state) {

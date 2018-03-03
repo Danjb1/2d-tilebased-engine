@@ -11,14 +11,14 @@ public abstract class ComponentOwner {
     /**
      * {@link Component}s attached to this object.
      *
-     * <p>Components should be added using {@link Component#attachTo}, and 
+     * <p>Components should be added using {@link Component#attachTo}, and
      * retrieved using {@link getComponent}.
      */
     protected Map<String, Component> components = new HashMap<>();
 
     /**
      * Adds a Component to this ComponentOwner.
-     * 
+     *
      * @param key
      * @param component
      */
@@ -28,7 +28,7 @@ public abstract class ComponentOwner {
 
     /**
      * Retrives the Component with the given key.
-     * 
+     *
      * @param key
      * @return
      */
