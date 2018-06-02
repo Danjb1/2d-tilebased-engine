@@ -2,7 +2,7 @@
 
 A 2D tile-based game engine using axis-aligned bounding boxes.
 
-![Screenshot](docs/demo.png "Screenshot")
+![Screenshot](docs/demo.png)
 
 ## Features
 

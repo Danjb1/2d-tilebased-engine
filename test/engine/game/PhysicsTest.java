@@ -2,12 +2,10 @@ package engine.game;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import engine.game.entities.Entity;
 import engine.game.physics.CollisionResult;
-import engine.game.physics.Hitbox;
 import engine.game.physics.Physics;
 
 /**
@@ -16,13 +14,6 @@ import engine.game.physics.Physics;
  * @author Dan Bryce
  */
 public class PhysicsTest {
-
-    private Entity entity;
-    
-    @Before
-    public void setup() {
-        entity = new TestEntity(0, 0);
-    }
 
     /**
      * Tests an Entity moving without collisions.
@@ -37,8 +28,9 @@ public class PhysicsTest {
                 "0 0 0"
         );
         Logic logic = new Logic(level);
-        Hitbox hitbox = entity.getHitbox();
-        hitbox.setPos(GameUtils.worldUnits(1), GameUtils.worldUnits(1));
+        Entity entity = new TestEntity(
+                GameUtils.worldUnits(1),
+                GameUtils.worldUnits(1));
         
         // WHEN trying to move down by half a tile, right by half a tile
         CollisionResult collision =
@@ -62,8 +54,9 @@ public class PhysicsTest {
                 "1 1 1"
         );
         Logic logic = new Logic(level);
-        Hitbox hitbox = entity.getHitbox();
-        hitbox.setPos(GameUtils.worldUnits(1), GameUtils.worldUnits(1));
+        Entity entity = new TestEntity(
+                GameUtils.worldUnits(1),
+                GameUtils.worldUnits(1));
         
         // WHEN trying to move down by half a tile
         CollisionResult collision =
@@ -88,8 +81,9 @@ public class PhysicsTest {
                 "0 0 0"
         );
         Logic logic = new Logic(level);
-        Hitbox hitbox = entity.getHitbox();
-        hitbox.setPos(GameUtils.worldUnits(1), GameUtils.worldUnits(1));
+        Entity entity = new TestEntity(
+                GameUtils.worldUnits(1),
+                GameUtils.worldUnits(1));
         
         // WHEN trying to move up by half a tile
         CollisionResult collision =
@@ -114,8 +108,9 @@ public class PhysicsTest {
                 "1 0 0"
         );
         Logic logic = new Logic(level);
-        Hitbox hitbox = entity.getHitbox();
-        hitbox.setPos(GameUtils.worldUnits(1), GameUtils.worldUnits(1));
+        Entity entity = new TestEntity(
+                GameUtils.worldUnits(1),
+                GameUtils.worldUnits(1));
         
         // WHEN trying to move left by half a tile
         CollisionResult collision =
@@ -140,8 +135,9 @@ public class PhysicsTest {
                 "0 0 1"
         );
         Logic logic = new Logic(level);
-        Hitbox hitbox = entity.getHitbox();
-        hitbox.setPos(GameUtils.worldUnits(1), GameUtils.worldUnits(1));
+        Entity entity = new TestEntity(
+                GameUtils.worldUnits(1),
+                GameUtils.worldUnits(1));
         
         // WHEN trying to move left by half a tile
         CollisionResult collision =
