@@ -89,9 +89,9 @@ public class FramerateTest {
 
         // THEN the Entity has not moved
         Hitbox hitbox = entity.getHitbox();
-        assertEquals(GameUtils.worldUnits(1), hitbox.getTop(),
+        assertEquals(GameUtils.worldUnits(1), hitbox.top(),
                 Physics.SMALLEST_DISTANCE);
-        assertEquals(GameUtils.worldUnits(1), hitbox.getLeft(),
+        assertEquals(GameUtils.worldUnits(1), hitbox.left(),
                 Physics.SMALLEST_DISTANCE);
     }
 

@@ -130,8 +130,8 @@ public class Camera {
         // Centre immediately on the tracked Entity
         Hitbox hitbox = targetEntity.getHitbox();
         settings.entityTeleported();
-        float targetX = hitbox.getCentreX() + settings.getTargetOffsetX();
-        float targetY = hitbox.getCentreY() + settings.getTargetOffsetY();
+        float targetX = hitbox.centreX() + settings.getTargetOffsetX();
+        float targetY = hitbox.centreY() + settings.getTargetOffsetY();
         float x = (float) (targetX - visibleRegion.getWidth() / 2);
         float y = (float) (targetY - visibleRegion.getHeight() / 2);
         setPos(x, y);
@@ -189,7 +189,7 @@ public class Camera {
 
         // Calculate how far the camera is from the target
         Hitbox hitbox = targetEntity.getHitbox();
-        float targetPos = hitbox.getCentreX() + settings.getTargetOffsetX();
+        float targetPos = hitbox.centreX() + settings.getTargetOffsetX();
         return (float) (targetPos - visibleRegion.getCenterX());
     }
 
@@ -208,7 +208,7 @@ public class Camera {
 
         // Calculate how far the camera is from the target
         Hitbox hitbox = targetEntity.getHitbox();
-        float targetPos = hitbox.getCentreY() + settings.getTargetOffsetY();
+        float targetPos = hitbox.centreY() + settings.getTargetOffsetY();
         return (float) (targetPos - visibleRegion.getCenterY());
     }
 
@@ -306,10 +306,10 @@ public class Camera {
      * @return
      */
     public boolean isOnscreen(Hitbox hitbox) {
-        return visibleRegion.contains(hitbox.getLeft(), hitbox.getTop()) ||
-                visibleRegion.contains(hitbox.getLeft(), hitbox.getBottom()) ||
-                visibleRegion.contains(hitbox.getRight(), hitbox.getTop()) ||
-                visibleRegion.contains(hitbox.getRight(), hitbox.getBottom());
+        return visibleRegion.contains(hitbox.left(), hitbox.top()) ||
+                visibleRegion.contains(hitbox.left(), hitbox.bottom()) ||
+                visibleRegion.contains(hitbox.right(), hitbox.top()) ||
+                visibleRegion.contains(hitbox.right(), hitbox.bottom());
     }
 
     /**

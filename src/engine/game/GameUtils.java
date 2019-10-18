@@ -79,8 +79,8 @@ public class GameUtils {
      * @return
      */
     public static float getAngle(Hitbox h1, Hitbox h2) {
-        float dx = h1.getCentreX() - h2.getCentreX();
-        float dy = h1.getCentreY() - h2.getCentreY();
+        float dx = h1.centreX() - h2.centreX();
+        float dy = h1.centreY() - h2.centreY();
         return getAngle(dx, dy);
     }
 

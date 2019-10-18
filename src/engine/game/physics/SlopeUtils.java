@@ -161,7 +161,7 @@ public class SlopeUtils {
         float yOnSlope = slope.getSlopeY_At_X(distIntoTileX);
         float collisionY = (tileY * Tile.HEIGHT) + Tile.HEIGHT - yOnSlope;
         result.setCollision_Y(new Collision(
-                result.getHitbox().getBottom(), collisionY, slope));
+                result.getHitbox().bottom(), collisionY, slope));
     }
 
     /**
@@ -179,7 +179,7 @@ public class SlopeUtils {
         float yOnSlope = slope.getSlopeY_At_X(distIntoTileX);
         float collisionY = (tileY * Tile.HEIGHT) + yOnSlope;
         result.setCollision_Y(new Collision(
-                result.getHitbox().getTop(), collisionY, slope));
+                result.getHitbox().top(), collisionY, slope));
     }
 
     /**

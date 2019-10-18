@@ -64,8 +64,8 @@ public class CollisionResult {
         this.hitbox = hitbox;
         attempted_dx = dx;
         attempted_dy = dy;
-        newX = hitbox.getLeft() + dx;
-        newY = hitbox.getTop() + dy;
+        newX = hitbox.left() + dx;
+        newY = hitbox.top() + dy;
     }
 
     /**
@@ -98,7 +98,7 @@ public class CollisionResult {
      * @return
      */
     public float getRight() {
-        return newX + hitbox.getWidth() - Physics.SMALLEST_DISTANCE;
+        return newX + hitbox.width - Physics.SMALLEST_DISTANCE;
     }
 
     /**
@@ -109,7 +109,7 @@ public class CollisionResult {
      * @return
      */
     public float getCentreX() {
-        return newX + hitbox.getWidth() / 2;
+        return newX + hitbox.width / 2;
     }
 
     /**
@@ -120,7 +120,7 @@ public class CollisionResult {
      * @return
      */
     public float getCentreY() {
-        return newY + hitbox.getHeight() / 2;
+        return newY + hitbox.height / 2;
     }
 
     /**
@@ -142,7 +142,7 @@ public class CollisionResult {
      * @return
      */
     public float getBottom() {
-        return newY + hitbox.getHeight() - Physics.SMALLEST_DISTANCE;
+        return newY + hitbox.height - Physics.SMALLEST_DISTANCE;
     }
 
     /**
@@ -233,8 +233,8 @@ public class CollisionResult {
      */
     public float getCollisionEdgeX() {
         return wasCollisionWithLeftEdge() ?
-                hitbox.getLeft() :
-                    hitbox.getRight();
+                hitbox.left() :
+                    hitbox.right();
     }
 
     /**
@@ -247,8 +247,8 @@ public class CollisionResult {
      */
     public float getCollisionEdgeY() {
         return wasCollisionWithTopEdge() ?
-                hitbox.getTop() :
-                    hitbox.getBottom();
+                hitbox.top() :
+                    hitbox.bottom();
     }
 
     /**
@@ -321,7 +321,7 @@ public class CollisionResult {
             newX = nearestCollisionX.getCollisionPos() +
                     Physics.SMALLEST_DISTANCE;
         } else if (wasCollisionWithRightEdge()){
-            newX = nearestCollisionX.getCollisionPos() - hitbox.getWidth();
+            newX = nearestCollisionX.getCollisionPos() - hitbox.width;
         }
     }
 
@@ -356,7 +356,7 @@ public class CollisionResult {
                 maintainSpeedY = true;
             }
         } else if (wasCollisionWithBottomEdge()){
-            newY = nearestCollisionY.getCollisionPos() - hitbox.getHeight();
+            newY = nearestCollisionY.getCollisionPos() - hitbox.height;
         }
     }
 

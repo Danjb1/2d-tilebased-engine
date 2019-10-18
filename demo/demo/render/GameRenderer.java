@@ -189,10 +189,10 @@ public class GameRenderer {
             gfx.setColor(entityGfx.getColour());
 
             Hitbox hitbox = entity.getHitbox();
-            int drawX = worldToDisplayX(hitbox.getLeft());
-            int drawY = worldToDisplayY(hitbox.getTop());
-            int width = worldToDisplay(hitbox.getWidth());
-            int height = worldToDisplay(hitbox.getHeight());
+            int drawX = worldToDisplayX(hitbox.left());
+            int drawY = worldToDisplayY(hitbox.top());
+            int width = worldToDisplay(hitbox.width);
+            int height = worldToDisplay(hitbox.height);
 
             gfx.fillRect(drawX, drawY, width, height);
         }

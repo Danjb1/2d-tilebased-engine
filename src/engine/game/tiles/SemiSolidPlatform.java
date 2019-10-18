@@ -19,7 +19,7 @@ public class SemiSolidPlatform extends ForegroundTile {
     public boolean hasCollisionY(CollisionResult result, Logic logic, int tileX,
             int tileY) {
 
-        if (result.getHitbox().getBottom() >= tileY * Tile.HEIGHT){
+        if (result.getHitbox().bottom() >= tileY * Tile.HEIGHT){
             // We were already inside the SemiSolidPlatform before this collision check
             return false;
         }

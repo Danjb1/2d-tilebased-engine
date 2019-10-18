@@ -51,7 +51,8 @@ public class Player extends DemoEntity {
     public Player(float x, float y) {
         super(x, y, WIDTH, HEIGHT, DemoEntity.TYPE_PLAYER);
 
-        hitbox.setMaxSpeedX(GameUtils.worldUnits(MAX_SPEED_X));
+        hitbox.setAirFrictionXCoefficient(10f);
+        hitbox.setMaxSpeedX(MAX_SPEED_X);
     }
 
     @Override
@@ -67,20 +68,20 @@ public class Player extends DemoEntity {
      * @param delta
      */
     private void applyAcceleration(int delta) {
-
-        float speedX = hitbox.getSpeedX();
-
-        if (movementDirection == DirectionX.NONE) {
-            // Decelerate
-            speedX = Physics.applyFriction(hitbox.getSpeedX(), delta);
-
-        } else {
+        if (movementDirection != DirectionX.NONE) {
             // Accelerate in direction of travel
-            speedX = Physics.applyAcceleration(hitbox.getSpeedX(), delta,
-                    movementDirection.getMultiplier() * ACCELERATION);
+            hitbox.setSpeedX(Physics.applyAcceleration(
+                    hitbox.getSpeedX(),
+                    delta,
+                    movementDirection.getMultiplier() * ACCELERATION));
         }
 
-        hitbox.setSpeedX(speedX);
+    }
+
+    @Override
+    public boolean isAffectedByFriction() {
+        // Only when no direction is pressed
+        return movementDirection == DirectionX.NONE;
     }
 
     /**
