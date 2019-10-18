@@ -2,22 +2,21 @@ package demo.game;
 
 import java.awt.Color;
 
-import engine.game.Component;
-import engine.game.tiles.Tile;
+import engine.game.tiles.TileComponent;
 
 /**
  * Component that can be attached to Tiles to give them a colour.
  *
  * @author Dan Bryce
  */
-public class TileGraphic extends Component {
+public class TileGraphic extends TileComponent {
 
     public static final String KEY = "gfx";
 
     private Color colour;
 
     public TileGraphic(Color colour) {
-        super(KEY, Tile.class);
+        super(KEY);
 
         this.colour = colour;
     }

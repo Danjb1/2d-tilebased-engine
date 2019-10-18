@@ -61,7 +61,8 @@ public class GameRenderer {
         this.logic = logic;
         this.camera = camera;
 
-        drawScale = (float) display.getWidth() / Camera.VISIBLE_WORLD_WIDTH;
+        drawScale = GameUtils.pxToWorld(display.getWidth())
+                / camera.getVisibleRegion().width;
     }
 
     /**
@@ -73,7 +74,7 @@ public class GameRenderer {
      * @return
      */
     public int worldToDisplayX(float worldUnits) {
-        return worldToDisplay(worldUnits - camera.getTarget().x);
+        return worldToDisplay(worldUnits - camera.getVisibleRegion().x);
     }
 
     /**
@@ -85,7 +86,7 @@ public class GameRenderer {
      * @return
      */
     public int worldToDisplayY(float worldUnits) {
-        return worldToDisplay(worldUnits - camera.getTarget().y);
+        return worldToDisplay(worldUnits - camera.getVisibleRegion().y);
     }
 
     /**
@@ -148,7 +149,8 @@ public class GameRenderer {
     private void renderTile(int x, int y, int tileId) {
 
         Tile tile = logic.getTile(tileId);
-        TileGraphic tileGfx = (TileGraphic) tile.getComponent(TileGraphic.KEY);
+        TileGraphic tileGfx = (TileGraphic)
+                tile.components.get(TileGraphic.KEY);
 
         if (tileGfx != null) {
             gfx.setColor(tileGfx.getColour());
@@ -180,8 +182,8 @@ public class GameRenderer {
      */
     private void renderEntity(Entity entity) {
 
-        EntityGraphic entityGfx =
-                (EntityGraphic) entity.getComponent(EntityGraphic.KEY);
+        EntityGraphic entityGfx = (EntityGraphic)
+                entity.components.get(EntityGraphic.KEY);
 
         if (entityGfx != null) {
             gfx.setColor(entityGfx.getColour());

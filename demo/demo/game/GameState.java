@@ -8,8 +8,8 @@ import demo.launcher.DemoLauncher;
 import demo.render.GameRenderer;
 import engine.game.Camera;
 import engine.game.GameUtils;
-import engine.game.Logic;
 import engine.game.GameUtils.DirectionX;
+import engine.game.Logic;
 import engine.game.tiles.ForegroundTile;
 import engine.launcher.Input;
 import engine.launcher.State;
@@ -20,6 +20,8 @@ import engine.launcher.State;
  * @author Dan Bryce
  */
 public class GameState extends State {
+
+    private static final float VISIBLE_WORLD_WIDTH = GameUtils.worldUnits(25);
 
     /**
      * Renderer used to render this State.
@@ -45,6 +47,7 @@ public class GameState extends State {
      * Creates a GameState.
      *
      * @param launcher
+     * @param logic
      */
     public GameState(DemoLauncher launcher, Logic logic) {
         super(launcher);
@@ -52,26 +55,31 @@ public class GameState extends State {
         this.logic = logic;
 
         // Initialise Tile graphics
-        new TileGraphic(Color.BLACK).attachTo(
-                logic.getTile(ForegroundTile.ID_AIR));
-        new TileGraphic(Color.WHITE).attachTo(
-                logic.getTile(ForegroundTile.ID_SOLID_BLOCK));
+        logic.getTile(ForegroundTile.ID_AIR).components.add(
+                new TileGraphic(Color.BLACK));
+        logic.getTile(ForegroundTile.ID_SOLID_BLOCK).components.add(
+                new TileGraphic(Color.WHITE));
 
         // Initialise Camera
-        double aspectRatio = (double)
+        float aspectRatio = (float)
                 launcher.getDisplayWidth() / launcher.getDisplayHeight();
-        camera = new Camera(1.0, aspectRatio, logic.getLevel());
+        camera = new Camera(
+                VISIBLE_WORLD_WIDTH,
+                1.0f,
+                aspectRatio,
+                logic.getLevel());
 
         // Initialise GameRenderer
         renderer = new GameRenderer(launcher.getGamePanel(), logic, camera);
 
         // Add our Player
         player = new Player(GameUtils.worldUnits(5), GameUtils.worldUnits(5));
-        new EntityGraphic(Color.RED).attachTo(player);
+        player.attach(new EntityGraphic(Color.RED));
         logic.addEntity(player);
 
         // Track the Player
         camera.trackEntity(player);
+        camera.teleportToDestination();
     }
 
     @Override

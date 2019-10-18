@@ -21,7 +21,7 @@ public class GameUtils {
      * Ratio of world units to pixels.
      */
     private static final float UNITS_PER_PIXEL =
-            (float) Tile.WIDTH / TILE_IMAGE_WIDTH;
+            Tile.WIDTH / TILE_IMAGE_WIDTH;
 
     ////////////////////////////////////////////////////////////////////////////
     // Directions
@@ -250,6 +250,7 @@ public class GameUtils {
      *
      * @param min
      * @param max
+     * @param random
      * @return
      */
     public static double randBetween(double min, double max, Random random) {
@@ -273,6 +274,7 @@ public class GameUtils {
      *
      * @param min
      * @param max
+     * @param random
      * @return
      */
     public static int randBetween(int min, int max, Random random) {

@@ -1,18 +1,16 @@
 package engine.game.entities;
 
-import engine.game.Component;
-
 /**
  * Component that gives Entities the ability to collide with each other.
  *
  * @author Dan Bryce
  */
-public abstract class CollisionListener extends Component {
+public abstract class CollisionListener extends EntityComponent {
 
-    public static final String KEY = "collision";
+    public static final String KEY = "collision_listener";
 
     public CollisionListener() {
-        super(KEY, Entity.class);
+        super(KEY);
     }
 
     /**

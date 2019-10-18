@@ -1,6 +1,6 @@
 package engine.game.tiles;
 
-import engine.game.ComponentOwner;
+import engine.game.ComponentStore;
 import engine.game.GameUtils;
 import engine.game.physics.Physics;
 
@@ -12,7 +12,7 @@ import engine.game.physics.Physics;
  *
  * @author Dan Bryce
  */
-public abstract class Tile extends ComponentOwner {
+public abstract class Tile {
 
     /**
      * The size (width or height) of one Tile, in world units.
@@ -32,6 +32,11 @@ public abstract class Tile extends ComponentOwner {
      * Height of one Tile, in world units.
      */
     public static final float HEIGHT = SIZE;
+
+    /**
+     * {@link TileComponent}s attached to this Tile.
+     */
+    public ComponentStore<TileComponent> components = new ComponentStore<>();
 
     /**
      * This Tile's unique identifier.

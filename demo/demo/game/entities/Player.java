@@ -1,8 +1,8 @@
 package demo.game.entities;
 
+import demo.game.DemoEntity;
 import engine.game.GameUtils;
 import engine.game.GameUtils.DirectionX;
-import engine.game.entities.Entity;
 import engine.game.physics.Physics;
 
 /**
@@ -10,7 +10,7 @@ import engine.game.physics.Physics;
  *
  * @author Dan Bryce
  */
-public class Player extends Entity {
+public class Player extends DemoEntity {
 
     /**
      * Width, in world units.
@@ -49,7 +49,7 @@ public class Player extends Entity {
      * @param y
      */
     public Player(float x, float y) {
-        super(x, y, WIDTH, HEIGHT);
+        super(x, y, WIDTH, HEIGHT, DemoEntity.TYPE_PLAYER);
 
         hitbox.setMaxSpeedX(GameUtils.worldUnits(MAX_SPEED_X));
     }

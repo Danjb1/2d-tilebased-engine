@@ -2,6 +2,7 @@ package engine.game;
 
 import java.awt.geom.Rectangle2D;
 
+import engine.game.entities.CameraSettings;
 import engine.game.entities.Entity;
 import engine.game.physics.Hitbox;
 import engine.game.tiles.Tile;
@@ -16,9 +17,9 @@ public class Camera {
     public enum TrackingMode {
 
         /**
-         * TrackingMode used to keep the Camera just ahead of an Entity.
+         * TrackingMode used to make the Camera follow an Entity.
          */
-        PREDICTIVE,
+        FOLLOW,
 
         /**
          * TrackingMode used to keep the Camera centred on an Entity.
@@ -27,76 +28,9 @@ public class Camera {
     }
 
     /**
-     * The number of tiles that should be visible at a time, in the x-axis.
-     *
-     * <p>This effectively determines the "zoom" level of the Camera. The height
-     * of the target rectangle is calculated based on the viewport size;
-     * see {@link #fillViewport}.
+     * Distance of the Camera from the game.
      */
-    private static final int NUM_VISIBLE_COLUMNS = 25;
-
-    /**
-     * Width of the visible portion of the world, in pixels, assuming the
-     * viewport fills the display.
-     */
-    public static final int VISIBLE_WORLD_WIDTH =
-            GameUtils.TILE_IMAGE_WIDTH * NUM_VISIBLE_COLUMNS;
-
-    /**
-     * Optimal horizontal distance from the tracked Entity, in world units.
-     *
-     * <p>This determines how far "in front" of an Entity the Camera should aim
-     * when the Entity is moving.
-     *
-     * <p>For example, if the tracked Entity is moving right, the Camera will
-     * aim to have its centre at (Entity.centreX + OPTIMAL_DISTANCE_X).
-     *
-     * <p>A value of zero means the tracked Entity will stay centred.
-     */
-    private static final float OPTIMAL_DISTANCE_X = GameUtils.worldUnits(3);
-
-    /**
-     * Optimal vertical distance from the tracked Entity, in world units.
-     *
-     * <p>This determines how far *above* an Entity the Camera should aim.
-     * Trying to aim "in front" of an Entity doesn't make sense if the Entity
-     * is prone to frequently changing direction (e.g. jumping).
-     *
-     * <p>A value of zero means the tracked Entity will stay centred.
-     */
-    private static final float OPTIMAL_DISTANCE_Y = GameUtils.worldUnits(0);
-
-    /**
-     * Maximum acceptable distance the Camera can be from the tracked Entity in
-     * the x-axis.
-     */
-    private static final float ACCEPTABLE_DISTANCE_X = GameUtils.worldUnits(4);
-
-    /**
-     * Maximum acceptable distance the Camera can be from the tracked Entity in
-     * the y-axis.
-     */
-    private static final float ACCEPTABLE_DISTANCE_Y = GameUtils.worldUnits(4);
-
-    /**
-     * Minimum x-speed before the Camera is considered stationary.
-     */
-    private static final float MIN_SPEED_X = GameUtils.worldUnits(0.5f);
-
-    /**
-     * Minimum y-speed before the Camera is considered stationary.
-     */
-    private static final float MIN_SPEED_Y = GameUtils.worldUnits(0.5f);
-
-    /**
-     * Multiplier used to determine the Camera's x-speed.
-     */
-    private static final float SPEED_MULTIPLIER_X = 1;
-
-    /**
-     * Multiplier used to determine the Camera's y-speed.
-     */
-    private static final float SPEED_MULTIPLIER_Y = 1;
+    public static final float Z_DISTANCE = 1;
 
     /**
      * The current level.
@@ -106,7 +40,7 @@ public class Camera {
     /**
      * Rectangle of the world that is visible to this camera, in world units.
      */
-    private Rectangle2D.Float target = new Rectangle2D.Float();
+    private Rectangle2D.Float visibleRegion = new Rectangle2D.Float();
 
     /**
      * Entity this Camera is tracking.
@@ -116,26 +50,42 @@ public class Camera {
     /**
      * TrackingMode used to determine the Camera's tracking behaviour.
      */
-    private TrackingMode trackingMode;
+    private TrackingMode trackingMode = TrackingMode.FOLLOW;
+
+    /**
+     * Settings used to control the Camera.
+     */
+    private CameraSettings settings;
 
     /**
      * Creates a Camera to fill the given area of the display.
      *
+     * @param visibleWorldWidth
+     * How much of the game world should be visible to this camera, in world
+     * units.
+     *
      * @param widthRatio
      * How much of the game world should be visible to this camera, as a
-     * fraction of VISIBLE_WORLD_WIDTH.
-     * 
+     * fraction of the visible world width.
+     *
      * <p>This should generally be set to 1, but can be set to a smaller value
      * if we want to change the shape of the viewport. For example, if we wanted
      * to make the viewport half as wide, we would set the widthRatio to 0.5 and
      * change the aspect ratio accordingly.
+     *
      * @param aspectRatio Aspect ratio of the camera target.
-     * @param level
+     *
+     * @param level The Level the Camera is looking at.
      */
-    public Camera(double widthRatio, double aspectRatio, Level level) {
+    public Camera(
+            float visibleWorldWidth,
+            float widthRatio,
+            float aspectRatio,
+            Level level) {
+
         this.level = level;
 
-        resize(widthRatio, aspectRatio);
+        resize(visibleWorldWidth, widthRatio, aspectRatio);
     }
 
     /**
@@ -146,21 +96,24 @@ public class Camera {
      * target rectangle will be adjusted such that the aspect ratio is
      * maintained.
      *
+     * @param visibleWorldWidth
+     * How much of the game world should be visible to this camera, in world
+     * units.
+     *
      * @param widthRatio
      * How much of the game world should be visible to this camera, as a
-     * fraction of VISIBLE_WORLD_WIDTH.
-     * @param aspectRatio Aspect ratio of the camera target.
+     * fraction of visibleWorldWidth.
+     *
+     * @param aspectRatio
+     * Aspect ratio of the camera target.
      */
-    public void resize(double widthRatio, double aspectRatio) {
+    public void resize(float visibleWorldWidth, float widthRatio, float aspectRatio) {
 
-        // Calculate the actual visible world width, in pixels
-        int visibleWorldWidth = (int) (widthRatio * VISIBLE_WORLD_WIDTH);
-
-        // Convert to world units
-        target.width = GameUtils.pxToWorld(visibleWorldWidth);
+        // Calculate the new visible world width
+        visibleRegion.width = (int) (widthRatio * visibleWorldWidth);
 
         // Calculate the corresponding camera height
-        target.height = (float) (target.width / aspectRatio);
+        visibleRegion.height = visibleRegion.width / aspectRatio;
 
         teleportToDestination();
     }
@@ -168,7 +121,7 @@ public class Camera {
     /**
      * Centres the camera immediately on the target Entity.
      */
-    public void teleportToDestination(){
+    public void teleportToDestination() {
 
         if (targetEntity == null){
             return;
@@ -176,8 +129,11 @@ public class Camera {
 
         // Centre immediately on the tracked Entity
         Hitbox hitbox = targetEntity.getHitbox();
-        float x = (float) (hitbox.getCentreX() - target.getWidth() / 2);
-        float y = (float) (hitbox.getCentreY() - target.getHeight() / 2);
+        settings.entityTeleported();
+        float targetX = hitbox.getCentreX() + settings.getTargetOffsetX();
+        float targetY = hitbox.getCentreY() + settings.getTargetOffsetY();
+        float x = (float) (targetX - visibleRegion.getWidth() / 2);
+        float y = (float) (targetY - visibleRegion.getHeight() / 2);
         setPos(x, y);
     }
 
@@ -188,6 +144,10 @@ public class Camera {
      */
     public void trackEntity(Entity entity) {
         targetEntity = entity;
+        settings = (CameraSettings) entity.components.get(CameraSettings.KEY);
+        if (settings == null) {
+            settings = new CameraSettings();
+        }
     }
 
     /**
@@ -201,129 +161,55 @@ public class Camera {
             return;
         }
 
-        /*
-         * Camera move algorithm:
-         *
-         * This basically calculates the Camera's speed each frame based on the
-         * distance to the destination, then applies a few rules to smooth out
-         * the movement.
-         */
+        // Determine how far the Camera "should" move
+        float dx = getDistToTargetX(delta);
+        float dy = getDistToTargetY(delta);
 
-        float speedX = getSpeedX();
-        float speedY = getSpeedY();
-        float dx = (speedX * delta) / 1000;
-        float dy = (speedY * delta) / 1000;
+        // Keep the Camera speed within permitted limits
+        if (trackingMode == TrackingMode.FOLLOW) {
+            dx = settings.limitDx(dx);
+            dy = settings.limitDy(dy);
+        }
+
         move(dx, dy);
     }
 
     /**
      * Determines how fast the camera should move in the x-axis this frame.
      *
+     * @param delta
      * @return
      */
-    private float getSpeedX() {
+    private float getDistToTargetX(int delta) {
 
-        if (level.getWorldWidth() <= target.getWidth()){
-            // The full width of the level is visible; no need to move
+        // If the full width of the level is visible, there is no need to move
+        if (level.getWorldWidth() <= visibleRegion.getWidth()) {
             return 0;
         }
 
-        // Calculate how far the Entity is from the target centre
+        // Calculate how far the camera is from the target
         Hitbox hitbox = targetEntity.getHitbox();
-        float distToEntity = (float)
-                (hitbox.getCentreX() - target.getCenterX());
-
-        /*
-         * As a minimum, match the target Entity's speed.
-         * This prevents the Entity from escaping from view, and helps ensure
-         * the Camera moves smoothly.
-         */
-        float speedX = hitbox.getSpeedX();
-
-        if (trackingMode == TrackingMode.CENTRED){
-            // Just centre on the target Entity
-            return speedX + distToEntity;
-        }
-
-        // If Entity is too far away, move towards it
-        if (Math.abs(distToEntity) > ACCEPTABLE_DISTANCE_X){
-            // Move just enough to reach an acceptable distance
-            speedX += distToEntity;
-
-        // If Entity is moving, move towards the "optimal" position
-        } else if (hitbox.getSpeedX() != 0){
-            float optimalTargetX = hitbox.getCentreX()
-                    + Math.copySign(OPTIMAL_DISTANCE_X, hitbox.getSpeedX());
-            float distToOptimalTargetX = (float)
-                    (optimalTargetX - target.getCenterX());
-            speedX += distToOptimalTargetX;
-        }
-
-        /*
-         * else:
-         * Entity is not moving, so do not move.
-         * We could keep moving towards the previous "optimal" destination, but
-         * it is quite annoying for the camera to keep moving every time you
-         * tap a different direction (e.g. when the player is controlling the
-         * tracked entity).
-         */
-
-        // Consider Camera to be stationary if moving very slowly
-        if (Math.abs(speedX) < MIN_SPEED_X){
-            return 0;
-        }
-
-        return speedX * SPEED_MULTIPLIER_X;
+        float targetPos = hitbox.getCentreX() + settings.getTargetOffsetX();
+        return (float) (targetPos - visibleRegion.getCenterX());
     }
 
     /**
      * Determines how fast the camera should move in the y-axis this frame.
      *
+     * @param delta
      * @return
      */
-    private float getSpeedY() {
+    private float getDistToTargetY(int delta) {
 
-        if (level.getWorldHeight() <= target.getHeight()){
-            // The full height of the level is visible; no need to move
+        // If the full height of the level is visible, there is no need to move
+        if (level.getWorldHeight() <= visibleRegion.getHeight()) {
             return 0;
         }
 
-        // Calculate how far the Entity is from the target centre
+        // Calculate how far the camera is from the target
         Hitbox hitbox = targetEntity.getHitbox();
-        float distToEntity = (float)
-                (hitbox.getCentreY() - target.getCenterY());
-
-        /*
-         * As a minimum, match the target Entity's speed.
-         * This prevents the Entity from escaping from view, and helps ensure
-         * the Camera moves smoothly.
-         */
-        float speedY = hitbox.getSpeedY();
-
-        if (trackingMode == TrackingMode.CENTRED){
-            // Just centre on the target Entity
-            return speedY + distToEntity;
-        }
-
-        // If Entity is too far away, move towards it
-        if (Math.abs(distToEntity) > ACCEPTABLE_DISTANCE_Y){
-            // Move just enough to reach an acceptable distance
-            speedY += distToEntity;
-
-        // Otherwise, move towards the "optimal" position
-        } else {
-            float optimalTargetY = hitbox.getCentreY() - OPTIMAL_DISTANCE_Y;
-            float distToOptimalTargetY = (float)
-                    (optimalTargetY - target.getCenterY());
-            speedY += distToOptimalTargetY;
-        }
-
-        // Consider Camera to be stationary if moving very slowly
-        if (Math.abs(speedY) < MIN_SPEED_Y){
-            return 0;
-        }
-
-        return speedY * SPEED_MULTIPLIER_Y;
+        float targetPos = hitbox.getCentreY() + settings.getTargetOffsetY();
+        return (float) (targetPos - visibleRegion.getCenterY());
     }
 
     /**
@@ -333,7 +219,7 @@ public class Camera {
      * @param dy
      */
     private void move(float dx, float dy) {
-        setPos(target.x + dx, target.y + dy);
+        setPos(visibleRegion.x + dx, visibleRegion.y + dy);
     }
 
     /**
@@ -347,8 +233,8 @@ public class Camera {
          * We cast the target dimensions to integers, otherwise jitter occurs
          * due to the way the final result is rounded during rendering.
          */
-        setPos(x - (int)(target.width / 2),
-                y - (int)(target.height / 2));
+        setPos(x - (int)(visibleRegion.width / 2),
+                y - (int)(visibleRegion.height / 2));
     }
 
     /**
@@ -360,7 +246,7 @@ public class Camera {
     public void setPos(float x, float y){
         float newX = keepWithinBoundsX(x);
         float newY = keepWithinBoundsY(y);
-        target.setRect(newX, newY, target.width, target.height);
+        visibleRegion.setRect(newX, newY, visibleRegion.width, visibleRegion.height);
     }
 
     /**
@@ -374,9 +260,9 @@ public class Camera {
 
         float minVisibleX = 0;
         float maxVisibleX = minVisibleX + level.getNumTilesX() * Tile.WIDTH;
-        float maxCameraX = maxVisibleX - target.width;
+        float maxCameraX = maxVisibleX - visibleRegion.width;
 
-        if (level.getWorldWidth() <= target.getWidth()){
+        if (level.getWorldWidth() <= visibleRegion.getWidth()){
             // The full width of the level is visible; keep camera at left edge
             cameraX = minVisibleX;
         } else if (cameraX < minVisibleX){
@@ -399,9 +285,9 @@ public class Camera {
 
         float minVisibleY = 0;
         float maxVisibleY = minVisibleY + level.getNumTilesY() * Tile.HEIGHT;
-        float maxCameraY = maxVisibleY - target.height;
+        float maxCameraY = maxVisibleY - visibleRegion.height;
 
-        if (level.getWorldHeight() <= target.getHeight()){
+        if (level.getWorldHeight() <= visibleRegion.getHeight()){
             // The full height of the level is visible; keep camera at top edge
             cameraY = minVisibleY;
         } else if (cameraY < minVisibleY){
@@ -420,10 +306,10 @@ public class Camera {
      * @return
      */
     public boolean isOnscreen(Hitbox hitbox) {
-        return target.contains(hitbox.getLeft(), hitbox.getTop()) ||
-                target.contains(hitbox.getLeft(), hitbox.getBottom()) ||
-                target.contains(hitbox.getRight(), hitbox.getTop()) ||
-                target.contains(hitbox.getRight(), hitbox.getBottom());
+        return visibleRegion.contains(hitbox.getLeft(), hitbox.getTop()) ||
+                visibleRegion.contains(hitbox.getLeft(), hitbox.getBottom()) ||
+                visibleRegion.contains(hitbox.getRight(), hitbox.getTop()) ||
+                visibleRegion.contains(hitbox.getRight(), hitbox.getBottom());
     }
 
     /**
@@ -432,7 +318,7 @@ public class Camera {
      * @return
      */
     public int getFirstVisibleTileX() {
-        return Math.max((int) (target.x / Tile.WIDTH), 0);
+        return Math.max((int) (visibleRegion.x / Tile.WIDTH), 0);
     }
 
     /**
@@ -441,7 +327,7 @@ public class Camera {
      * @return
      */
     public int getFirstVisibleTileY() {
-        return Math.max((int) (target.y / Tile.HEIGHT), 0);
+        return Math.max((int) (visibleRegion.y / Tile.HEIGHT), 0);
     }
 
     /**
@@ -483,7 +369,7 @@ public class Camera {
          * tiles to one side. This can leave a gap at the opposite side, so we
          * add another 1 to cover this.
          */
-        return (int) (target.width / Tile.WIDTH) + 2;
+        return (int) (visibleRegion.width / Tile.WIDTH) + 2;
     }
 
     /**
@@ -493,11 +379,11 @@ public class Camera {
      */
     private int getNumVisibleTilesY() {
         // See comment in getNumVisibleTilesX().
-        return (int) (target.height / Tile.HEIGHT) + 2;
+        return (int) (visibleRegion.height / Tile.HEIGHT) + 2;
     }
 
-    public Rectangle2D.Float getTarget() {
-        return target;
+    public Rectangle2D.Float getVisibleRegion() {
+        return visibleRegion;
     }
 
     public Entity getTargetEntity() {

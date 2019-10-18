@@ -53,14 +53,14 @@ public class Hitbox {
      * has a means of accelerating; in many cases a Hitbox will never exceed its
      * initial speed.
      */
-    protected float maxSpeedX =
+    private float maxSpeedX =
             Launcher.FPS *
             (GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE);
 
     /**
      * See {@link Hitbox#maxSpeedX}.
      */
-    protected float maxSpeedY =
+    private float maxSpeedY =
             Launcher.FPS *
             (GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE);
 
@@ -85,32 +85,32 @@ public class Hitbox {
      * Multiplier that determines how strongly this Hitbox is affected by
      * gravity.
      */
-    protected float gravityCoefficient = 1.0f;
+    private float gravityCoefficient = 1.0f;
 
     /**
      * Multiplier that determines how colliding with a surface affects this
      * Hitbox's speed.
      */
-    protected float bounceCoefficient = 0;
+    private float bounceCoefficient = 0;
 
     /**
      * Multiplier that determines how the Hitbox's speed is affected each frame
      * when on the ground.
      */
-    protected float groundFriction = 1;
+    private float groundFriction = 1;
 
     /**
      * Multiplier that determines how the Hitbox's speed is affected each frame
      * when in the air.
      */
-    protected float airFriction = 1;
+    private float airFriction = 1;
 
     /**
      * Whether this Hitbox can travel up and down Slopes.
      *
      * <p>If set to false, this Hitbox will collide with slopes instead.
      */
-    protected boolean supportsSlopes = false;
+    private boolean supportsSlopes = false;
 
     /**
      * Creates a new Hitbox with a listener.
@@ -132,6 +132,13 @@ public class Hitbox {
 
         collisionNodesX = createCollisionNodes(width);
         collisionNodesY = createCollisionNodes(height);
+    }
+
+    /**
+     * Cleans up this Hitbox when it is no longer needed.
+     */
+    public void destroy() {
+        listener = null;
     }
 
     /**
@@ -573,7 +580,7 @@ public class Hitbox {
      *
      * @return
      */
-    public boolean isOnGround() {
+    public boolean isGrounded() {
         return onGround;
     }
 
@@ -581,7 +588,7 @@ public class Hitbox {
      * Setter that allows for manually overriding whether this Hitbox is deemed
      * to be on the ground.
      *
-     * @see Hitbox#isOnGround
+     * @see Hitbox#isGrounded
      * @param nowOnGround
      */
     public void setOnGround(boolean nowOnGround) {

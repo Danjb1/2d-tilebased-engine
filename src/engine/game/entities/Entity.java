@@ -1,7 +1,7 @@
 package engine.game.entities;
 
 import engine.game.Component;
-import engine.game.ComponentOwner;
+import engine.game.ComponentStore;
 import engine.game.Logic;
 import engine.game.physics.CollisionResult;
 import engine.game.physics.Hitbox;
@@ -25,7 +25,12 @@ import engine.game.physics.HitboxListener;
  *
  * @author Dan Bryce
  */
-public abstract class Entity extends ComponentOwner implements HitboxListener {
+public abstract class Entity implements HitboxListener {
+
+    /**
+     * {@link EntityComponent}s attached to this Entity.
+     */
+    public ComponentStore<EntityComponent> components = new ComponentStore<>();
 
     /**
      * Unique identifier used to refer to this Entity.
@@ -63,107 +68,17 @@ public abstract class Entity extends ComponentOwner implements HitboxListener {
         hitbox = new Hitbox(x, y, width, height, this);
     }
 
-    /**
-     * Callback for when this Entity is added to the world.
-     *
-     * <p>If this is overridden, it may be necessary to also override the
-     * {@link Entity#delete} method to clean up the Logic when this Entity is
-     * removed.
-     *
-     * @param id
-     * @param logic
-     */
-    public void addedToWorld(int id, Logic logic) {
-        this.id = id;
-        this.logic = logic;
-    }
-
-    /**
-     * Updates this Entity (should be called each frame).
-     *
-     * <p>This should only be called after the Entity has been added to the
-     * world, since it is dependent on the logic.
-     *
-     * @param delta
-     */
-    public void update(int delta) {
-
-        // Update Components
-        for (Component component : components.values()){
-            component.update(logic, delta);
-        }
-
-        /*
-         * Apply physics.
-         *
-         * We do this last, so that if a collision occurs the Entity's speed
-         * will be zero once the update is finished, which may be useful to
-         * know.
-         */
-
-        if (isAffectedByGravity()){
-            hitbox.applyGravity(delta);
-        }
-
-        if (canMove()){
-            hitbox.moveWithCollision(logic, delta);
-        }
-
-        if (isAffectedByFriction()){
-            hitbox.applyFriction(delta);
-        }
-    }
-
-    /**
-     * Determines whether gravity should be applied to this Entity.
-     *
-     * @see Hitbox#applyGravity
-     * @return
-     */
-    protected boolean isAffectedByGravity() {
-        return true;
-    }
-
-    /**
-     * Determines whether this Entity can move.
-     *
-     * <p>Currently there is no way to distinguish between horizontal and
-     * vertical movement; either an Entity can move, or it is completely
-     * stationary.
-     *
-     * <p>Note also that the velocity of a stationary Entity can still be
-     * changed, e.g. by gravity.
-     *
-     * @see Hitbox#moveWithCollision
-     * @return
-     */
-    protected boolean canMove() {
-        return true;
-    }
-
-    /**
-     * Determines whether friction should be applied to this Entity.
-     *
-     * @see Hitbox#applyFriction
-     * @return
-     */
-    protected boolean isAffectedByFriction() {
-        return true;
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    // Getters
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Gets this Entity's {@link Hitbox}.
+     *
      * @return
      */
     public Hitbox getHitbox() {
         return hitbox;
-    }
-
-    /**
-     * Marks this Entity for deletion.
-     */
-    public void delete() {
-        deleted = true;
     }
 
     /**
@@ -185,6 +100,145 @@ public abstract class Entity extends ComponentOwner implements HitboxListener {
     public int getEntityId(){
         return id;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Modifiers
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Teleports this Entity.
+     *
+     * @param x New x-position
+     * @param y New y-position
+     */
+    public void teleport(float x, float y) {
+        hitbox.setPos(x, y);
+
+        components.notifyAll(CameraSettings.KEY,
+                new TeleportEntityComponentEvent());
+    }
+
+    /**
+     * Marks this Entity for deletion.
+     */
+    public void delete() {
+        deleted = true;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Lifecycle
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Callback for when this Entity is added to the world.
+     *
+     * <p>If this is overridden, it may be necessary to also override the
+     * {@link Entity#delete} method to clean up the Logic when this Entity is
+     * removed.
+     *
+     * @param id
+     * @param logic
+     */
+    public void addedToWorld(int id, Logic logic) {
+        this.id = id;
+        this.logic = logic;
+
+        // Inform Components
+        for (EntityComponent component : components.asList()) {
+            component.entityAddedToWorld(logic);
+        }
+    }
+
+    /**
+     * Updates this Entity (should be called each frame).
+     *
+     * <p>This should only be called after the Entity has been added to the
+     * world, since it is dependent on the logic.
+     *
+     * @param delta
+     */
+    public void update(int delta) {
+        // Update Components
+        for (EntityComponent component : components.asList()) {
+            component.update(logic, delta);
+        }
+    }
+
+    /**
+     * Performs any final clean-up before deletion.
+     */
+    public void destroy() {
+        // Destroy Components
+        for (EntityComponent component : components.asList()) {
+            component.destroy();
+        }
+        components.clear();
+        hitbox.destroy();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Behaviour
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Determines whether gravity should be applied to this Entity.
+     *
+     * @see Hitbox#applyGravity
+     * @return
+     */
+    public boolean isAffectedByGravity() {
+        return true;
+    }
+
+    /**
+     * Determines whether this Entity can move.
+     *
+     * <p>Currently there is no way to distinguish between horizontal and
+     * vertical movement; either an Entity can move, or it is completely
+     * stationary.
+     *
+     * <p>Note also that the velocity of a stationary Entity can still be
+     * changed, e.g. by gravity.
+     *
+     * @see Hitbox#moveWithCollision
+     * @return
+     */
+    public boolean canMove() {
+        return true;
+    }
+
+    /**
+     * Determines whether friction should be applied to this Entity.
+     *
+     * @see Hitbox#applyFriction
+     * @return
+     */
+    public boolean isAffectedByFriction() {
+        return true;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Components
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Attaches an {@link EntityComponent} to this Entity.
+     *
+     * <p>Results in a callback to {@link EntityComponent#onAttach(Entity)}.
+     *
+     * @param component
+     */
+    public void attach(EntityComponent component) {
+
+        components.add(component);
+
+        // Inform the new component
+        component.onAttach(this);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // HitboxListener methods
+    ////////////////////////////////////////////////////////////////////////////
 
     @Override
     public void hitboxMoved(CollisionResult result) {

@@ -105,7 +105,7 @@ public abstract class Launcher {
                 Logger.log(ex);
             }
         }
-
+        
         exit(status);
     }
 

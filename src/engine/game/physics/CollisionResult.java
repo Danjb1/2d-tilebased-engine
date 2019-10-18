@@ -461,7 +461,7 @@ public class CollisionResult {
      * @return
      */
     public boolean shouldHitboxStickToSlope() {
-        return hitbox.isOnGround() && attempted_dy > 0;
+        return hitbox.isGrounded() && attempted_dy > 0;
     }
 
 }

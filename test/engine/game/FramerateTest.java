@@ -10,53 +10,63 @@ import engine.game.physics.Physics;
 
 /**
  * Tests related to the game's handling of inconsistent framerates.
- * 
+ *
  * @author Dan Bryce
  */
 public class FramerateTest {
 
     @Test
-    public void testFramerateIndependence() {
+    public void testPhysicsAt60Fps() {
 
-        // GIVEN we have 2 Entities at the same position
+        // GIVEN an Entity is moving right at 0.5 world units / second
         Level level = TestUtils.createLevel(3, 3,
                 "0 0 0",
                 "0 0 0",
                 "1 1 1"
         );
-        Entity e1 = new TestEntity(
+        Logic logic = new Logic(level);
+        Entity e = new TestEntity(
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
-        Hitbox hitbox1 = e1.getHitbox();
-        Entity e2 = new TestEntity(hitbox1.x, hitbox1.y);
-        Hitbox hitbox2 = e2.getHitbox();
-        Logic logic = new Logic(level);
-        logic.addEntity(e1);
-        logic.addEntity(e2);
-        
-        // AND both Entities are moving right at 0.5 world units / second
-        hitbox1.setSpeedX(0.5f);
-        hitbox2.setSpeedX(0.5f);
-        
+        Hitbox hitbox = e.getHitbox();
+        hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
+        logic.addEntity(e);
+
         // WHEN 2 seconds have passed
-        // (here we simulate different framerates for each Entity)
-        
-        // e1: 15 ms per frame
         int msPerFrame = 15;
         for (int msPassed = 0; msPassed < 2000; msPassed += msPerFrame) {
-            e1.update(msPerFrame);
+            logic.updateEntities(msPerFrame);
         }
 
-        // e2: 11 frames @ 45 ms per frame
-        msPerFrame = 45;
+        // THEN the Entity has moved approximately 1 world unit
+        assertEquals(GameUtils.worldUnits(1), hitbox.x, 0.05f);
+    }
+
+    @Test
+    public void testPhysicsAt20Fps() {
+
+        // GIVEN an Entity is moving right at 0.5 world units / second
+        Level level = TestUtils.createLevel(3, 3,
+                "0 0 0",
+                "0 0 0",
+                "1 1 1"
+        );
+        Logic logic = new Logic(level);
+        Entity e = new TestEntity(
+                GameUtils.worldUnits(0),
+                GameUtils.worldUnits(1));
+        Hitbox hitbox = e.getHitbox();
+        hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
+        logic.addEntity(e);
+
+        // WHEN 2 seconds have passed
+        int msPerFrame = 45;
         for (int msPassed = 0; msPassed < 2000; msPassed += msPerFrame) {
-            e2.update(msPerFrame);
+            logic.updateEntities(msPerFrame);
         }
-        
-        // THEN the Entities have both moved approximately 1 world unit
-        System.out.println(hitbox1.x);
-        assertEquals(GameUtils.worldUnits(1), hitbox1.x, 0.05f);
-        assertEquals(GameUtils.worldUnits(1), hitbox2.x, 0.05f);
+
+        // THEN the Entity has moved approximately 1 world unit
+        assertEquals(GameUtils.worldUnits(1), hitbox.x, 0.05f);
     }
 
     @Test
@@ -73,10 +83,10 @@ public class FramerateTest {
                 GameUtils.worldUnits(1));
         Logic logic = new Logic(level);
         logic.addEntity(entity);
-        
+
         // WHEN a lag spike occurs
         entity.update(1000);
-        
+
         // THEN the Entity has not moved
         Hitbox hitbox = entity.getHitbox();
         assertEquals(GameUtils.worldUnits(1), hitbox.getTop(),

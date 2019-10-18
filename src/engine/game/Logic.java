@@ -8,6 +8,7 @@ import java.util.Map;
 
 import engine.game.entities.CollisionListener;
 import engine.game.entities.Entity;
+import engine.game.physics.Hitbox;
 import engine.game.tiles.Air;
 import engine.game.tiles.ForegroundTile;
 import engine.game.tiles.SolidBlock;
@@ -26,17 +27,17 @@ public class Logic {
     /**
      * The current Level.
      */
-    private Level level;
+    protected Level level;
 
     /**
      * All available Tile types, by ID.
      */
-    private Map<Integer, Tile> tiles = new HashMap<>();
+    protected Map<Integer, Tile> tiles = new HashMap<>();
 
     /**
      * The next available Entity ID.
      */
-    private int nextEntityId;
+    protected int nextEntityId;
 
     /**
      * Map of all Entities present in the game world, keyed by their unique
@@ -46,12 +47,12 @@ public class Logic {
      * will use the same order as the order in which they were added to the
      * world.
      */
-    private Map<Integer, Entity> entities = new LinkedHashMap<>();
+    protected Map<Integer, Entity> entities = new LinkedHashMap<>();
 
     /**
-     * IDs of all Entities flagged for deletion.
+     * List of Entities flagged for deletion.
      */
-    private List<Integer> entitiesToDelete = new ArrayList<>();
+    protected List<Entity> entitiesToDelete = new ArrayList<>();
 
     /**
      * Constructs the Logic using the given Level.
@@ -83,21 +84,46 @@ public class Logic {
      *
      * @param delta
      */
-    private void updateEntities(int delta) {
+    protected void updateEntities(int delta) {
         for (Entity entity : entities.values()){
 
             entity.update(delta);
 
+            applyPhysics(entity, delta);
+
             if (entity.isDeleted()){
-                entitiesToDelete.add(entity.getEntityId());
+                entitiesToDelete.add(entity);
             }
+        }
+    }
+
+    /**
+     * Applies physics to the given Entity.
+     *
+     * @param entity
+     * @param delta
+     */
+    protected void applyPhysics(Entity entity, int delta) {
+
+        Hitbox hitbox = entity.getHitbox();
+
+        if (entity.isAffectedByGravity()) {
+            hitbox.applyGravity(delta);
+        }
+
+        if (entity.canMove()) {
+            hitbox.moveWithCollision(this, delta);
+        }
+
+        if (entity.isAffectedByFriction()) {
+            hitbox.applyFriction(delta);
         }
     }
 
     /**
      * Checks for collisions between every pair of Entities.
      */
-    private void processCollisions() {
+    protected void processCollisions() {
 
         List<Entity> collidingEntities = new ArrayList<>(entities.values());
 
@@ -116,6 +142,11 @@ public class Logic {
                 }
 
                 checkForCollision(e1, e2);
+
+                if (e1.isDeleted()) {
+                    // Entity has been deleted as the result of a collision
+                    break;
+                }
             }
         }
     }
@@ -126,12 +157,12 @@ public class Logic {
      * @param e1
      * @param e2
      */
-    private void checkForCollision(Entity e1, Entity e2) {
+    protected void checkForCollision(Entity e1, Entity e2) {
 
         CollisionListener e1CollisionListener = (CollisionListener)
-                e1.getComponent(CollisionListener.KEY);
+                e1.components.get(CollisionListener.KEY);
         CollisionListener e2CollisionListener = (CollisionListener)
-                e2.getComponent(CollisionListener.KEY);
+                e2.components.get(CollisionListener.KEY);
 
         // This flag ensures that we only check for a collision once
         boolean collision = false;
@@ -156,17 +187,16 @@ public class Logic {
     /**
      * Remove all Entities that have been marked for deletion.
      */
-    private void deleteEntities() {
-        for (Integer i : entitiesToDelete){
-            entities.remove(i);
+    protected void deleteEntities() {
+        for (Entity e : entitiesToDelete){
+            e.destroy();
+            entities.remove(e.getEntityId());
         }
         entitiesToDelete.clear();
     }
 
     /**
      * Adds the given Entity to the world.
-     *
-     * <p>This also initialises any Components that the Entity requires.
      *
      * <p><b>This should not be called during Entity processing.</b> Adding an
      * Entity from within an Entity's {@link Entity#update} method can cause a
@@ -185,7 +215,7 @@ public class Logic {
      *
      * @return
      */
-    private int requestEntityId() {
+    protected int requestEntityId() {
         int returnValue = nextEntityId;
         nextEntityId++;
         return returnValue;
@@ -221,7 +251,7 @@ public class Logic {
 
     /**
      * Adds the given ForegroundTile to the list of available tile types.
-     * 
+     *
      * @param tile
      */
     public void addTileType(ForegroundTile tile) {

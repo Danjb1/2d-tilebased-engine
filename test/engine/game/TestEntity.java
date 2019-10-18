@@ -4,7 +4,7 @@ import engine.game.entities.Entity;
 
 /**
  * Sample Entity used by unit tests.
- * 
+ *
  * @author Dan Bryce
  */
 public class TestEntity extends Entity {
