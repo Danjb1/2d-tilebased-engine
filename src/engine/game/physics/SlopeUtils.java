@@ -29,16 +29,16 @@ public class SlopeUtils {
 
         // Look for slopes at both of the Hitbox's "slope nodes" (horizontal
         // centres of the top and bottom edges).
-        float slopeNodeX = result.getCentreX();
+        float slopeNodeX = result.centreX();
 
         boolean onSlope = handleFloorSlopeCollisions(
-                result, logic, slopeNodeX, result.getBottom());
+                result, logic, slopeNodeX, result.bottom());
 
         if (!onSlope){
             // No need to check the top node if we already have a result from
             // the bottom node.
             handleCeilingSlopeCollisions(
-                    result, logic, slopeNodeX, result.getTop());
+                    result, logic, slopeNodeX, result.top());
         }
 
         // Need to resolve collisions again as they may be affected by slope

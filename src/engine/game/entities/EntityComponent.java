@@ -5,6 +5,8 @@ import engine.game.Logic;
 
 public abstract class EntityComponent extends Component {
 
+    protected Entity entity;
+
     public EntityComponent(String key) {
         super(key);
     }
@@ -18,7 +20,7 @@ public abstract class EntityComponent extends Component {
      * @param parent
      */
     public void onAttach(Entity parent) {
-        // Do nothing by default
+        entity = parent;
     }
 
     /**

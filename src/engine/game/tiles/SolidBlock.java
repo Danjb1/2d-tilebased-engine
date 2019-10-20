@@ -33,14 +33,14 @@ public class SolidBlock extends ForegroundTile {
         if (collision.getAttemptedDx() > 0){
             // Moving right; collision is between the right of the hitbox and
             // the left of the tile.
-            float hitboxX = collision.getRight();
+            float hitboxX = collision.right();
             float collisionX = Tile.getLeft(hitboxX);
             collision.addCollision_X(new Collision(hitboxX, collisionX, this));
 
         } else if (collision.getAttemptedDx() < 0){
             // Moving left; collision is between the left of the hitbox and the
             // right of the tile.
-            float hitboxX = collision.getLeft();
+            float hitboxX = collision.left();
             float collisionX = Tile.getRight(hitboxX);
             collision.addCollision_X(new Collision(hitboxX, collisionX, this));
         }
@@ -52,14 +52,14 @@ public class SolidBlock extends ForegroundTile {
         if (collision.getAttemptedDy() > 0){
             // Moving down; collision is between the bottom of the hitbox and
             // the top of the tile.
-            float hitboxY = collision.getBottom();
+            float hitboxY = collision.bottom();
             float collisionY = Tile.getTop(hitboxY);
             collision.addCollision_Y(new Collision(hitboxY, collisionY, this));
 
         } else if (collision.getAttemptedDy() < 0){
             // Moving up; collision is between the top of the hitbox and the
             // bottom of the tile.
-            float hitboxY = collision.getTop();
+            float hitboxY = collision.top();
             float collisionY = Tile.getBottom(hitboxY);
             collision.addCollision_Y(new Collision(hitboxY, collisionY, this));
         }

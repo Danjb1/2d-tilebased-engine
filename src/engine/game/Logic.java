@@ -107,16 +107,28 @@ public class Logic {
 
         Hitbox hitbox = entity.getHitbox();
 
+        // Gravity
         if (entity.isAffectedByGravity()) {
             hitbox.applyGravity(delta);
         }
 
+        // Movement
         if (entity.canMove()) {
             hitbox.moveWithCollision(this, delta);
         }
 
-        if (entity.isAffectedByFriction()) {
-            hitbox.applyFriction(delta);
+        // Friction
+        if (hitbox.isGrounded()) {
+            if (entity.isAffectedByGroundFriction()) {
+                hitbox.applyGroundFriction(delta);
+            }
+        } else {
+            if (entity.isAffectedByAirFrictionX()) {
+                hitbox.applyAirFrictionX(delta);
+            }
+            if (entity.isAffectedByAirFrictionY()) {
+                hitbox.applyAirFrictionY(delta);
+            }
         }
     }
 

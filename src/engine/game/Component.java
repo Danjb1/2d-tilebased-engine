@@ -27,9 +27,9 @@ public abstract class Component {
      * <p>This is a generic message-passing mechanism that can be used to signal
      * to components when certain events take place.
      *
-     * @param event
+     * @param eventBeforeCast
      */
-    public void notify(ComponentEvent event) {
+    public void notify(ComponentEvent eventBeforeCast) {
         // Do nothing by default
     }
 

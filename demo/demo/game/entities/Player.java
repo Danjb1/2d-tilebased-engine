@@ -51,7 +51,7 @@ public class Player extends DemoEntity {
     public Player(float x, float y) {
         super(x, y, WIDTH, HEIGHT, DemoEntity.TYPE_PLAYER);
 
-        hitbox.setAirFrictionXCoefficient(10f);
+        hitbox.setAirFrictionCoefficient(10f);
         hitbox.setMaxSpeedX(MAX_SPEED_X);
     }
 
@@ -79,7 +79,13 @@ public class Player extends DemoEntity {
     }
 
     @Override
-    public boolean isAffectedByFriction() {
+    public boolean isAffectedByGroundFriction() {
+        // Only when no direction is pressed
+        return movementDirection == DirectionX.NONE;
+    }
+
+    @Override
+    public boolean isAffectedByAirFrictionX() {
         // Only when no direction is pressed
         return movementDirection == DirectionX.NONE;
     }

@@ -86,62 +86,62 @@ public class CollisionResult {
      *
      * @return
      */
-    public float getLeft() {
+    public float left() {
         return newX;
     }
 
     /**
      * Getter for the new Hitbox right.
      *
-     * See {@link #getLeft}.
+     * See {@link #left}.
      *
      * @return
      */
-    public float getRight() {
+    public float right() {
         return newX + hitbox.width - Physics.SMALLEST_DISTANCE;
     }
 
     /**
      * Getter for the new Hitbox centre.
      *
-     * See {@link #getLeft}.
+     * See {@link #left}.
      *
      * @return
      */
-    public float getCentreX() {
+    public float centreX() {
         return newX + hitbox.width / 2;
     }
 
     /**
      * Getter for the new Hitbox centre.
      *
-     * See {@link #getLeft}.
+     * See {@link #left}.
      *
      * @return
      */
-    public float getCentreY() {
+    public float centreY() {
         return newY + hitbox.height / 2;
     }
 
     /**
      * Getter for the new Hitbox top.
      *
-     * See {@link #getLeft}.
+     * See {@link #left}.
      *
      * @return
      */
-    public float getTop() {
+    public float top() {
         return newY;
     }
 
     /**
      * Getter for the new Hitbox bottom.
      *
-     * See {@link #getLeft}.
+     * See {@link #left}.
      *
      * @return
      */
-    public float getBottom() {
+    public float bottom() {
         return newY + hitbox.height - Physics.SMALLEST_DISTANCE;
     }
 

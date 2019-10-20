@@ -114,8 +114,7 @@ public abstract class Entity implements HitboxListener {
     public void teleport(float x, float y) {
         hitbox.setPos(x, y);
 
-        components.notifyAll(CameraSettings.KEY,
-                new TeleportEntityComponentEvent());
+        components.notifyAll(CameraSettings.KEY, new EntityTeleported());
     }
 
     /**
@@ -208,13 +207,35 @@ public abstract class Entity implements HitboxListener {
     }
 
     /**
-     * Determines whether friction should be applied to this Entity.
+     * Determines whether ground friction should be applied to this Entity.
      *
-     * @see Hitbox#applyFriction
+     * @see Hitbox#applyGroundFriction
      * @return
      */
-    public boolean isAffectedByFriction() {
+    public boolean isAffectedByGroundFriction() {
         return true;
+    }
+
+    /**
+     * Determines whether air friction should be applied to this Entity.
+     *
+     * @see Hitbox#applyAirFrictionX
+     * @return
+     */
+    public boolean isAffectedByAirFrictionX() {
+        return true;
+    }
+
+    /**
+     * Determines whether air friction should be applied to this Entity.
+     *
+     * <p>By default this is false because it interferes with gravity.
+     *
+     * @see Hitbox#applyAirFrictionY
+     * @return
+     */
+    public boolean isAffectedByAirFrictionY() {
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////

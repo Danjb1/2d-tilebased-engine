@@ -39,7 +39,7 @@ public class SemiSolidPlatform extends ForegroundTile {
         if (collision.getAttemptedDy() > 0){
             // Moving down; collision is between the bottom of the hitbox and
             // the top of the tile.
-            float hitboxY = collision.getBottom();
+            float hitboxY = collision.bottom();
             float collisionY = Tile.getTop(hitboxY);
             collision.addCollision_Y(new Collision(hitboxY, collisionY, this));
 

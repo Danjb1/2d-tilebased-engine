@@ -272,7 +272,7 @@ public abstract class Physics {
         for (float node : collisionNodesX){
 
             // Use the already-calculated x-collision result
-            float x = result.getLeft() + node;
+            float x = result.left() + node;
             float yBefore = result.getCollisionEdgeY();
             float yAfter = yBefore + result.getAttemptedDy();
 

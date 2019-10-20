@@ -36,7 +36,7 @@ public class CameraSettings extends EntityComponent {
 
     @Override
     public void notify(ComponentEvent event) {
-        if (event.getKey() == TeleportEntityComponentEvent.KEY) {
+        if (event instanceof EntityTeleported) {
             entityTeleported();
         }
     }

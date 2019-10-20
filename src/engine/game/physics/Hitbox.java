@@ -118,18 +118,9 @@ public class Hitbox {
 
     /**
      * Multiplier that determines how strongly this Hitbox is affected by air
-     * friction in the x-axis.
+     * friction.
      */
-    private float airFrictionXCoefficient = 1;
-
-    /**
-     * Multiplier that determines how strongly this Hitbox is affected by air
-     * friction in the y-axis.
-     *
-     * This is zero by default, because it interferes with gravity. It is most
-     * useful for Entities which are not affected by gravity.
-     */
-    private float airFrictionYCoefficient = 0;
+    private float airFrictionCoefficient = 1;
 
     /**
      * Whether this Hitbox is affected by collisions.
@@ -235,7 +226,7 @@ public class Hitbox {
         // Move to the nearest collision
         CollisionResult result =
                 Physics.getCollisionResult(logic, this, dx, dy);
-        setPos(result.getLeft(), result.getTop());
+        setPos(result.left(), result.top());
 
         // Collide with slopes if this Hitbox doesn't support them
         if (!getCollisionFlag(SUPPORT_SLOPES)
@@ -391,27 +382,36 @@ public class Hitbox {
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Adjusts this Hitbox's speed according to friction.
+     * Adjusts this Hitbox's speed according to ground friction.
      *
-     * <p>There are 2 different values for friction; one is used when this
-     * Hitbox is on the ground, the other is used when this Hitbox is in the
-     * air.
-     *
-     * @see Hitbox#setAirFrictionXCoefficient
-     * @see Hitbox#setAirFrictionYCoefficient
      * @see Hitbox#setGroundFrictionCoefficient
      * @param delta
      */
-    public void applyFriction(int delta) {
-        if (onGround){
-            setSpeedX(Physics.applyGroundFriction(
-                    speedX, delta, groundFrictionCoefficient));
-        } else {
-            setSpeedX(Physics.applyAirFriction(
-                    speedX, delta, airFrictionXCoefficient));
-            setSpeedY(Physics.applyAirFriction(
-                    speedY, delta, airFrictionYCoefficient));
-        }
+    public void applyGroundFriction(int delta) {
+        setSpeedX(Physics.applyGroundFriction(
+                speedX, delta, groundFrictionCoefficient));
+    }
+
+    /**
+     * Adjusts this Hitbox's x-speed according to air friction.
+     *
+     * @see Hitbox#setAirFrictionCoefficient
+     * @param delta
+     */
+    public void applyAirFrictionX(int delta) {
+        setSpeedX(Physics.applyAirFriction(
+                speedX, delta, airFrictionCoefficient));
+    }
+
+    /**
+     * Adjusts this Hitbox's y-speed according to air friction.
+     *
+     * @see Hitbox#setAirFrictionCoefficient
+     * @param delta
+     */
+    public void applyAirFrictionY(int delta) {
+        setSpeedY(Physics.applyAirFriction(
+                speedY, delta, airFrictionCoefficient));
     }
 
     /**
@@ -446,22 +446,12 @@ public class Hitbox {
 
     /**
      * Sets the multiplier used to determine the strength of air friction, as
-     * applied to this Hitbox, in the x-axis.
+     * applied to this Hitbox.
      *
-     * @param airFrictionXCoefficient
+     * @param airFrictionCoefficient
      */
-    public void setAirFrictionXCoefficient(float airFrictionXCoefficient) {
-        this.airFrictionXCoefficient = airFrictionXCoefficient;
-    }
-
-    /**
-     * Sets the multiplier used to determine the strength of air friction, as
-     * applied to this Hitbox, in the y-axis.
-     *
-     * @param airFrictionYCoefficient
-     */
-    public void setAirFrictionYCoefficient(float airFrictionYCoefficient) {
-        this.airFrictionYCoefficient = airFrictionYCoefficient;
+    public void setAirFrictionCoefficient(float airFrictionCoefficient) {
+        this.airFrictionCoefficient = airFrictionCoefficient;
     }
 
     /**

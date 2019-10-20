@@ -100,6 +100,15 @@ public class ComponentStore<T extends Component> {
     }
 
     /**
+     * Determines if the store contains no Components.
+     *
+     * @return
+     */
+    public boolean isEmpty() {
+        return components.isEmpty();
+    }
+
+    /**
      * Removes all Components from this ComponentStore.
      */
     public void clear() {
