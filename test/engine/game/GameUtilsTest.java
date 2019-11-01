@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  * Tests of the static methods in the GameUtils class.
- * 
+ *
  * @author Dan Bryce
  */
 public class GameUtilsTest {

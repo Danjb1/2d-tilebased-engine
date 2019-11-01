@@ -1,7 +1,8 @@
 package engine.game.tiles;
 
-import engine.game.Logic;
 import engine.game.physics.CollisionResult;
+import engine.game.physics.Hitbox;
+import engine.game.physics.Hitbox.CollisionNode;
 
 /**
  * Class representing a Tile within the foreground layer of the Level.
@@ -50,51 +51,76 @@ public abstract class ForegroundTile extends Tile {
     }
 
     /**
-     * Determines whether or not Entities can collide with this Tile when
-     * attempting to move according to the given CollisionResult.
+     * Checks for an x-collision and adds it to the CollisionResult.
+     *
+     * @param result CollisionResult to which Collisions should be added.
+     * @param dstX
+     * The absolute x-position of the collision node after the attempted
+     * movement.
+     * @param node Node that has collided.
+     */
+    public void checkForCollision_X(
+            CollisionResult result, float dstX, CollisionNode node) {
+        // No collision by default
+    }
+
+    /**
+     * Checks for a y-collision and adds it to the CollisionResult.
      *
      * @param result
-     * @param logic
-     * @param tileX
-     * @param tileY
+     * @param dstY
+     * The absolute y-position of the collision node after the attempted
+     * movement.
+     * @param node Node that has collided.
+     */
+    public void checkForCollision_Y(
+            CollisionResult result, float dstY, CollisionNode node) {
+        // No collision by default
+    }
+
+    /**
+     * Determines whether or not this Tile is completely solid.
+     *
      * @return
      */
-    public boolean hasCollisionX(CollisionResult result, Logic logic, int tileX,
-            int tileY) {
+    public boolean isSolid() {
         return false;
     }
 
     /**
-     * Determines whether or not Entities can collide with this Tile when
-     * attempting to move according to the given CollisionResult.
+     * Determines whether or not this Tile has special collision properties.
      *
-     * @param result
-     * @param logic
-     * @param tileX
-     * @param tileY
      * @return
      */
-    public boolean hasCollisionY(CollisionResult result, Logic logic, int tileX,
-            int tileY) {
+    public boolean hasSpecialCollisionProperties() {
         return false;
     }
 
     /**
-     * Modifies the given CollisionResult after a collision with this Tile.
+     * Called when a Hitbox collides with this Tile in the x-axis.
      *
-     * @param collision
+     * <p>For tiles that have collision, this will cause the Hitbox to bounce
+     * off the tile according to its bounce coefficient. A bounce coefficient of
+     * zero (the default) will cause the Hitbox to stop.
+     *
+     * @param result
      */
-    public void collisionOccurredX(CollisionResult collision) {
-        // Solid tiles should override this
+    public void hitboxCollidedX(CollisionResult result) {
+        Hitbox hitbox = result.hitbox;
+        float newSpeedX = -hitbox.getSpeedX() * hitbox.bounceCoefficient;
+        hitbox.setSpeedX(newSpeedX);
     }
 
     /**
-     * Modifies the given CollisionResult after a collision with this Tile.
+     * Called when a Hitbox collides with this Tile in the y-axis.
      *
-     * @param collision
+     * @see ForegroundTile#hitboxCollidedX(CollisionResult)
+     * @param result
      */
-    public void collisionOccurredY(CollisionResult collision) {
-        // Solid tiles should override this
+    public void hitboxCollidedY(CollisionResult result) {
+        Hitbox hitbox = result.hitbox;
+        float newSpeedY = -hitbox.getSpeedY() * hitbox.bounceCoefficient;
+        hitbox.setSpeedY(newSpeedY);
     }
 
 }

@@ -224,12 +224,12 @@ public class GameUtils {
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Returns either -1 or 1 at random.
+     * Multiplies the given value by either -1 or 1 at random.
      *
      * @param i
      * @return
      */
-    public static int randomSign(int i) {
+    public static float randomSign(float i) {
         return i * (Math.random() < 0.5 ? -1 : 1);
     }
 
@@ -258,7 +258,7 @@ public class GameUtils {
     }
 
     /**
-     * Returns a random int between the 2 limits.
+     * Returns a random int between the 2 limits (inclusive).
      *
      * @param min
      * @param max
@@ -279,6 +279,42 @@ public class GameUtils {
      */
     public static int randBetween(int min, int max, Random random) {
         return min + (int)(random.nextDouble() * ((max - min) + 1));
+    }
+
+    /**
+     * Clamps an integer between 2 limits.
+     *
+     * @param val
+     * @param min
+     * @param max
+     * @return
+     */
+    public static int clamp(int val, int min, int max) {
+        if (val < min) {
+            return min;
+        }
+        if (val > max) {
+            return max;
+        }
+        return val;
+    }
+
+    /**
+     * Clamps a float between 2 limits.
+     *
+     * @param val
+     * @param min
+     * @param max
+     * @return
+     */
+    public static float clamp(float val, float min, float max) {
+        if (val < min) {
+            return min;
+        }
+        if (val > max) {
+            return max;
+        }
+        return val;
     }
 
 }

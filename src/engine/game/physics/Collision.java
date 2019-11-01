@@ -1,5 +1,6 @@
 package engine.game.physics;
 
+import engine.game.physics.Hitbox.CollisionNode;
 import engine.game.tiles.ForegroundTile;
 
 /**
@@ -10,35 +11,47 @@ import engine.game.tiles.ForegroundTile;
 public class Collision implements Comparable<Collision> {
 
     /**
-     * Distance to the collision, in world units.
+     * Absolute position of the collision (x or y), in world units.
      */
-    private float distanceToCollision;
+    public final float collisionPos;
 
     /**
-     * Absolute position of the collision (either x or y), in world units.
+     * Distance to the collision, in world units.
      */
-    private float collisionPos;
+    public final float distanceToCollision;
+
+    /**
+     * The CollisionNode that triggered this Collision.
+     */
+    public final CollisionNode node;
 
     /**
      * Tile with which the collision occurred.
      */
-    private ForegroundTile tile;
+    public final ForegroundTile tile;
 
     /**
-     * Constructor for a Collision.
-     *
-     * @param hitboxPos
-     *          Position of the relevant hitbox edge before the collision (x or y).
-     *          Used to calculate the distance to the collision.
-     * @param collisionPos
-     *          Position in the world where the collision occurred (x or y).
-     * @param tile Tile with which the collision occurred.
+     * Whether this Collision is valid.
      */
-    public Collision(float hitboxPos, float collisionPos, ForegroundTile tile) {
-        this.collisionPos = collisionPos;
-        this.tile = tile;
+    protected boolean valid = true;
 
-        distanceToCollision = collisionPos - hitboxPos;
+    /**
+     * Constructs a Collision.
+     *
+     * @param collisionPos
+     * @param node
+     * @param tile
+     * @param distanceToCollision
+     */
+    private Collision(
+            float collisionPos,
+            CollisionNode node,
+            ForegroundTile tile,
+            float distanceToCollision) {
+        this.collisionPos = collisionPos;
+        this.node = node;
+        this.tile = tile;
+        this.distanceToCollision = distanceToCollision;
     }
 
     /**
@@ -49,27 +62,33 @@ public class Collision implements Comparable<Collision> {
     @Override
     public int compareTo(Collision other) {
         float myDist = Math.abs(distanceToCollision);
-        float otherDist = Math.abs(other.getDistanceToCollision());
+        float otherDist = Math.abs(other.distanceToCollision);
 
-        if (myDist < otherDist) {
-            return -1;
-        } else if (myDist == otherDist) {
-            return 0;
-        } else {
-            return 1;
-        }
+        return Float.compare(myDist, otherDist);
     }
 
-    public float getDistanceToCollision() {
-        return distanceToCollision;
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    // Factory Methods
+    ////////////////////////////////////////////////////////////////////////////
 
-    public float getCollisionPos() {
-        return collisionPos;
-    }
-
-    public ForegroundTile getTile() {
-        return tile;
+    /**
+     * Creates a Collision.
+     *
+     * @param posBefore
+     * Absolute position of the relevant node before the collision.
+     * @param posAfter
+     * Absolute position of the relevant node after the collision.
+     * @param node The Node involved in this Collision.
+     * @param tile Tile with which the collision occurred.
+     * @return
+     */
+    public static Collision create(
+            float posBefore,
+            float posAfter,
+            CollisionNode node,
+            ForegroundTile tile) {
+        float distanceToCollision = posAfter - posBefore;
+        return new Collision(posAfter, node, tile, distanceToCollision);
     }
 
 }

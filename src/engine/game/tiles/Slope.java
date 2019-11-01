@@ -1,74 +1,237 @@
 package engine.game.tiles;
 
+import engine.game.GameUtils;
+import engine.game.physics.Collision;
+import engine.game.physics.CollisionResult;
 import engine.game.physics.Hitbox;
+import engine.game.physics.Hitbox.CollisionNode;
+import engine.game.physics.Physics;
+import engine.game.physics.PostProcessCollision;
 
 /**
- * Abstract Slope class, to be subclassed by specific Slope types.
+ * Base class for Slopes.
+ *
+ * <p>There are a lot of problems with implementing slopes in a tile-based game:
+ *
+ * 1) Hitboxes may at times intersect the tile behind or below a slope.
+ *     Collisions with such tiles must be disabled.
+ *
+ * 2) Regular collisions must still be respected outside the slope, for example,
+ *     if a slope leads into a wall.
+ *
+ * 3) It looks strange if a Hitbox is positioned such that only its corner sits
+ *     on the slope, as the rest of the Hitbox will be floating. Thus, when a
+ *     Hitbox collides with a slope, it should be positioned such that its
+ *     horizontal centre sits atop the slope.
+ *
+ * 4) Unlike regular collisions which affect the speed of a Hitbox, collisions
+ *     with ceiling slopes should not slow a falling Hitbox.
+ *
+ * 5) Hitboxes that do not support slope traversal (for example, projectiles)
+ *     should take into account the angle of the slope when bouncing off the
+ *     slope.
+ *
+ * 6) By default, fast-moving Hitboxes will fly off the slope, instead of
+ *     sliding down it.
+ *
+ * These problems are addressed herein.
  *
  * @author Dan Bryce
  */
-public abstract class Slope extends ForegroundTile {
-
-    /*
-     * Slope flag constants.
-     *
-     * These can be used (with the '&' operator) to create conditions that apply
-     * only to certain Slope tiles, e.g.
-     *
-     *     if (slope.getSlopeFlags() & SLOPE_LEFT > 0)
-     */
-    public static final int SLOPE_LEFT          = 0xff000000;
-    public static final int SLOPE_RIGHT         = 0x00ff0000;
-    public static final int SLOPE_CEILING_LEFT  = 0x0000ff00;
-    public static final int SLOPE_CEILING_RIGHT = 0x000000ff;
-    public static final int SLOPE_LEFT_ANY      = SLOPE_LEFT | SLOPE_CEILING_LEFT;
-    public static final int SLOPE_RIGHT_ANY     = SLOPE_RIGHT | SLOPE_CEILING_RIGHT;
-    public static final int SLOPE_FLOOR_ANY     = SLOPE_LEFT | SLOPE_RIGHT;
-    public static final int SLOPE_CEILING_ANY   = SLOPE_CEILING_LEFT | SLOPE_CEILING_RIGHT;
-    public static final int NOT_ON_SLOPE        = 0;
-
-    /**
-     * Slope flags of this Slope tile.
-     */
-    protected int slopeFlags;
+public abstract class Slope extends ForegroundTile
+        implements PostProcessingTile {
 
     /**
      * Constructs a Slope with the given Slope flags.
      *
      * @param id
-     * @param slopeFlags
      */
-    protected Slope(int id, int slopeFlags) {
+    protected Slope(int id) {
         super(id);
-
-        this.slopeFlags = slopeFlags;
     }
 
-    public boolean isFloorSlope() {
-        return (slopeFlags & SLOPE_FLOOR_ANY) != 0;
-    }
-
-    public boolean isCeilingSlope() {
-        return (slopeFlags & SLOPE_CEILING_ANY) != 0;
-    }
-
-    public boolean isLeftSlope() {
-        return (slopeFlags & SLOPE_LEFT_ANY) != 0;
-    }
-
-    public boolean isRightSlope() {
-        return (slopeFlags & SLOPE_RIGHT_ANY) != 0;
+    @Override
+    public boolean hasSpecialCollisionProperties() {
+        return true;
     }
 
     /**
-     * Gets the y-position of the Slope at the given x-position.
+     * Resolves a PostProcessCollision with this Slope.
+     */
+    @Override
+    public void postProcessing(
+            CollisionResult result, PostProcessCollision slopeCollision) {
+
+        // Filter out invalid x-collisions
+        for (Collision collision : result.getCollisionsX()) {
+            if (!isCollisionValid_X(result, slopeCollision, collision)) {
+                result.invalidateCollision(collision);
+            }
+        }
+
+        // Filter out invalid y-collisions
+        for (Collision collision : result.getCollisionsY()) {
+            if (!isCollisionValid_Y(result, slopeCollision, collision)) {
+                result.invalidateCollision(collision);
+            }
+        }
+
+        // If the desired destination is in the Slope, add a Collision
+        if (shouldCollide(result, slopeCollision)) {
+            collideWithSlope(result, slopeCollision);
+        }
+    }
+
+    /**
+     * Determines if the given x-Collision is valid, in light of a collision
+     * with this Slope.
      *
-     * <p>Positions range from 0 - Tile.SIZE.
-     *
-     * @param distIntoTileX
+     * @param result
+     * @param slopeCollision
+     * @param collision
      * @return
      */
-    public abstract float getSlopeY_At_X(float distIntoTileX);
+    protected boolean isCollisionValid_X(
+            CollisionResult result,
+            PostProcessCollision slopeCollision,
+            Collision collision) {
+
+        int tileXBefore = Tile.getTileX(result.initialNodeX(collision.node));
+        int tileXAfter = Tile.getTileX(result.desiredNodeX(collision.node));
+        if (tileXBefore == tileXAfter) {
+            // Disable x-collisions if the CollisionNode was already
+            // intersecting the Tile in question
+            // (e.g. having been on a neighbouring slope)
+            return false;
+        }
+
+        if (result.initialNodeY(collision.node) < slopeCollision.getTileTop()) {
+            // Allow x-collisions triggered by CollisionNodes above the Slope
+            // (e.g. if a Slope leads into a wall)
+            return true;
+        }
+
+        if (result.initialNodeY(collision.node) > slopeCollision.getTileBottom()) {
+            // Allow x-collisions triggered by CollisionNodes below the Slope
+            // (e.g. if a Slope leads to a vertical drop)
+            return true;
+        }
+
+        // Disable other x-collisions while on the Slope
+        return false;
+    }
+
+    /**
+     * Determines if the given x-Collision is valid, in light of a collision
+     * with this Slope.
+     *
+     * @param result
+     * @param slopeCollision
+     * @param collision
+     * @return
+     */
+    protected abstract boolean isCollisionValid_Y(
+            CollisionResult result,
+            PostProcessCollision slopeCollision,
+            Collision collision);
+
+    /**
+     * Determines if a CollisionResult should collide with this Slope.
+     *
+     * @param result
+     * @param collision
+     * @return
+     */
+    protected boolean shouldCollide(
+            CollisionResult result, PostProcessCollision collision) {
+
+        // Determine the position of the slope node relative to this Slope tile
+        float xInSlope = getSlopeNodeX(result) - collision.getTileLeft();
+        float yInSlope = getSlopeNodeY(result) - collision.getTileTop();
+
+        // A Hitbox is only considered to be intersecting the Slope if its slope
+        // node is inside the *solid* part of the Slope
+        return isPointInSlope(xInSlope, yInSlope);
+    }
+
+    /**
+     * Determines the absolute x-position of the "slope node", that is, the
+     * point on the Hitbox which should sit atop the slope.
+     *
+     * @param result
+     * @return
+     */
+    protected float getSlopeNodeX(CollisionResult result) {
+        return result.centreX();
+    }
+
+    /**
+     * Determines the absolute y-position of the "slope node", that is, the
+     * point on the Hitbox which should sit atop the slope.
+     *
+     * @param result
+     * @return
+     */
+    protected abstract float getSlopeNodeY(CollisionResult result);
+
+    /**
+     * Causes the CollisionResult to collide with this Slope.
+     *
+     * @param result
+     * @param slopeCollision
+     */
+    protected void collideWithSlope(
+            CollisionResult result, PostProcessCollision slopeCollision) {
+        Collision collision = createCollision(result, slopeCollision);
+        result.addCollision_Y(collision);
+    }
+
+    /**
+     * Creates a y-collision based on a PostProcessCollision with this Slope.
+     *
+     * @param result
+     * @param slopeCollision
+     * @return
+     */
+    protected Collision createCollision(
+            CollisionResult result, PostProcessCollision slopeCollision) {
+
+        // Determine the "correct" y-position of the slope node on the Slope
+        float xInSlope = getSlopeNodeX(result) - slopeCollision.getTileLeft();
+        float yInSlopeCorrect = calculateY(xInSlope);
+
+        // Keep this position within acceptable bounds
+        yInSlopeCorrect = GameUtils.clamp(yInSlopeCorrect,
+                0,
+                Tile.HEIGHT - Physics.SMALLEST_DISTANCE);
+
+        // Find the absolute y-position of this point
+        float collisionY = slopeCollision.getTileTop() + yInSlopeCorrect;
+
+        // Calculate the initial and corrected position of the CollisionNode
+        float yBefore = result.initialNodeY(slopeCollision.node);
+        float yAfter = calculateNodeYAfterCollision(
+                result, slopeCollision.node, collisionY);
+
+        // Create the Collision
+        return Collision.create(
+                yBefore,
+                yAfter,
+                slopeCollision.node,
+                this);
+    }
+
+    /**
+     * Given the point of a collision, calculates the new position of the
+     * CollisionNode that triggered this collision.
+     *
+     * @param result
+     * @param node
+     * @param collisionY
+     * @return
+     */
+    protected abstract float calculateNodeYAfterCollision(
+            CollisionResult result, CollisionNode node, float collisionY);
 
     /**
      * Determines if a point is inside the solid part of this Slope.
@@ -79,10 +242,20 @@ public abstract class Slope extends ForegroundTile {
      * @param y Position from 0 - Tile.HEIGHT.
      * @return
      */
-    public abstract boolean isPointInSlope(float x, float y);
+    protected abstract boolean isPointInSlope(float x, float y);
 
     /**
-     * Changes the given Hitbox's speed to cause it to bounce off this Slope.
+     * Gets the y-position of the Slope at the given x-position.
+     *
+     * <p>Positions range from 0 - Tile.SIZE.
+     *
+     * @param distIntoTileX x-position relative to the left of the Tile.
+     * @return y-position relative to the top of the Tile.
+     */
+    protected abstract float calculateY(float distIntoTileX);
+
+    /**
+     * Causes a Hitbox to bounce after a collision with this Slope.
      *
      * <p>If you imagine 2 lines protruding from a Slope, one horizontal and one
      * vertical, those lines create 3 different sectors. These correspond to the
@@ -103,146 +276,36 @@ public abstract class Slope extends ForegroundTile {
      * <p>Fortunately, after some experimentation, it would appear that these
      * different cases can all be handled in the same way - just swap the x- and
      * y-speeds, and possibly invert them (depending on the slope).
-     *
-     * @param hitbox
-     * @param bounceCoefficient
      */
-    public abstract void collide(Hitbox hitbox, float bounceCoefficient);
+    @Override
+    public void hitboxCollidedY(CollisionResult result) {
 
-    ////////////////////////////////////////////////////////////////////////////
-    // Slope Subclasses
-    ////////////////////////////////////////////////////////////////////////////
+        // Collisions with Slopes are always in the y-axis,
+        // but they affect the Hitbox speed in BOTH axes
 
-    /**
-     * Left Slope.
-     *
-     * <pre>
-     *  #
-     *  ###
-     *  #####
-     * </pre>
-     */
-    public static class Left extends Slope {
+        Hitbox hitbox = result.hitbox;
+        float prevSpeedX = hitbox.getSpeedX();
+        float prevSpeedY = hitbox.getSpeedY();
 
-        public Left(int id) {
-            super(id, SLOPE_LEFT);
+        // The new y-speed is the old x-speed
+        float newSpeedY = prevSpeedX
+                * hitbox.bounceCoefficient
+                * getBouceMultiplierY();
+        hitbox.setSpeedY(newSpeedY);
+
+        // The x-speed is only affected if a Hitbox supports slope traversal
+        if (!hitbox.getCollisionFlag(Hitbox.SUPPORTS_SLOPE_TRAVERSAL)) {
+
+            // The new x-speed is the old y-speed
+            float newSpeedX = prevSpeedY
+                    * hitbox.bounceCoefficient
+                    * getBouceMultiplierX();
+            hitbox.setSpeedX(newSpeedX);
         }
-
-        @Override
-        public boolean isPointInSlope(float x, float y) {
-            return y >= x;
-        }
-
-        @Override
-        public float getSlopeY_At_X(float distIntoTileX) {
-            return Tile.HEIGHT - distIntoTileX;
-        }
-
-        @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient) {
-            hitbox.setSpeedX(hitbox.getSpeedY() * bounceCoefficient);
-            hitbox.setSpeedY(hitbox.getSpeedX() * bounceCoefficient);
-        }
-
     }
 
-    /**
-     * Right Slope.
-     *
-     * <pre>
-     *      #
-     *    ###
-     *  #####
-     * </pre>
-     */
-    public static class Right extends Slope {
+    protected abstract float getBouceMultiplierX();
 
-        public Right(int id) {
-            super(id, SLOPE_RIGHT);
-        }
-
-        @Override
-        public boolean isPointInSlope(float x, float y) {
-            return x + y >= Tile.HEIGHT;
-        }
-
-        @Override
-        public float getSlopeY_At_X(float distIntoTileX) {
-            return distIntoTileX;
-        }
-
-        @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient) {
-            hitbox.setSpeedX(-hitbox.getSpeedY() * bounceCoefficient);
-            hitbox.setSpeedY(-hitbox.getSpeedX() * bounceCoefficient);
-        }
-
-    }
-
-    /**
-     * Left Ceiling Slope.
-     *
-     * <pre>
-     *  #####
-     *  ###
-     *  #
-     * </pre>
-     */
-    public static class LeftCeiling extends Slope {
-
-        public LeftCeiling(int id) {
-            super(id, SLOPE_CEILING_LEFT);
-        }
-
-        @Override
-        public boolean isPointInSlope(float x, float y) {
-            return x + y <= Tile.HEIGHT;
-        }
-
-        @Override
-        public float getSlopeY_At_X(float distIntoTileX) {
-            return Tile.HEIGHT - distIntoTileX;
-        }
-
-        @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient) {
-            hitbox.setSpeedX(-hitbox.getSpeedY() * bounceCoefficient);
-            hitbox.setSpeedY(-hitbox.getSpeedX() * bounceCoefficient);
-        }
-
-    }
-
-    /**
-     * Right Ceiling Slope.
-     *
-     * <pre>
-     *  #####
-     *    ###
-     *      #
-     * </pre>
-     */
-    public static class RightCeiling extends Slope {
-
-        public RightCeiling(int id) {
-            super(id, SLOPE_CEILING_RIGHT);
-        }
-
-        @Override
-        public boolean isPointInSlope(float x, float y) {
-            return y <= x;
-        }
-
-        @Override
-        public float getSlopeY_At_X(float distIntoTileX) {
-            return distIntoTileX;
-        }
-
-        @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient) {
-            hitbox.setSpeedX(hitbox.getSpeedY() * bounceCoefficient);
-            hitbox.setSpeedY(hitbox.getSpeedX() * bounceCoefficient);
-        }
-
-    }
+    protected abstract float getBouceMultiplierY();
 
 }

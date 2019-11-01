@@ -51,7 +51,9 @@ public class Player extends DemoEntity {
     public Player(float x, float y) {
         super(x, y, WIDTH, HEIGHT, DemoEntity.TYPE_PLAYER);
 
-        hitbox.setAirFrictionCoefficient(10f);
+        // Player should slow down dramatically in the air
+        hitbox.airFrictionCoefficient = 10f;
+
         hitbox.setMaxSpeedX(MAX_SPEED_X);
     }
 

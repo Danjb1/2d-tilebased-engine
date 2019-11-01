@@ -1,8 +1,8 @@
 package engine.game.tiles;
 
-import engine.game.Logic;
 import engine.game.physics.Collision;
 import engine.game.physics.CollisionResult;
+import engine.game.physics.Hitbox.CollisionNode;
 
 /**
  * A solid block tile.
@@ -16,53 +16,38 @@ public class SolidBlock extends ForegroundTile {
     }
 
     @Override
-    public boolean hasCollisionX(CollisionResult result, Logic logic, int tileX,
-            int tileY) {
+    public boolean isSolid() {
         return true;
     }
 
     @Override
-    public boolean hasCollisionY(CollisionResult result, Logic logic, int tileX,
-            int tileY) {
-        return true;
+    public void checkForCollision_X(
+            CollisionResult result, float dstX, CollisionNode node) {
+
+        float xBefore = result.hitbox.x + node.x;
+
+        // The Tile edge we collide with depends on the direction of travel
+        float xAfter = node.isOnLeftEdge()
+                ? Tile.getRight(dstX)
+                : Tile.getLeft(dstX);
+
+        result.addCollision_X(
+                Collision.create(xBefore, xAfter, node, this));
     }
 
     @Override
-    public void collisionOccurredX(CollisionResult collision) {
+    public void checkForCollision_Y(
+            CollisionResult result, float dstY, CollisionNode node) {
 
-        if (collision.getAttemptedDx() > 0) {
-            // Moving right; collision is between the right of the hitbox and
-            // the left of the tile.
-            float hitboxX = collision.right();
-            float collisionX = Tile.getLeft(hitboxX);
-            collision.addCollision_X(new Collision(hitboxX, collisionX, this));
+        float yBefore = result.hitbox.y + node.y;
 
-        } else if (collision.getAttemptedDx() < 0) {
-            // Moving left; collision is between the left of the hitbox and the
-            // right of the tile.
-            float hitboxX = collision.left();
-            float collisionX = Tile.getRight(hitboxX);
-            collision.addCollision_X(new Collision(hitboxX, collisionX, this));
-        }
-    }
+        // The Tile edge we collide with depends on the direction of travel
+        float yAfter = node.isOnTopEdge()
+                ? Tile.getBottom(dstY)
+                : Tile.getTop(dstY);
 
-    @Override
-    public void collisionOccurredY(CollisionResult collision) {
-
-        if (collision.getAttemptedDy() > 0) {
-            // Moving down; collision is between the bottom of the hitbox and
-            // the top of the tile.
-            float hitboxY = collision.bottom();
-            float collisionY = Tile.getTop(hitboxY);
-            collision.addCollision_Y(new Collision(hitboxY, collisionY, this));
-
-        } else if (collision.getAttemptedDy() < 0) {
-            // Moving up; collision is between the top of the hitbox and the
-            // bottom of the tile.
-            float hitboxY = collision.top();
-            float collisionY = Tile.getBottom(hitboxY);
-            collision.addCollision_Y(new Collision(hitboxY, collisionY, this));
-        }
+        result.addCollision_Y(
+                Collision.create(yBefore, yAfter, node, this));
     }
 
 }

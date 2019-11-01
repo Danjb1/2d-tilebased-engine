@@ -8,4 +8,8 @@ public class TileComponent extends Component {
         super(key);
     }
 
+    public void onAttach(Tile tile) {
+        // Do nothing by default
+    }
+
 }

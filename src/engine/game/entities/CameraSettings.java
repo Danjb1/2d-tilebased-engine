@@ -35,8 +35,8 @@ public class CameraSettings extends EntityComponent {
     }
 
     @Override
-    public void notify(ComponentEvent event) {
-        if (event instanceof EntityTeleported) {
+    public void notify(ComponentEvent eventBeforeCast) {
+        if (eventBeforeCast instanceof EntityTeleported) {
             entityTeleported();
         }
     }

@@ -55,11 +55,23 @@ public class Level {
 
     /**
      * Determines if a tile co-ordinate is valid.
+     *
      * @param tileY
      * @return
      */
     public boolean doesTileExist_Y(int tileY) {
         return tileY >= 0 && tileY < getNumTilesY();
+    }
+
+    /**
+     * Determines if a tile co-ordinate is valid.
+     *
+     * @param tileX
+     * @param tileY
+     * @return
+     */
+    public boolean doesTileExist(int tileX, int tileY) {
+        return doesTileExist_X(tileX) && doesTileExist_Y(tileY);
     }
 
     /**

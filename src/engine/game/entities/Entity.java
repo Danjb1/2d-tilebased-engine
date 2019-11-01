@@ -33,16 +33,16 @@ public abstract class Entity implements HitboxListener {
     public ComponentStore<EntityComponent> components = new ComponentStore<>();
 
     /**
+     * This Entity's physical presence within the game world.
+     */
+    public Hitbox hitbox;
+
+    /**
      * Unique identifier used to refer to this Entity.
      *
      * <p>Assigned by the logic when the Entity is added to the world.
      */
     protected int id = -1;
-
-    /**
-     * This Entity's physical presence within the game world.
-     */
-    protected Hitbox hitbox;
 
     /**
      * Flag set when this Entity is marked for deletion.
@@ -71,15 +71,6 @@ public abstract class Entity implements HitboxListener {
     ////////////////////////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Gets this Entity's {@link Hitbox}.
-     *
-     * @return
-     */
-    public Hitbox hitbox {
-        return hitbox;
-    }
 
     /**
      * Determines whether this Entity has been deleted.

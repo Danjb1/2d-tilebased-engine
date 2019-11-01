@@ -29,12 +29,12 @@ public class FramerateTest {
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
         Hitbox hitbox = e.hitbox;
-        hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
         logic.addEntity(e);
 
         // WHEN 2 seconds have passed
         int msPerFrame = 15;
         for (int msPassed = 0; msPassed < 2000; msPassed += msPerFrame) {
+            hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
             logic.updateEntities(msPerFrame);
         }
 
@@ -56,12 +56,12 @@ public class FramerateTest {
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
         Hitbox hitbox = e.hitbox;
-        hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
         logic.addEntity(e);
 
         // WHEN 2 seconds have passed
         int msPerFrame = 45;
         for (int msPassed = 0; msPassed < 2000; msPassed += msPerFrame) {
+            hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
             logic.updateEntities(msPerFrame);
         }
 

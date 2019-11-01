@@ -57,6 +57,18 @@ public abstract class Tile {
     }
 
     /**
+     * Attaches a TileComponent.
+     *
+     * <p>Results in a callback to {@link TileComponent#onAttach}.
+     *
+     * @param component
+     */
+    public void attach(TileComponent component) {
+        components.add(component);
+        component.onAttach(this);
+    }
+
+    /**
      * Gets this Tile's unique identifier.
      *
      * @return
@@ -73,7 +85,7 @@ public abstract class Tile {
      * @return Tile edge in world units.
      */
     public static float getLeft(float x) {
-        return x - (x % WIDTH);
+        return (int) (x / WIDTH);
     }
 
     /**
@@ -96,7 +108,7 @@ public abstract class Tile {
      * @return Tile edge in world units.
      */
     public static float getTop(float y) {
-        return y - (y % HEIGHT);
+        return (int) (y / HEIGHT);
     }
 
     /**

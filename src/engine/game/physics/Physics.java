@@ -1,9 +1,13 @@
 package engine.game.physics;
 
+import java.util.Set;
+
 import engine.game.GameUtils;
 import engine.game.Level;
 import engine.game.Logic;
+import engine.game.physics.Hitbox.CollisionNode;
 import engine.game.tiles.ForegroundTile;
+import engine.game.tiles.PostProcessingTile;
 import engine.game.tiles.Tile;
 import engine.launcher.Logger;
 
@@ -15,10 +19,10 @@ import engine.launcher.Logger;
 public abstract class Physics {
 
     /**
-     * Minimum speed at which Entities are considered to be moving.
+     * Minimum speed at which Hitboxes are considered to be moving.
      *
      * <p>Speeds lower than this are negligible, so it is simpler to consider
-     * Entities stationary.
+     * Hitboxes stationary.
      *
      * <p>Measured in world units per second.
      */
@@ -52,13 +56,13 @@ public abstract class Physics {
      * (tile left + tile width) gives us the position of the right edge of the
      * tile.
      *
-     * <p>This is important for a number of reasons. For example, an Entity the
+     * <p>This is important for a number of reasons. For example, a Hitbox the
      * height of a tile should be able to fit inside a single tile without its
      * hitbox overlapping the tile below. However, as soon as any gravity is
      * applied whatsoever, a collision should be registered with the tile below.
      *
      * <p>This value ensures that such a collision will happen every frame, and
-     * the entity will be continually repositioned in the correct position atop
+     * the Hitbox will be continually repositioned in the correct position atop
      * the ground tile.
      */
     public static final float SMALLEST_DISTANCE =
@@ -168,12 +172,12 @@ public abstract class Physics {
      * @param dy Attempted distance travelled in y-direction.
      * @return
      */
-    public static CollisionResult getCollisionResult(Logic logic,
-            Hitbox hitbox, float dx, float dy) {
+    public static CollisionResult getCollisionResult(
+            Logic logic, Hitbox hitbox, float dx, float dy) {
 
         if (Math.abs(dx) > MAX_MOVE_DISTANCE) {
             /*
-             * Entity has attempted to move further than a single Tile, which
+             * Hitbox has attempted to move further than a single Tile, which
              * can be problematic for collision detection. This can happen if
              * the game is lagging.
              *
@@ -200,19 +204,47 @@ public abstract class Physics {
 
         if (hitbox.isSolid()) {
 
-            // Move in each axis separately
+            /*
+             * Move in each axis independently and resolve collisions along the
+             * way.
+             *
+             * If the Hitbox intersects a PostProcessingTile at any point during
+             * the movement, a PostProcessingCollision will be registered. After
+             * the movement is finished, all PostProcessingCollisions will be
+             * resolved.
+             */
+
+            // Move in the x-axis
+            if (dx < 0) {
+                detectCollisionsX(result, logic, hitbox.getLeftNodes());
+            } else if (dx > 0) {
+                detectCollisionsX(result, logic, hitbox.getRightNodes());
+            }
+
+            // Check for collisions with any PostProcessingTiles at the new
+            // Hitbox position; we have to check this now because after the
+            // y-movement is applied, the Hitbox may no longer be colliding with
+            // a PostProcessingTile, so we will have missed the collision!
             if (dx != 0) {
-                detectCollisionsX(result, logic,
-                        hitbox.getVerticalCollisionNodes());
+                detectPostProcessCollisions(
+                        result, logic, hitbox.getAllNodes(), false);
             }
+
+            // Move in the y-axis
+            if (dy < 0) {
+                detectCollisionsY(result, logic, hitbox.getTopNodes());
+            } else if (dy > 0) {
+                detectCollisionsY(result, logic, hitbox.getBottomNodes());
+            }
+
+            // Check for collisions with any PostProcessingTiles at the final
+            // Hitbox position
             if (dy != 0) {
-                detectCollisionsY(result, logic,
-                        hitbox.getHorizontalCollisionNodes());
+                detectPostProcessCollisions(
+                        result, logic, hitbox.getAllNodes(), true);
             }
 
-            // Adjust the CollisionResult for Slopes
-            SlopeUtils.doSlopePostProcessing(result, logic);
-
+            result.finish();
         }
 
         return result;
@@ -223,37 +255,29 @@ public abstract class Physics {
      *
      * @param result CollisionResult to update after detecting collisions.
      * @param logic
-     * @param collisionNodesY
+     * @param nodesY
      */
-    private static void detectCollisionsX(CollisionResult result, Logic logic,
-            float[] collisionNodesY) {
+    private static void detectCollisionsX(
+            CollisionResult result, Logic logic, CollisionNode[] nodesY) {
 
         Level level = logic.getLevel();
 
-        // Get collision results for each node along the Entity's edge
-        for (float node : collisionNodesY) {
+        // Get collision results for each node along the Hitbox's edge
+        for (CollisionNode node : nodesY) {
 
-            float y = result.hitbox.top() + node;
-            float xBefore = result.getCollisionEdgeX();
-            float xAfter = xBefore + result.getAttemptedDx();
+            // Find the new position of this CollisionNode
+            float nodeX = result.newNodeX(node);
+            float nodeY = result.initialNodeY(node);
 
-            int tileX = Tile.getTileX(xAfter);
-            int tileY = Tile.getTileY(y);
+            // Find the tile which this node will intersect
+            int tileX = Tile.getTileX(nodeX);
+            int tileY = Tile.getTileY(nodeY);
             int tileId = level.getForeground().getTile(tileX, tileY);
             ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
 
-            if (SlopeUtils.isTileBehindSlope(result, tileX, tileY, logic) ||
-                    SlopeUtils.isTileAtBottomOfFloorSlope(result, tileX, tileY, logic) ||
-                    SlopeUtils.isTileAtTopOfCeilingSlope(result, tileX, tileY, logic)) {
-                // Don't collide with Tiles behind or at the bottom of slopes,
-                // lest they interfere with the Slope physics.
-                continue;
-            } else if (tile.hasCollisionX(result, logic, tileX, tileY)) {
-                tile.collisionOccurredX(result);
-            }
+            // Let the tile handle this collision
+            tile.checkForCollision_X(result, nodeX, node);
         }
-
-        result.resolveCollisions_X();
     }
 
     /**
@@ -261,36 +285,74 @@ public abstract class Physics {
      *
      * @param result CollisionResult to update after detecting collisions.
      * @param logic
-     * @param collisionNodesX
+     * @param nodesX
      */
-    private static void detectCollisionsY(CollisionResult result, Logic logic,
-            float[] collisionNodesX) {
+    private static void detectCollisionsY(
+            CollisionResult result, Logic logic, CollisionNode[] nodesX) {
 
         Level level = logic.getLevel();
 
-        // Get collision results for each node along the Entity's edge
-        for (float node : collisionNodesX) {
+        // Get collision results for each node along the Hitbox's edge
+        for (CollisionNode node : nodesX) {
 
-            // Use the already-calculated x-collision result
-            float x = result.left() + node;
-            float yBefore = result.getCollisionEdgeY();
-            float yAfter = yBefore + result.getAttemptedDy();
+            // Find the new position of this CollisionNode,
+            // using the already-calculated x-collision result
+            float nodeX = result.newNodeX(node);
+            float nodeY = result.newNodeY(node);
 
-            int tileX = Tile.getTileX(x);
-            int tileY = Tile.getTileY(yAfter);
+            // Find the tile which this node will intersect
+            int tileX = Tile.getTileX(nodeX);
+            int tileY = Tile.getTileY(nodeY);
             int tileId = level.getForeground().getTile(tileX, tileY);
             ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
 
-            if (SlopeUtils.isTileBelowFloorSlope(result, tileX, tileY, logic)) {
-                // Don't collide with Tiles underneath slopes, lest they
-                // interfere with the Slope physics.
-                continue;
-            } else if (tile.hasCollisionY(result, logic, tileX, tileY)) {
-                tile.collisionOccurredY(result);
+            // Let the tile handle this collision
+            tile.checkForCollision_Y(result, nodeY, node);
+        }
+    }
+
+    /**
+     * Detects collisions with PostProcessingTiles at each Node of the Hitbox.
+     *
+     * <p>If any part of the Hitbox intersects a PostProcessingTiles, the tile
+     * should be informed of the collision.
+     *
+     * @param result CollisionResult to update after detecting collisions.
+     * @param logic
+     * @param nodes
+     * @param afterYMovement
+     */
+    private static void detectPostProcessCollisions(
+            CollisionResult result,
+            Logic logic,
+            Set<CollisionNode> nodes,
+            boolean afterYMovement) {
+
+        Level level = logic.getLevel();
+
+        for (CollisionNode node : nodes) {
+
+            // Find the desired position of this CollisionNode
+            // (this ignores any previously-detected collisions, since they may
+            //  be overridden by a PostProcessingCollision)
+            float nodeX = result.desiredNodeX(node);
+            float nodeY = afterYMovement
+                    ? result.desiredNodeY(node)
+                    : result.initialNodeY(node);
+
+            // Find the tile which this node will intersect
+            int tileX = Tile.getTileX(nodeX);
+            int tileY = Tile.getTileY(nodeY);
+            int tileId = level.getForeground().getTile(tileX, tileY);
+            ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
+
+            // If it is a PostProcessingTile, add a PostProcessCollision
+            if (tile instanceof PostProcessingTile) {
+                PostProcessCollision collision = new PostProcessCollision(
+                        (PostProcessingTile) tile, tileX, tileY, node);
+                result.addPostProcessCollision(collision);
             }
         }
-
-        result.resolveCollisions_Y();
     }
 
 }

@@ -1,11 +1,12 @@
 package engine.game.physics;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import engine.game.GameUtils;
 import engine.game.Logic;
-import engine.game.tiles.Slope;
 import engine.game.tiles.Tile;
 import engine.launcher.Launcher;
 
@@ -19,12 +20,90 @@ import engine.launcher.Launcher;
  */
 public class Hitbox {
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Node
+    ////////////////////////////////////////////////////////////////////////////
+
+    public class CollisionNode {
+
+        /**
+         * x-position of this Node relative to the left of the Hitbox.
+         */
+        public final float x;
+
+        /**
+         * y-position of this Node relative to the top of the Hitbox.
+         */
+        public final float y;
+
+        public CollisionNode(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        /**
+         * Determines if this Node is on the left edge of a Hitbox.
+         *
+         * @return
+         */
+        public boolean isOnLeftEdge() {
+            return x == 0;
+        }
+
+        /**
+         * Determines if this Node is on the top edge of a Hitbox.
+         *
+         * @return
+         */
+        public boolean isOnTopEdge() {
+            return y == 0;
+        }
+
+        // Auto-generated
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Float.floatToIntBits(x);
+            result = prime * result + Float.floatToIntBits(y);
+            return result;
+        }
+
+        // Auto-generated
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            CollisionNode other = (CollisionNode) obj;
+            if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
+                return false;
+            if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
+                return false;
+            return true;
+        }
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Hitbox
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
-     * Collision flag that allows a Hitbox to travel up and down Slopes.
-     *
-     * <p>If set to false, a Hitbox will collide with slopes instead.
+     * Collision flag that allows a Hitbox to walk up and down slopes.
      */
-    public static final int SUPPORT_SLOPES = 0;
+    public static final int SUPPORTS_SLOPE_TRAVERSAL = 0;
+
+    /**
+     * Starting index for custom collisions flags.
+     *
+     * <p>When defining custom collision flags, they should be offset by this
+     * value to prevent conflicts with flags added to the engine in future.
+     */
+    public static final int CUSTOM_FLAG_INDEX = 1;
 
     /**
      * Listener to inform whenever significant events occur.
@@ -72,16 +151,29 @@ public class Hitbox {
             (GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE);
 
     /**
-     * Distances along this Hitbox's horizontal edges at which to check for
-     * collision.
+     * Collision Nodes along the left edge of the Hitbox.
      */
-    private float[] horizontalCollisionNodes;
+    private CollisionNode[] leftNodes;
 
     /**
-     * Distances along this Hitbox's vertical edges at which to check for
-     * collision.
+     * Collision Nodes along the right edge of the Hitbox.
      */
-    private float[] verticalCollisionNodes;
+    private CollisionNode[] rightNodes;
+
+    /**
+     * Collision Nodes along the top edge of the Hitbox.
+     */
+    private CollisionNode[] topNodes;
+
+    /**
+     * Collision Nodes along the bottom edge of the Hitbox.
+     */
+    private CollisionNode[] bottomNodes;
+
+    /**
+     * Collision Nodes along all edges of the Hitbox.
+     */
+    private Set<CollisionNode> allNodes = new HashSet<>();
 
     /**
      * Flags that can be used to control the outcome of collisions.
@@ -91,7 +183,7 @@ public class Hitbox {
     /**
      * Flag set whenever this Hitbox is touching the ground.
      */
-    private boolean onGround;
+    private boolean grounded;
 
     /**
      * Milliseconds since this Hitbox was last touching the ground.
@@ -102,25 +194,25 @@ public class Hitbox {
      * Multiplier that determines how strongly this Hitbox is affected by
      * gravity.
      */
-    private float gravityCoefficient = 1;
+    public float gravityCoefficient = 1;
 
     /**
      * Multiplier that determines how colliding with a surface affects this
      * Hitbox's speed.
      */
-    private float bounceCoefficient = 0;
+    public float bounceCoefficient = 0;
 
     /**
      * Multiplier that determines how strongly this Hitbox is affected by ground
      * friction.
      */
-    private float groundFrictionCoefficient = 1;
+    public float groundFrictionCoefficient = 1;
 
     /**
      * Multiplier that determines how strongly this Hitbox is affected by air
      * friction.
      */
-    private float airFrictionCoefficient = 1;
+    public float airFrictionCoefficient = 1;
 
     /**
      * Whether this Hitbox is affected by collisions.
@@ -150,8 +242,7 @@ public class Hitbox {
         this.height = height;
         this.listener = listener;
 
-        horizontalCollisionNodes = createCollisionNodes(width);
-        verticalCollisionNodes = createCollisionNodes(height);
+        createCollisionNodes();
 
         lastCollisionResult = new CollisionResult(this, 0, 0);
     }
@@ -164,8 +255,48 @@ public class Hitbox {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Collision
+    // Collision Nodes
     ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Creates the Nodes used by this Hitbox for collision detection.
+     */
+    private void createCollisionNodes() {
+
+        // Calculate collision node positions
+        float[] horizontalCollisionNodes = getCollisionNodesPositions(width);
+        float[] verticalCollisionNodes = getCollisionNodesPositions(height);
+        float rightNode =
+                horizontalCollisionNodes[horizontalCollisionNodes.length - 1];
+        float bottomNode =
+                verticalCollisionNodes[verticalCollisionNodes.length - 1];
+
+        // Initialise edge Nodes
+        leftNodes = new CollisionNode[verticalCollisionNodes.length];
+        rightNodes = new CollisionNode[verticalCollisionNodes.length];
+        topNodes = new CollisionNode[horizontalCollisionNodes.length];
+        bottomNodes = new CollisionNode[horizontalCollisionNodes.length];
+
+        // Create Nodes for left / right edges
+        for (int i = 0; i < verticalCollisionNodes.length; i++) {
+            CollisionNode left = new CollisionNode(0, verticalCollisionNodes[i]);
+            CollisionNode right = new CollisionNode(rightNode, verticalCollisionNodes[i]);
+            leftNodes[i] = left;
+            rightNodes[i] = right;
+            allNodes.add(left);
+            allNodes.add(right);
+        }
+
+        // Create Nodes for top / bottom edges
+        for (int i = 0; i < horizontalCollisionNodes.length; i++) {
+            CollisionNode top = new CollisionNode(horizontalCollisionNodes[i], 0);
+            CollisionNode bottom = new CollisionNode(horizontalCollisionNodes[i], bottomNode);
+            topNodes[i] = top;
+            bottomNodes[i] = bottom;
+            allNodes.add(top);
+            allNodes.add(bottom);
+        }
+    }
 
     /**
      * Determines the points along the given edge at which to check for
@@ -178,7 +309,7 @@ public class Hitbox {
      *
      * @param edgeLength Length of the collision edge, in world units.
      */
-    private float[] createCollisionNodes(float edgeLength) {
+    private float[] getCollisionNodesPositions(float edgeLength) {
 
         /*
          * The number of nodes is equal to:
@@ -202,20 +333,64 @@ public class Hitbox {
     }
 
     /**
+     * Gets the Nodes along the left edge of the Hitbox.
+     *
+     * @return
+     */
+    public CollisionNode[] getLeftNodes() {
+        return leftNodes;
+    }
+
+    /**
+     * Gets the Nodes along the right edge of the Hitbox.
+     *
+     * @return
+     */
+    public CollisionNode[] getRightNodes() {
+        return rightNodes;
+    }
+
+    /**
+     * Gets the Nodes along the top edge of the Hitbox.
+     *
+     * @return
+     */
+    public CollisionNode[] getTopNodes() {
+        return topNodes;
+    }
+
+    /**
+     * Gets the Nodes along the bottom edge of the Hitbox.
+     *
+     * @return
+     */
+    public CollisionNode[] getBottomNodes() {
+        return bottomNodes;
+    }
+
+    /**
+     * Gets all the Nodes along the edges of the Hitbox.
+     *
+     * @return
+     */
+    public Set<CollisionNode> getAllNodes() {
+        return allNodes;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Collision Handling
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
      * Moves this Hitbox according to its current speed, and handles any
      * collisions with the Level along the way.
      *
-     * <p>When colliding with a surface, this Hitbox will bounce off it (change
-     * direction), and its speed will be multiplied by the bounce coefficient.
-     * A bounce coefficient of zero (the default) will cause the Hitbox to stop.
-     *
-     * @see Hitbox#setBounceCoefficient
      * @param logic
      * @param delta
      */
     public void moveWithCollision(Logic logic, int delta) {
 
-        if (!onGround) {
+        if (!grounded) {
             msSinceGrounded += delta;
         }
 
@@ -226,39 +401,8 @@ public class Hitbox {
         // Move to the nearest collision
         CollisionResult result =
                 Physics.getCollisionResult(logic, this, dx, dy);
-        setPos(result.left(), result.top());
 
-        // Collide with slopes if this Hitbox doesn't support them
-        if (!getCollisionFlag(SUPPORT_SLOPES)
-                && result.isCollisionWithSlope()) {
-            Slope slope = (Slope) result.getNearestCollisionY().getTile();
-            slope.collide(this, bounceCoefficient);
-        }
-
-        // Adjust speed according to x-collisions
-        if (result.hasCollisionOccurredX()) {
-            setSpeedX(-speedX * bounceCoefficient);
-        }
-
-        // Adjust speed according to y-collisions
-        if (result.hasCollisionOccurredY()) {
-            if (!result.shouldMaintainSpeedY()) {
-                setSpeedY(-speedY * bounceCoefficient);
-            }
-            if (result.getAttemptedDy() > 0 &&
-                    Math.abs(speedY) < Physics.MOVING_SPEED) {
-                // Hitbox has hit the ground
-                setSpeedY(0);
-                if (!onGround) {
-                    setGrounded(true);
-                }
-            }
-        } else {
-            if (onGround) {
-                // Hitbox has left the ground
-                setGrounded(false);
-            }
-        }
+        apply(result);
 
         // Check if this Hitbox is now out-of-bounds
         if (y > logic.getLevel().getWorldHeight()) {
@@ -275,32 +419,54 @@ public class Hitbox {
     }
 
     /**
+     * Applies the given CollisionResult.
+     *
+     * @param result
+     */
+    private void apply(CollisionResult result) {
+
+        // Move to the new position
+        setPos(result.left(), result.top());
+
+        if (result.hasCollisionOccurredX()) {
+            // Let the tile affect the Hitbox after an x-collision
+            result.getNearestCollisionX().tile.hitboxCollidedX(result);
+        }
+
+        if (result.hasCollisionOccurredY()) {
+            // Let the tile affect the Hitbox after an y-collision
+            result.getNearestCollisionY().tile.hitboxCollidedY(result);
+
+            // Landing
+            if (hasLanded(result)) {
+                setSpeedY(0);
+                setGrounded(true);
+            }
+
+        } else if (grounded) {
+            // Hitbox has left the ground
+            setGrounded(false);
+        }
+    }
+
+    /**
+     * Determines if this Hitbox has landed as the result of a collision.
+     *
+     * @param result
+     * @return
+     */
+    private boolean hasLanded(CollisionResult result) {
+        // Hitbox has landed if it has hit the ground and stopped
+        return result.getAttemptedDy() > 0 && !isMovingY();
+    }
+
+    /**
      * Gets the most recent CollisionResult computed by this Hitbox.
      *
      * @return
      */
     public CollisionResult getLastCollisionResult() {
         return lastCollisionResult;
-    }
-
-    /**
-     * Gets the distances along this Hitbox's horizontal edges at which to check
-     * for collisions.
-     *
-     * @return
-     */
-    public float[] getHorizontalCollisionNodes() {
-        return horizontalCollisionNodes;
-    }
-
-    /**
-     * Gets the distances along this Hitbox's vertical edges at which to check
-     * for collisions.
-     *
-     * @return
-     */
-    public float[] getVerticalCollisionNodes() {
-        return verticalCollisionNodes;
     }
 
     /**
@@ -349,7 +515,7 @@ public class Hitbox {
      * @return
      */
     public boolean isGrounded() {
-        return onGround;
+        return grounded;
     }
 
     /**
@@ -365,16 +531,16 @@ public class Hitbox {
      * to be on the ground.
      *
      * @see Hitbox#isGrounded
-     * @param nowOnGround
+     * @param nowGrounded
      */
-    public void setGrounded(boolean nowOnGround) {
-        if (!onGround && nowOnGround) {
+    public void setGrounded(boolean nowGrounded) {
+        if (!grounded && nowGrounded) {
             msSinceGrounded = 0;
             listener.hitboxLanded();
-        } else if (onGround && !nowOnGround) {
+        } else if (grounded && !nowGrounded) {
             listener.hitboxLeftGround();
         }
-        onGround = nowOnGround;
+        grounded = nowGrounded;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -384,7 +550,6 @@ public class Hitbox {
     /**
      * Adjusts this Hitbox's speed according to ground friction.
      *
-     * @see Hitbox#setGroundFrictionCoefficient
      * @param delta
      */
     public void applyGroundFriction(int delta) {
@@ -395,7 +560,6 @@ public class Hitbox {
     /**
      * Adjusts this Hitbox's x-speed according to air friction.
      *
-     * @see Hitbox#setAirFrictionCoefficient
      * @param delta
      */
     public void applyAirFrictionX(int delta) {
@@ -406,7 +570,6 @@ public class Hitbox {
     /**
      * Adjusts this Hitbox's y-speed according to air friction.
      *
-     * @see Hitbox#setAirFrictionCoefficient
      * @param delta
      */
     public void applyAirFrictionY(int delta) {
@@ -417,51 +580,10 @@ public class Hitbox {
     /**
      * Adjusts this Hitbox's y-speed according to gravity.
      *
-     * @see Hitbox#setGravityCoefficient
      * @param delta
      */
     public void applyGravity(int delta) {
         setSpeedY(Physics.applyGravity(speedY, delta, gravityCoefficient));
-    }
-
-    /**
-     * Sets the multiplier used to determine the strength of gravity, as applied
-     * to this Hitbox.
-     *
-     * @param gravityCoefficient
-     */
-    public void setGravityCoefficient(float gravityCoefficient) {
-        this.gravityCoefficient = gravityCoefficient;
-    }
-
-    /**
-     * Sets the multiplier used to determine the strength of ground friction, as
-     * applied to this Hitbox.
-     *
-     * @param groundFrictionCoefficient
-     */
-    public void setGroundFrictionCoefficient(float groundFrictionCoefficient) {
-        this.groundFrictionCoefficient = groundFrictionCoefficient;
-    }
-
-    /**
-     * Sets the multiplier used to determine the strength of air friction, as
-     * applied to this Hitbox.
-     *
-     * @param airFrictionCoefficient
-     */
-    public void setAirFrictionCoefficient(float airFrictionCoefficient) {
-        this.airFrictionCoefficient = airFrictionCoefficient;
-    }
-
-    /**
-     * Sets the multiplier used to determine this Hitbox's speed after a
-     * collision with a surface.
-     *
-     * @param bounceCoefficient
-     */
-    public void setBounceCoefficient(float bounceCoefficient) {
-        this.bounceCoefficient = bounceCoefficient;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -504,7 +626,25 @@ public class Hitbox {
      * @return
      */
     public boolean isFalling() {
-        return !onGround && speedY > 0;
+        return !grounded && speedY > 0;
+    }
+
+    /**
+     * Determines if this Hitbox is moving in the x-axis.
+     *
+     * @return
+     */
+    public boolean isMovingX() {
+        return Math.abs(speedX) >= Physics.MOVING_SPEED;
+    }
+
+    /**
+     * Determines if this Hitbox is moving in the y-axis.
+     *
+     * @return
+     */
+    public boolean isMovingY() {
+        return Math.abs(speedY) >= Physics.MOVING_SPEED;
     }
 
     /**
@@ -513,8 +653,7 @@ public class Hitbox {
      * @return
      */
     public boolean isMoving() {
-        return Math.abs(speedX) >= Physics.MOVING_SPEED
-                || Math.abs(speedY) >= Physics.MOVING_SPEED;
+        return isMovingX() || isMovingY();
     }
 
     /**
