@@ -44,19 +44,19 @@ public abstract class Slope extends ForegroundTile {
         this.slopeFlags = slopeFlags;
     }
 
-    public boolean isFloorSlope(){
+    public boolean isFloorSlope() {
         return (slopeFlags & SLOPE_FLOOR_ANY) != 0;
     }
 
-    public boolean isCeilingSlope(){
+    public boolean isCeilingSlope() {
         return (slopeFlags & SLOPE_CEILING_ANY) != 0;
     }
 
-    public boolean isLeftSlope(){
+    public boolean isLeftSlope() {
         return (slopeFlags & SLOPE_LEFT_ANY) != 0;
     }
 
-    public boolean isRightSlope(){
+    public boolean isRightSlope() {
         return (slopeFlags & SLOPE_RIGHT_ANY) != 0;
     }
 
@@ -139,7 +139,7 @@ public abstract class Slope extends ForegroundTile {
         }
 
         @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient){
+        public void collide(Hitbox hitbox, float bounceCoefficient) {
             hitbox.setSpeedX(hitbox.getSpeedY() * bounceCoefficient);
             hitbox.setSpeedY(hitbox.getSpeedX() * bounceCoefficient);
         }
@@ -172,7 +172,7 @@ public abstract class Slope extends ForegroundTile {
         }
 
         @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient){
+        public void collide(Hitbox hitbox, float bounceCoefficient) {
             hitbox.setSpeedX(-hitbox.getSpeedY() * bounceCoefficient);
             hitbox.setSpeedY(-hitbox.getSpeedX() * bounceCoefficient);
         }
@@ -205,7 +205,7 @@ public abstract class Slope extends ForegroundTile {
         }
 
         @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient){
+        public void collide(Hitbox hitbox, float bounceCoefficient) {
             hitbox.setSpeedX(-hitbox.getSpeedY() * bounceCoefficient);
             hitbox.setSpeedY(-hitbox.getSpeedX() * bounceCoefficient);
         }
@@ -238,7 +238,7 @@ public abstract class Slope extends ForegroundTile {
         }
 
         @Override
-        public void collide(Hitbox hitbox, float bounceCoefficient){
+        public void collide(Hitbox hitbox, float bounceCoefficient) {
             hitbox.setSpeedX(hitbox.getSpeedY() * bounceCoefficient);
             hitbox.setSpeedY(hitbox.getSpeedX() * bounceCoefficient);
         }

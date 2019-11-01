@@ -12,7 +12,7 @@ import org.junit.Test;
 public class GameUtilsTest {
 
     @Test
-    public void testGetAngleFromSpeed(){
+    public void testGetAngleFromSpeed() {
 
         // Edge cases (only one axis)
         assertEquals(0, GameUtils.getAngle(0, -1), 0);
@@ -28,7 +28,7 @@ public class GameUtilsTest {
     }
 
     @Test
-    public void testNormaliseAngle(){
+    public void testNormaliseAngle() {
 
         // Angle is already normalised
         assertEquals(0, GameUtils.normaliseAngle(0), 0);
@@ -45,7 +45,7 @@ public class GameUtilsTest {
         assertEquals(350, GameUtils.normaliseAngle(-370), 0);
     }
 
-    public void testGetAngleDifference(){
+    public void testGetAngleDifference() {
 
         // Angles are equal
         assertEquals(0, GameUtils.getAngleDifference(0, 0), 0);

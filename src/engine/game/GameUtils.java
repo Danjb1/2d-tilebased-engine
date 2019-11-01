@@ -42,7 +42,7 @@ public class GameUtils {
             this.multiplier = multiplier;
         }
 
-        public int getMultiplier(){
+        public int getMultiplier() {
             return multiplier;
         }
     }
@@ -62,7 +62,7 @@ public class GameUtils {
             this.multiplier = multiplier;
         }
 
-        public int getMultiplier(){
+        public int getMultiplier() {
             return multiplier;
         }
     }
@@ -94,11 +94,11 @@ public class GameUtils {
     public static float getAngle(float dx, float dy) {
 
         // Edge cases when moving in only one axis
-        if (dx == 0){
+        if (dx == 0) {
             // Moving up / down
             return dy < 0 ? 0 : 180;
         }
-        if (dy == 0){
+        if (dy == 0) {
             // Moving left / right
             return dx < 0 ? 270 : 90;
         }
@@ -106,11 +106,11 @@ public class GameUtils {
         double angle = Math.toDegrees(Math.atan(Math.abs(dx) / Math.abs(dy)));
 
         // Adjust angle according to quadrant
-        if (dx > 0 && dy < 0){
+        if (dx > 0 && dy < 0) {
             // no change
-        } else if (dx > 0 && dy > 0){
+        } else if (dx > 0 && dy > 0) {
             angle = 180 - angle;
-        } else if (dx < 0 && dy > 0){
+        } else if (dx < 0 && dy > 0) {
             angle = 180 + angle;
         } else {
             angle = 360 - angle;
@@ -152,7 +152,7 @@ public class GameUtils {
      * @return
      */
     public static float normaliseAngle(float angle) {
-        while (angle < 0){
+        while (angle < 0) {
             angle += 360;
         }
         return angle % 360;
@@ -205,7 +205,7 @@ public class GameUtils {
      * @param worldUnits
      * @return
      */
-    public static float worldToPx(float worldUnits){
+    public static float worldToPx(float worldUnits) {
         return worldUnits / UNITS_PER_PIXEL;
     }
 
@@ -215,7 +215,7 @@ public class GameUtils {
      * @param px
      * @return
      */
-    public static float pxToWorld(int px){
+    public static float pxToWorld(int px) {
         return px * UNITS_PER_PIXEL;
     }
 
@@ -240,7 +240,7 @@ public class GameUtils {
      * @param max
      * @return
      */
-    public static double randBetween(double min, double max){
+    public static double randBetween(double min, double max) {
         return min + (Math.random() * (max - min));
     }
 
@@ -264,7 +264,7 @@ public class GameUtils {
      * @param max
      * @return
      */
-    public static int randBetween(int min, int max){
+    public static int randBetween(int min, int max) {
         return min + (int)(Math.random() * ((max - min) + 1));
     }
 

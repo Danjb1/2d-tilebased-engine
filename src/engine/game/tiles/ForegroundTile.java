@@ -60,7 +60,7 @@ public abstract class ForegroundTile extends Tile {
      * @return
      */
     public boolean hasCollisionX(CollisionResult result, Logic logic, int tileX,
-            int tileY){
+            int tileY) {
         return false;
     }
 
@@ -75,7 +75,7 @@ public abstract class ForegroundTile extends Tile {
      * @return
      */
     public boolean hasCollisionY(CollisionResult result, Logic logic, int tileX,
-            int tileY){
+            int tileY) {
         return false;
     }
 
@@ -84,7 +84,7 @@ public abstract class ForegroundTile extends Tile {
      *
      * @param collision
      */
-    public void collisionOccurredX(CollisionResult collision){
+    public void collisionOccurredX(CollisionResult collision) {
         // Solid tiles should override this
     }
 
@@ -93,7 +93,7 @@ public abstract class ForegroundTile extends Tile {
      *
      * @param collision
      */
-    public void collisionOccurredY(CollisionResult collision){
+    public void collisionOccurredY(CollisionResult collision) {
         // Solid tiles should override this
     }
 

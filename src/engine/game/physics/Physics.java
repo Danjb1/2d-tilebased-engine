@@ -171,7 +171,7 @@ public abstract class Physics {
     public static CollisionResult getCollisionResult(Logic logic,
             Hitbox hitbox, float dx, float dy) {
 
-        if (Math.abs(dx) > MAX_MOVE_DISTANCE){
+        if (Math.abs(dx) > MAX_MOVE_DISTANCE) {
             /*
              * Entity has attempted to move further than a single Tile, which
              * can be problematic for collision detection. This can happen if
@@ -181,14 +181,14 @@ public abstract class Physics {
              * preserving the x:y ratio of the movement.
              */
             Logger.log("Trying to move too far in the x-axis: %f", dx);
-            if (dx > dy){
+            if (dx > dy) {
                 float ratio = dy / dx;
                 dx = Math.copySign(Tile.WIDTH - Physics.SMALLEST_DISTANCE, dx);
                 dy = ratio * dx;
             } // If dy > dx, it will be handled in the block below
         }
 
-        if (Math.abs(dy) > MAX_MOVE_DISTANCE){
+        if (Math.abs(dy) > MAX_MOVE_DISTANCE) {
             // See comment above
             Logger.log("Trying to move too far in the y-axis: %f", dy);
             float ratio = dx / dy;
@@ -231,9 +231,9 @@ public abstract class Physics {
         Level level = logic.getLevel();
 
         // Get collision results for each node along the Entity's edge
-        for (float node : collisionNodesY){
+        for (float node : collisionNodesY) {
 
-            float y = result.getHitbox().top() + node;
+            float y = result.hitbox.top() + node;
             float xBefore = result.getCollisionEdgeX();
             float xAfter = xBefore + result.getAttemptedDx();
 
@@ -244,11 +244,11 @@ public abstract class Physics {
 
             if (SlopeUtils.isTileBehindSlope(result, tileX, tileY, logic) ||
                     SlopeUtils.isTileAtBottomOfFloorSlope(result, tileX, tileY, logic) ||
-                    SlopeUtils.isTileAtTopOfCeilingSlope(result, tileX, tileY, logic)){
+                    SlopeUtils.isTileAtTopOfCeilingSlope(result, tileX, tileY, logic)) {
                 // Don't collide with Tiles behind or at the bottom of slopes,
                 // lest they interfere with the Slope physics.
                 continue;
-            } else if (tile.hasCollisionX(result, logic, tileX, tileY)){
+            } else if (tile.hasCollisionX(result, logic, tileX, tileY)) {
                 tile.collisionOccurredX(result);
             }
         }
@@ -269,7 +269,7 @@ public abstract class Physics {
         Level level = logic.getLevel();
 
         // Get collision results for each node along the Entity's edge
-        for (float node : collisionNodesX){
+        for (float node : collisionNodesX) {
 
             // Use the already-calculated x-collision result
             float x = result.left() + node;
@@ -281,11 +281,11 @@ public abstract class Physics {
             int tileId = level.getForeground().getTile(tileX, tileY);
             ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
 
-            if (SlopeUtils.isTileBelowFloorSlope(result, tileX, tileY, logic)){
+            if (SlopeUtils.isTileBelowFloorSlope(result, tileX, tileY, logic)) {
                 // Don't collide with Tiles underneath slopes, lest they
                 // interfere with the Slope physics.
                 continue;
-            } else if (tile.hasCollisionY(result, logic, tileX, tileY)){
+            } else if (tile.hasCollisionY(result, logic, tileX, tileY)) {
                 tile.collisionOccurredY(result);
             }
         }

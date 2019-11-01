@@ -51,7 +51,7 @@ public class Collision implements Comparable<Collision> {
         float myDist = Math.abs(distanceToCollision);
         float otherDist = Math.abs(other.getDistanceToCollision());
 
-        if (myDist < otherDist){
+        if (myDist < otherDist) {
             return -1;
         } else if (myDist == otherDist) {
             return 0;

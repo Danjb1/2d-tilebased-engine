@@ -34,7 +34,7 @@ public class SlopeUtils {
         boolean onSlope = handleFloorSlopeCollisions(
                 result, logic, slopeNodeX, result.bottom());
 
-        if (!onSlope){
+        if (!onSlope) {
             // No need to check the top node if we already have a result from
             // the bottom node.
             handleCeilingSlopeCollisions(
@@ -65,7 +65,7 @@ public class SlopeUtils {
         int tileId = foreground.getTile(tileX, tileY);
         ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
 
-        if (tile instanceof Slope){
+        if (tile instanceof Slope) {
             // Slope node is inside a Slope tile
             Slope slope = (Slope) tile;
             float distIntoTileX = nodeX - Tile.getLeft(nodeX);
@@ -74,12 +74,12 @@ public class SlopeUtils {
             // slope, or is supposed to be "stuck" to it.
             if (slope.isFloorSlope() &&
                     (slope.isPointInSlope(distIntoTileX, distIntoTileY) ||
-                            result.shouldHitboxStickToSlope())){
+                            result.shouldHitboxStickToSlope())) {
                 snapToFloorSlope(result, nodeX, tileY, slope);
                 return true;
             }
 
-        } else if (isTileBelowFloorSlope(result, tileX, tileY, logic)){
+        } else if (isTileBelowFloorSlope(result, tileX, tileY, logic)) {
             // Slope node is inside the Tile *under* a slope.
             // We need to get this slope tile, and snap to it.
             tileY -= 1;
@@ -89,7 +89,7 @@ public class SlopeUtils {
             return true;
 
         } else if (isTileAboveFloorSlope(result, tileX, tileY, logic) &&
-                result.shouldHitboxStickToSlope()){
+                result.shouldHitboxStickToSlope()) {
             // Hitbox is supposed to be "stuck" to the slope
             tileY += 1;
             tileId = foreground.getTile(tileX, tileY);
@@ -119,14 +119,14 @@ public class SlopeUtils {
         int tileId = foreground.getTile(tileX, tileY);
         ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
 
-        if (tile instanceof Slope){
+        if (tile instanceof Slope) {
             // Slope node is intersecting a Slope tile
             Slope slope = (Slope) tile;
             float distIntoTileX = nodeX - Tile.getLeft(nodeX);
             float distIntoTileY = nodeY - (tileY * Tile.HEIGHT);
             // Only snap if Hitbox is colliding with the solid part of the slope
             if (slope.isCeilingSlope() &&
-                    slope.isPointInSlope(distIntoTileX, distIntoTileY)){
+                    slope.isPointInSlope(distIntoTileX, distIntoTileY)) {
                 /*
                  * Note that unlike floor slopes where we don't snap to the
                  * slope if the Hitbox is jumping, we SHOULD snap to ceiling
@@ -137,7 +137,7 @@ public class SlopeUtils {
                 snapToCeilingSlope(result, nodeX, tileY, slope);
             }
 
-        } else if (isTileAboveCeilingSlope(tileX, tileY, logic)){
+        } else if (isTileAboveCeilingSlope(tileX, tileY, logic)) {
             // Slope node is in the Tile *above* a slope.
             // We need to get this slope tile, and "snap" to it.
             tileY += 1;
@@ -156,12 +156,12 @@ public class SlopeUtils {
      * @param slope Slope tile with which the collision occurred.
      */
     private static void snapToFloorSlope(CollisionResult result, float nodeX,
-            int tileY, Slope slope){
+            int tileY, Slope slope) {
         float distIntoTileX = nodeX - Tile.getLeft(nodeX);
         float yOnSlope = slope.getSlopeY_At_X(distIntoTileX);
         float collisionY = (tileY * Tile.HEIGHT) + Tile.HEIGHT - yOnSlope;
         result.setCollision_Y(new Collision(
-                result.getHitbox().bottom(), collisionY, slope));
+                result.hitbox.bottom(), collisionY, slope));
     }
 
     /**
@@ -174,12 +174,12 @@ public class SlopeUtils {
      * @param slope Slope tile with which the collision occurred.
      */
     private static void snapToCeilingSlope(CollisionResult result, float nodeX,
-            int tileY, Slope slope){
+            int tileY, Slope slope) {
         float distIntoTileX = nodeX - Tile.getLeft(nodeX);
         float yOnSlope = slope.getSlopeY_At_X(distIntoTileX);
         float collisionY = (tileY * Tile.HEIGHT) + yOnSlope;
         result.setCollision_Y(new Collision(
-                result.getHitbox().top(), collisionY, slope));
+                result.hitbox.top(), collisionY, slope));
     }
 
     /**
@@ -206,7 +206,7 @@ public class SlopeUtils {
 
         int possibleSlopeTileX = result.getAttemptedDx() > 0 ?
                 tileX - 1 : tileX + 1;
-        if (!level.doesTileExist_X(possibleSlopeTileX)){
+        if (!level.doesTileExist_X(possibleSlopeTileX)) {
             // Don't try to check outside the Level bounds
             return false;
         }
@@ -232,14 +232,14 @@ public class SlopeUtils {
         TileLayer foreground = level.getForeground();
 
         int possibleSlopeTileY = tileY - 1;
-        if (!level.doesTileExist_Y(possibleSlopeTileY)){
+        if (!level.doesTileExist_Y(possibleSlopeTileY)) {
             // Don't try to check outside the Level bounds
             return false;
         }
 
         int tileId = foreground.getTile(tileX, possibleSlopeTileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
-        if (possibleSlopeTile instanceof Slope){
+        if (possibleSlopeTile instanceof Slope) {
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isFloorSlope();
         }
@@ -263,14 +263,14 @@ public class SlopeUtils {
         TileLayer foreground = level.getForeground();
 
         int possibleSlopeTileY = tileY + 1;
-        if (!level.doesTileExist_Y(possibleSlopeTileY)){
+        if (!level.doesTileExist_Y(possibleSlopeTileY)) {
             // Don't try to check outside the Level bounds
             return false;
         }
 
         int tileId = foreground.getTile(tileX, possibleSlopeTileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
-        if (possibleSlopeTile instanceof Slope){
+        if (possibleSlopeTile instanceof Slope) {
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isFloorSlope();
         }
@@ -293,14 +293,14 @@ public class SlopeUtils {
         TileLayer foreground = level.getForeground();
 
         int possibleSlopeTileY = tileY + 1;
-        if (!level.doesTileExist_Y(possibleSlopeTileY)){
+        if (!level.doesTileExist_Y(possibleSlopeTileY)) {
             // Don't try to check outside the Level bounds
             return false;
         }
 
         int tileId = foreground.getTile(tileX, possibleSlopeTileY);
         Tile possibleSlopeTile = logic.getTile(tileId);
-        if (possibleSlopeTile instanceof Slope){
+        if (possibleSlopeTile instanceof Slope) {
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isCeilingSlope();
         }
@@ -328,14 +328,14 @@ public class SlopeUtils {
         int possibleSlopeTileX = result.getAttemptedDx() > 0 ?
                 tileX - 1 : tileX + 1;
         if (!level.doesTileExist_X(possibleSlopeTileX) ||
-                !level.doesTileExist_Y(tileY - 1)){
+                !level.doesTileExist_Y(tileY - 1)) {
             // Don't try to check outside the Level bounds
             return false;
         }
 
         int tileId = foreground.getTile(possibleSlopeTileX, tileY - 1);
         Tile possibleSlopeTile = logic.getTile(tileId);
-        if (possibleSlopeTile instanceof Slope){
+        if (possibleSlopeTile instanceof Slope) {
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isFloorSlope();
         }
@@ -363,14 +363,14 @@ public class SlopeUtils {
         int possibleSlopeTileX = result.getAttemptedDx() > 0 ?
                 tileX - 1 : tileX + 1;
         if (!level.doesTileExist_X(possibleSlopeTileX)||
-                !level.doesTileExist_Y(tileY - 1)){
+                !level.doesTileExist_Y(tileY - 1)) {
             // Don't try to check outside the Level bounds
             return false;
         }
 
         int tileId = foreground.getTile(possibleSlopeTileX, tileY + 1);
         Tile possibleSlopeTile = logic.getTile(tileId);
-        if (possibleSlopeTile instanceof Slope){
+        if (possibleSlopeTile instanceof Slope) {
             Slope slope = (Slope) possibleSlopeTile;
             return slope.isCeilingSlope();
         }

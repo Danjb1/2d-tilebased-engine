@@ -123,12 +123,12 @@ public class Camera {
      */
     public void teleportToDestination() {
 
-        if (targetEntity == null){
+        if (targetEntity == null) {
             return;
         }
 
         // Centre immediately on the tracked Entity
-        Hitbox hitbox = targetEntity.getHitbox();
+        Hitbox hitbox = targetEntity.hitbox;
         settings.entityTeleported();
         float targetX = hitbox.centreX() + settings.getTargetOffsetX();
         float targetY = hitbox.centreY() + settings.getTargetOffsetY();
@@ -188,7 +188,7 @@ public class Camera {
         }
 
         // Calculate how far the camera is from the target
-        Hitbox hitbox = targetEntity.getHitbox();
+        Hitbox hitbox = targetEntity.hitbox;
         float targetPos = hitbox.centreX() + settings.getTargetOffsetX();
         return (float) (targetPos - visibleRegion.getCenterX());
     }
@@ -207,7 +207,7 @@ public class Camera {
         }
 
         // Calculate how far the camera is from the target
-        Hitbox hitbox = targetEntity.getHitbox();
+        Hitbox hitbox = targetEntity.hitbox;
         float targetPos = hitbox.centreY() + settings.getTargetOffsetY();
         return (float) (targetPos - visibleRegion.getCenterY());
     }
@@ -243,7 +243,7 @@ public class Camera {
      * @param x Left edge of the desired target, in world units.
      * @param y Top edge of the desired target, in world units.
      */
-    public void setPos(float x, float y){
+    public void setPos(float x, float y) {
         float newX = keepWithinBoundsX(x);
         float newY = keepWithinBoundsY(y);
         visibleRegion.setRect(newX, newY, visibleRegion.width, visibleRegion.height);
@@ -262,12 +262,12 @@ public class Camera {
         float maxVisibleX = minVisibleX + level.getNumTilesX() * Tile.WIDTH;
         float maxCameraX = maxVisibleX - visibleRegion.width;
 
-        if (level.getWorldWidth() <= visibleRegion.getWidth()){
+        if (level.getWorldWidth() <= visibleRegion.getWidth()) {
             // The full width of the level is visible; keep camera at left edge
             cameraX = minVisibleX;
-        } else if (cameraX < minVisibleX){
+        } else if (cameraX < minVisibleX) {
             cameraX = minVisibleX;
-        } else if (cameraX > maxCameraX){
+        } else if (cameraX > maxCameraX) {
             cameraX = maxCameraX;
         }
 
@@ -287,12 +287,12 @@ public class Camera {
         float maxVisibleY = minVisibleY + level.getNumTilesY() * Tile.HEIGHT;
         float maxCameraY = maxVisibleY - visibleRegion.height;
 
-        if (level.getWorldHeight() <= visibleRegion.getHeight()){
+        if (level.getWorldHeight() <= visibleRegion.getHeight()) {
             // The full height of the level is visible; keep camera at top edge
             cameraY = minVisibleY;
-        } else if (cameraY < minVisibleY){
+        } else if (cameraY < minVisibleY) {
             cameraY = minVisibleY;
-        } else if (cameraY > maxCameraY){
+        } else if (cameraY > maxCameraY) {
             cameraY = maxCameraY;
         }
 
@@ -390,7 +390,7 @@ public class Camera {
         return targetEntity;
     }
 
-    public void setTrackingMode(TrackingMode trackingMode){
+    public void setTrackingMode(TrackingMode trackingMode) {
         this.trackingMode = trackingMode;
     }
 

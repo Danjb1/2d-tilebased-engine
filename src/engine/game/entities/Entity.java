@@ -77,7 +77,7 @@ public abstract class Entity implements HitboxListener {
      *
      * @return
      */
-    public Hitbox getHitbox() {
+    public Hitbox hitbox {
         return hitbox;
     }
 
@@ -97,7 +97,7 @@ public abstract class Entity implements HitboxListener {
      *
      * @return
      */
-    public int getEntityId(){
+    public int getEntityId() {
         return id;
     }
 

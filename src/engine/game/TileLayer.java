@@ -55,7 +55,7 @@ public class TileLayer {
         try {
             tiles[tileX][tileY] = tileId;
             usedTileIds.add(tileId);
-        } catch (ArrayIndexOutOfBoundsException ex){
+        } catch (ArrayIndexOutOfBoundsException ex) {
             // Somehow, we are trying to set a tile that's out of bounds
             Logger.log("Trying to set invalid tile: %d, %d", tileX, tileY);
         }
@@ -68,16 +68,16 @@ public class TileLayer {
      * @param tileY
      * @return
      */
-    public int getTile(int tileX, int tileY){
+    public int getTile(int tileX, int tileY) {
         /*
          * We assume all Tiles outside the level are solid, except for those
          * beneath the level, which are air (this allows Entities to fall out
          * of the level).
          */
         int tileId;
-        if (tileX < 0 || tileX >= getNumTilesX() || tileY < 0){
+        if (tileX < 0 || tileX >= getNumTilesX() || tileY < 0) {
             tileId = ForegroundTile.ID_SOLID_BLOCK;
-        } else if (tileY >= getNumTilesY()){
+        } else if (tileY >= getNumTilesY()) {
             tileId = ForegroundTile.ID_AIR;
         } else {
             tileId = tiles[tileX][tileY];

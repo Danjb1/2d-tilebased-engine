@@ -11,7 +11,7 @@ public class Logger {
         ex.printStackTrace();
     }
 
-    public static void log(String message, Object... args){
+    public static void log(String message, Object... args) {
         System.out.println(String.format(message, args));
     }
 

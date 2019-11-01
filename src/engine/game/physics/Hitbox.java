@@ -191,7 +191,7 @@ public class Hitbox {
         float[] nodes = new float[numNodes];
 
         // Define all nodes except the last one, Tile.SIZE apart.
-        for (int i = 0; i < numNodes - 1; i++){
+        for (int i = 0; i < numNodes - 1; i++) {
             nodes[i] = Tile.SIZE * i;
         }
 
@@ -236,34 +236,34 @@ public class Hitbox {
         }
 
         // Adjust speed according to x-collisions
-        if (result.hasCollisionOccurredX()){
+        if (result.hasCollisionOccurredX()) {
             setSpeedX(-speedX * bounceCoefficient);
         }
 
         // Adjust speed according to y-collisions
-        if (result.hasCollisionOccurredY()){
-            if (!result.shouldMaintainSpeedY()){
+        if (result.hasCollisionOccurredY()) {
+            if (!result.shouldMaintainSpeedY()) {
                 setSpeedY(-speedY * bounceCoefficient);
             }
             if (result.getAttemptedDy() > 0 &&
-                    Math.abs(speedY) < Physics.MOVING_SPEED){
+                    Math.abs(speedY) < Physics.MOVING_SPEED) {
                 // Hitbox has hit the ground
                 setSpeedY(0);
-                if (!onGround){
+                if (!onGround) {
                     setGrounded(true);
                 }
             }
         } else {
-            if (onGround){
+            if (onGround) {
                 // Hitbox has left the ground
                 setGrounded(false);
             }
         }
 
         // Check if this Hitbox is now out-of-bounds
-        if (y > logic.getLevel().getWorldHeight()){
+        if (y > logic.getLevel().getWorldHeight()) {
             listener.hitboxFallenOutOfBounds();
-        } else if (bottom() > logic.getLevel().getWorldHeight()){
+        } else if (bottom() > logic.getLevel().getWorldHeight()) {
             listener.hitboxFallingOutOfBounds();
         }
 
@@ -309,7 +309,7 @@ public class Hitbox {
      * @param flag
      * @param value
      */
-    public void setCollisionFlag(int flag, boolean value){
+    public void setCollisionFlag(int flag, boolean value) {
         collisionFlags.put(flag, value);
     }
 
@@ -319,7 +319,7 @@ public class Hitbox {
      * @param flag
      * @return Flag value, or false is not set.
      */
-    public boolean getCollisionFlag(int flag){
+    public boolean getCollisionFlag(int flag) {
         Boolean value = collisionFlags.get(flag);
         return value == null ? false : value;
     }
@@ -368,10 +368,10 @@ public class Hitbox {
      * @param nowOnGround
      */
     public void setGrounded(boolean nowOnGround) {
-        if (!onGround && nowOnGround){
+        if (!onGround && nowOnGround) {
             msSinceGrounded = 0;
             listener.hitboxLanded();
-        } else if (onGround && !nowOnGround){
+        } else if (onGround && !nowOnGround) {
             listener.hitboxLeftGround();
         }
         onGround = nowOnGround;
@@ -601,7 +601,7 @@ public class Hitbox {
      *
      * @return
      */
-    public float right(){
+    public float right() {
         return x + width - Physics.SMALLEST_DISTANCE;
     }
 
@@ -610,7 +610,7 @@ public class Hitbox {
      *
      * @return
      */
-    public float bottom(){
+    public float bottom() {
         return y + height - Physics.SMALLEST_DISTANCE;
     }
 
@@ -647,10 +647,10 @@ public class Hitbox {
      * @param speedX
      */
     public void setSpeedX(float speedX) {
-        if (Math.abs(speedX) < Physics.MOVING_SPEED){
+        if (Math.abs(speedX) < Physics.MOVING_SPEED) {
             speedX = 0;
         }
-        if (Math.abs(speedX) > maxSpeedX){
+        if (Math.abs(speedX) > maxSpeedX) {
             speedX = Math.copySign(maxSpeedX, speedX);
         }
         this.speedX = speedX;
@@ -667,10 +667,10 @@ public class Hitbox {
      * @param speedY
      */
     public void setSpeedY(float speedY) {
-        if (Math.abs(speedY) < Physics.MOVING_SPEED){
+        if (Math.abs(speedY) < Physics.MOVING_SPEED) {
             speedY = 0;
         }
-        if (Math.abs(speedY) > maxSpeedY){
+        if (Math.abs(speedY) > maxSpeedY) {
             speedY = Math.copySign(maxSpeedY, speedY);
         }
         this.speedY = speedY;
@@ -684,7 +684,7 @@ public class Hitbox {
      * @param maxSpeedY
      */
     public void setSpeedY(float speedY, float maxSpeedY) {
-        if (Math.abs(speedY) > maxSpeedY){
+        if (Math.abs(speedY) > maxSpeedY) {
             speedY = Math.copySign(maxSpeedY, speedY);
         }
         this.speedY = speedY;
@@ -706,7 +706,7 @@ public class Hitbox {
         // Calculate axis-independent speed
         float speed = (float) Math.hypot(newSpeedX, newSpeedY);
 
-        if (speed > maxSpeed){
+        if (speed > maxSpeed) {
             // Moving too fast; throttle the given x- and y-speeds
             float ratio = maxSpeed / speed;
             speedX = newSpeedX * ratio;

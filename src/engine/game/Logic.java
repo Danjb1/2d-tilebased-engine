@@ -85,13 +85,13 @@ public class Logic {
      * @param delta
      */
     protected void updateEntities(int delta) {
-        for (Entity entity : entities.values()){
+        for (Entity entity : entities.values()) {
 
             entity.update(delta);
 
             applyPhysics(entity, delta);
 
-            if (entity.isDeleted()){
+            if (entity.isDeleted()) {
                 entitiesToDelete.add(entity);
             }
         }
@@ -105,7 +105,7 @@ public class Logic {
      */
     protected void applyPhysics(Entity entity, int delta) {
 
-        Hitbox hitbox = entity.getHitbox();
+        Hitbox hitbox = entity.hitbox;
 
         // Gravity
         if (entity.isAffectedByGravity()) {
@@ -142,14 +142,14 @@ public class Logic {
         for (int i = 0; i < collidingEntities.size(); i++) {
 
             Entity e1  = collidingEntities.get(i);
-            if (e1.isDeleted()){
+            if (e1.isDeleted()) {
                 continue;
             }
 
             for (int j = i + 1; j < collidingEntities.size(); j++) {
 
                 Entity e2 = collidingEntities.get(j);
-                if (e2.isDeleted()){
+                if (e2.isDeleted()) {
                     continue;
                 }
 
@@ -180,8 +180,8 @@ public class Logic {
         boolean collision = false;
 
         if (e1CollisionListener != null &&
-                e1CollisionListener.canCollideWith(e2)){
-            if (e1.getHitbox().intersects(e2.getHitbox())) {
+                e1CollisionListener.canCollideWith(e2)) {
+            if (e1.hitbox.intersects(e2.hitbox)) {
                 collision = true;
                 e1CollisionListener.collidedWith(e2);
             } else {
@@ -191,7 +191,7 @@ public class Logic {
 
         if (e2CollisionListener != null &&
                 e2CollisionListener.canCollideWith(e1) &&
-                (collision || e2.getHitbox().intersects(e1.getHitbox()))) {
+                (collision || e2.hitbox.intersects(e1.hitbox))) {
             e2CollisionListener.collidedWith(e1);
         }
     }
@@ -200,7 +200,7 @@ public class Logic {
      * Remove all Entities that have been marked for deletion.
      */
     protected void deleteEntities() {
-        for (Entity e : entitiesToDelete){
+        for (Entity e : entitiesToDelete) {
             e.destroy();
             entities.remove(e.getEntityId());
         }

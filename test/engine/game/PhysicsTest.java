@@ -34,7 +34,7 @@ public class PhysicsTest {
         
         // WHEN trying to move down by half a tile, right by half a tile
         CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.getHitbox(), 0.5f, 0.5f);
+                Physics.getCollisionResult(logic, entity.hitbox, 0.5f, 0.5f);
         
         // THEN no collision is detected
         assertEquals(false, collision.hasCollisionOccurredX());
@@ -60,7 +60,7 @@ public class PhysicsTest {
         
         // WHEN trying to move down by half a tile
         CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.getHitbox(), 0, 0.5f);
+                Physics.getCollisionResult(logic, entity.hitbox, 0, 0.5f);
         
         // THEN the nearest collision detected is at the top of the floor
         assertEquals(GameUtils.worldUnits(2),
@@ -87,7 +87,7 @@ public class PhysicsTest {
         
         // WHEN trying to move up by half a tile
         CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.getHitbox(), 0, -0.5f);
+                Physics.getCollisionResult(logic, entity.hitbox, 0, -0.5f);
         
         // THEN the nearest collision detected is at the bottom of the ceiling
         assertEquals(GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE,
@@ -114,7 +114,7 @@ public class PhysicsTest {
         
         // WHEN trying to move left by half a tile
         CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.getHitbox(), -0.5f, 0);
+                Physics.getCollisionResult(logic, entity.hitbox, -0.5f, 0);
         
         // THEN the nearest collision detected is at the right edge of the wall
         assertEquals(GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE,
@@ -141,7 +141,7 @@ public class PhysicsTest {
         
         // WHEN trying to move left by half a tile
         CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.getHitbox(), 0.5f, 0);
+                Physics.getCollisionResult(logic, entity.hitbox, 0.5f, 0);
         
         // THEN the nearest collision detected is at the left edge of the wall
         assertEquals(GameUtils.worldUnits(2),

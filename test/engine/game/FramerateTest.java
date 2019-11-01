@@ -28,7 +28,7 @@ public class FramerateTest {
         Entity e = new TestEntity(
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
-        Hitbox hitbox = e.getHitbox();
+        Hitbox hitbox = e.hitbox;
         hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
         logic.addEntity(e);
 
@@ -55,7 +55,7 @@ public class FramerateTest {
         Entity e = new TestEntity(
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
-        Hitbox hitbox = e.getHitbox();
+        Hitbox hitbox = e.hitbox;
         hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
         logic.addEntity(e);
 
@@ -88,7 +88,7 @@ public class FramerateTest {
         entity.update(1000);
 
         // THEN the Entity has not moved
-        Hitbox hitbox = entity.getHitbox();
+        Hitbox hitbox = entity.hitbox;
         assertEquals(GameUtils.worldUnits(1), hitbox.top(),
                 Physics.SMALLEST_DISTANCE);
         assertEquals(GameUtils.worldUnits(1), hitbox.left(),

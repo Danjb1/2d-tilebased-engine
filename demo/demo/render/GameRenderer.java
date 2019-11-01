@@ -132,8 +132,8 @@ public class GameRenderer {
         int maxTileX = camera.getLastVisibleTileX(minTileX);
         int maxTileY = camera.getLastVisibleTileY(minTileY);
 
-        for (int y = minTileY; y <= maxTileY; y++){
-            for (int x = minTileX; x <= maxTileX; x++){
+        for (int y = minTileY; y <= maxTileY; y++) {
+            for (int x = minTileX; x <= maxTileX; x++) {
                 renderTile(x, y, tiles[x][y]);
             }
         }
@@ -188,7 +188,7 @@ public class GameRenderer {
         if (entityGfx != null) {
             gfx.setColor(entityGfx.getColour());
 
-            Hitbox hitbox = entity.getHitbox();
+            Hitbox hitbox = entity.hitbox;
             int drawX = worldToDisplayX(hitbox.left());
             int drawY = worldToDisplayY(hitbox.top());
             int width = worldToDisplay(hitbox.width);

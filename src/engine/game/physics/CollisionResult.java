@@ -73,7 +73,7 @@ public class CollisionResult {
      *
      * @return
      */
-    public Hitbox getHitbox() {
+    public Hitbox hitbox {
         return hitbox;
     }
 
@@ -172,7 +172,7 @@ public class CollisionResult {
      *
      * @param collision
      */
-    public void addCollision_X(Collision collision){
+    public void addCollision_X(Collision collision) {
         collisionsX.add(collision);
     }
 
@@ -181,7 +181,7 @@ public class CollisionResult {
      *
      * @param collision
      */
-    public void addCollision_Y(Collision collision){
+    public void addCollision_Y(Collision collision) {
         collisionsY.add(collision);
     }
 
@@ -307,7 +307,7 @@ public class CollisionResult {
      */
     public void resolveCollisions_X() {
 
-        if (collisionsX.isEmpty()){
+        if (collisionsX.isEmpty()) {
             return;
         }
 
@@ -315,12 +315,12 @@ public class CollisionResult {
         nearestCollisionX = collisionsX.get(0);
         collisionsX.clear(); // No longer needed
 
-        if (wasCollisionWithLeftEdge()){
+        if (wasCollisionWithLeftEdge()) {
             // We add a small distance because we want the Hitbox to be placed
             // NEXT to the colliding Tile, not inside it.
             newX = nearestCollisionX.getCollisionPos() +
                     Physics.SMALLEST_DISTANCE;
-        } else if (wasCollisionWithRightEdge()){
+        } else if (wasCollisionWithRightEdge()) {
             newX = nearestCollisionX.getCollisionPos() - hitbox.width;
         }
     }
@@ -332,7 +332,7 @@ public class CollisionResult {
      */
     public void resolveCollisions_Y() {
 
-        if (collisionsY.isEmpty()){
+        if (collisionsY.isEmpty()) {
             return;
         }
 
@@ -340,12 +340,12 @@ public class CollisionResult {
         nearestCollisionY = collisionsY.get(0);
         collisionsY.clear(); // No longer needed
 
-        if (wasCollisionWithTopEdge()){
+        if (wasCollisionWithTopEdge()) {
             // We add a small distance because we want the Hitbox to be placed
             // NEXT to the colliding Tile, not inside it.
             newY = nearestCollisionY.getCollisionPos() +
                     Physics.SMALLEST_DISTANCE;
-            if (isCollisionWithCeilingSlope() && attempted_dy > 0){
+            if (isCollisionWithCeilingSlope() && attempted_dy > 0) {
                 /*
                  * Special case: Entities pressing into a ceiling slope while
                  * falling need to snap to the slope, but should maintain their
@@ -355,7 +355,7 @@ public class CollisionResult {
                  */
                 maintainSpeedY = true;
             }
-        } else if (wasCollisionWithBottomEdge()){
+        } else if (wasCollisionWithBottomEdge()) {
             newY = nearestCollisionY.getCollisionPos() - hitbox.height;
         }
     }
@@ -392,13 +392,13 @@ public class CollisionResult {
          * because we cannot rely on the direction of travel alone; it is
          * possible to collide with either slope while moving up or down.
          */
-        if (isCollisionWithCeilingSlope()){
+        if (isCollisionWithCeilingSlope()) {
             // Collisions with ceiling slopes always involve the top edge of the
             // Hitbox.
             return true;
         }
 
-        if (isCollisionWithFloorSlope()){
+        if (isCollisionWithFloorSlope()) {
             // Collisions with floor slopes always involve the bottom edge of
             // the Hitbox.
             return false;
@@ -421,13 +421,13 @@ public class CollisionResult {
          * because we cannot rely on the direction of travel alone; it is
          * possible to collide with either slope while moving up or down.
          */
-        if (isCollisionWithFloorSlope()){
+        if (isCollisionWithFloorSlope()) {
             // Collisions with floor slopes always involve the bottom edge of
             // the Hitbox.
             return true;
         }
 
-        if (isCollisionWithCeilingSlope()){
+        if (isCollisionWithCeilingSlope()) {
             // Collisions with ceiling slopes always involve the top edge of the
             // Hitbox.
             return false;

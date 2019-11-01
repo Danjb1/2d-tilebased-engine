@@ -82,7 +82,7 @@ public abstract class Launcher {
 
             try {
                 tick(delta);
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 // Game has crashed
                 Logger.log(ex);
                 status = -1;
@@ -150,7 +150,7 @@ public abstract class Launcher {
         Logger.log("Exiting with status: %d", status);
 
         // Clean up the current State
-        if (state != null){
+        if (state != null) {
             state.finish();
         }
 
