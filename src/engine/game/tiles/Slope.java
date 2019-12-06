@@ -99,21 +99,57 @@ public abstract class Slope extends ForegroundTile
         int tileXBefore = Tile.getTileX(result.initialNodeX(collision.node));
         int tileXAfter = Tile.getTileX(result.desiredNodeX(collision.node));
         if (tileXBefore == tileXAfter) {
-            // Disable x-collisions if the CollisionNode was already
-            // intersecting the Tile in question
-            // (e.g. having been on a neighbouring slope)
+            /*
+             * Disable x-collisions if the CollisionNode was already
+             * intersecting the Tile in question.
+             *
+             * This can happen when the Hitbox moves from 1 slope to another.
+             *
+             *  EXAMPLE:
+             *   - Hitbox is on a right slope, moving right. The slope node is
+             *      inside the slope, but the bottom-right node is intersecting
+             *      the solid tile "behind" the slope.
+             *   - After the attempted movement is applied, the Hitbox is no
+             *      longer intersecting the same slope. It is intersecting the
+             *      next slope tile (right and up), but the slope node is now
+             *      inside the solid block below the new slope.
+             *   - An x-collision is generated for the bottom-right node.
+             *      This collision would normally be valid, since the slope node
+             *      is not yet inside the new slope.
+             *   - Because the node was ALREADY intersecting that solid block,
+             *      the collision is invalidated - problem solved.
+             */
             return false;
         }
 
         if (result.initialNodeY(collision.node) < slopeCollision.getTileTop()) {
-            // Allow x-collisions triggered by CollisionNodes above the Slope
-            // (e.g. if a Slope leads into a wall)
+            /*
+             * Allow x-collisions triggered by CollisionNodes above the Slope
+             *
+             * This can happen if a Slope connects directly to a wall.
+             *
+             *  EXAMPLE:
+             *   - Hitbox is on a right slope, moving right.
+             *   - The Hitbox collides with a wall at the top of the slope.
+             *   - This collision is valid, because it is above the slope tile.
+             */
             return true;
         }
 
         if (result.initialNodeY(collision.node) > slopeCollision.getTileBottom()) {
-            // Allow x-collisions triggered by CollisionNodes below the Slope
-            // (e.g. if a Slope leads to a vertical drop)
+            /*
+             * Allow x-collisions triggered by CollisionNodes below the Slope
+             *
+             * This can happen if a Slope leads to a vertical drop.
+             *
+             *  EXAMPLE:
+             *   - Hitbox moves towards a right slope. There is a solid block
+             *      tile directly below the slope.
+             *   - The Hitbox collides in such a way that it intersects the
+             *      slope, but also the solid block. An x-collision is
+             *      generated.
+             *   - This collision is valid, because it is below the slope tile.
+             */
             return true;
         }
 
