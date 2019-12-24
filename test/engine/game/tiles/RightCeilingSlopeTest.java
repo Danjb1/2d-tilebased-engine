@@ -165,10 +165,10 @@ public class RightCeilingSlopeTest {
     @Test
     public void testPointInSlope() {
         // 4 corners of the Tile
-        assertEquals(true, slope.isPointInSlope(0, 0));
-        assertEquals(true, slope.isPointInSlope(Tile.WIDTH, 0));
-        assertEquals(true, slope.isPointInSlope(Tile.WIDTH, Tile.HEIGHT));
-        assertEquals(false, slope.isPointInSlope(0, Tile.HEIGHT));
+        assertEquals(true, slope.isPointInsideSolidArea(0, 0));
+        assertEquals(true, slope.isPointInsideSolidArea(Tile.WIDTH, 0));
+        assertEquals(true, slope.isPointInsideSolidArea(Tile.WIDTH, Tile.HEIGHT));
+        assertEquals(false, slope.isPointInsideSolidArea(0, Tile.HEIGHT));
     }
 
     @Test

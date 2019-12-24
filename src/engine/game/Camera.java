@@ -162,8 +162,8 @@ public class Camera {
         }
 
         // Determine how far the Camera "should" move
-        float dx = getDistToTargetX(delta);
-        float dy = getDistToTargetY(delta);
+        float dx = getDistToTargetX();
+        float dy = getDistToTargetY();
 
         // Keep the Camera speed within permitted limits
         if (trackingMode == TrackingMode.FOLLOW) {
@@ -177,10 +177,9 @@ public class Camera {
     /**
      * Determines how fast the camera should move in the x-axis this frame.
      *
-     * @param delta
      * @return
      */
-    private float getDistToTargetX(int delta) {
+    private float getDistToTargetX() {
 
         // If the full width of the level is visible, there is no need to move
         if (level.getWorldWidth() <= visibleRegion.getWidth()) {
@@ -196,10 +195,9 @@ public class Camera {
     /**
      * Determines how fast the camera should move in the y-axis this frame.
      *
-     * @param delta
      * @return
      */
-    private float getDistToTargetY(int delta) {
+    private float getDistToTargetY() {
 
         // If the full height of the level is visible, there is no need to move
         if (level.getWorldHeight() <= visibleRegion.getHeight()) {

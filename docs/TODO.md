@@ -11,11 +11,9 @@
 ## Bugs
 
  - Slopes:
-    - Non-slope-traversing Entities (e.g. projectiles) collide at the wrong place
     - Occasional jittering at the bottom of ceiling slopes
     - Strange behaviour when a slope leads into a ceiling
     - Strange behaviour when colliding with the "back" of a slope tile
-    - Strange behaviour when colliding with the left/right corners of a diamond
 
 ## Tech Debt
 

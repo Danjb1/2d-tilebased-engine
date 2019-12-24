@@ -76,10 +76,49 @@ public abstract class Slope extends ForegroundTile
             }
         }
 
-        // If the desired destination is in the Slope, add a Collision
-        if (shouldCollide(result, slopeCollision)) {
-            collideWithSlope(result, slopeCollision);
+        // If the Hitbox should be atop the Slope, add a collision
+        if (shouldBeOnSlope(result, slopeCollision)) {
+            addSlopeCollision(result, slopeCollision);
         }
+    }
+
+    /**
+     * Determines if the Hitbox should sit atop the Slope.
+     *
+     * @param result
+     * @param collision
+     * @return
+     */
+    protected boolean shouldBeOnSlope(
+            CollisionResult result, PostProcessCollision collision) {
+
+        // Determine the position of the slope node relative to this Slope tile
+        float xInSlope = getSlopeNodeX(result) - collision.getTileLeft();
+        float yInSlope = getSlopeNodeY(result) - collision.getTileTop();
+
+        /*
+         * There are 2 situations in which we place a Hitbox on a slope:
+         *
+         *   1) The slope node of the Hitbox is below the slope tile.
+         *
+         *      This case is straightforward; the Hitbox has moved such that it
+         *      is intersecting the slope, and should be moved onto it.
+         *
+         *   2) The slope node is inside the summit of a slope.
+         *
+         *      This case is a little more complicated. When the Hitbox reaches
+         *      the top of a slope (or the bottom, for a ceiling slope), the
+         *      slope node may intersect the solid block at the summit. This
+         *      would normally result in an x-collision being generated for the
+         *      solid block.
+         *
+         *      Instead, we recognise this case, and treat the Hitbox as if it
+         *      is still ascending the slope. This ensures that the Hitbox will
+         *      clear the summit, so that it doesn't collide with the solid
+         *      block in the x-axis.
+         */
+        return isPointInSlopeRegion(xInSlope, yInSlope)
+                || isPointInsideSummit(xInSlope, yInSlope);
     }
 
     /**
@@ -158,7 +197,7 @@ public abstract class Slope extends ForegroundTile
     }
 
     /**
-     * Determines if the given x-Collision is valid, in light of a collision
+     * Determines if the given y-Collision is valid, in light of a collision
      * with this Slope.
      *
      * @param result
@@ -172,23 +211,35 @@ public abstract class Slope extends ForegroundTile
             Collision collision);
 
     /**
-     * Determines if a CollisionResult should collide with this Slope.
+     * Determines if a point is inside this Slope's "region".
      *
-     * @param result
-     * @param collision
+     * <p>For floor slopes, the region is defined as the solid part of the
+     * slope, and all tiles below it.
+     *
+     * <p>For ceiling slopes, the region is defined as the solid part of the
+     * slope, and all tiles above it.
+     *
+     * @param xInSlope
+     * @param yInSlope
      * @return
      */
-    protected boolean shouldCollide(
-            CollisionResult result, PostProcessCollision collision) {
-
-        // Determine the position of the slope node relative to this Slope tile
-        float xInSlope = getSlopeNodeX(result) - collision.getTileLeft();
-        float yInSlope = getSlopeNodeY(result) - collision.getTileTop();
-
+    protected boolean isPointInSlopeRegion(float xInSlope, float yInSlope) {
         // A Hitbox is only considered to be intersecting the Slope if its slope
         // node is inside the *solid* part of the Slope
-        return isPointInSlope(xInSlope, yInSlope);
+        return xInSlope >= 0
+                && xInSlope < Tile.WIDTH
+                && isPointInsideSolidArea(xInSlope, yInSlope);
     }
+
+    /**
+     * Determines if a point is inside the summit of this Slope.
+     *
+     * @param xInSlope
+     * @param yInSlope
+     * @return
+     */
+    protected abstract boolean isPointInsideSummit(
+            float xInSlope, float yInSlope);
 
     /**
      * Determines the absolute x-position of the "slope node", that is, the
@@ -216,7 +267,7 @@ public abstract class Slope extends ForegroundTile
      * @param result
      * @param slopeCollision
      */
-    protected void collideWithSlope(
+    protected void addSlopeCollision(
             CollisionResult result, PostProcessCollision slopeCollision) {
         Collision collision = createCollision(result, slopeCollision);
         result.addCollision_Y(collision);
@@ -278,7 +329,7 @@ public abstract class Slope extends ForegroundTile
      * @param y Position from 0 - Tile.HEIGHT.
      * @return
      */
-    protected abstract boolean isPointInSlope(float x, float y);
+    protected abstract boolean isPointInsideSolidArea(float x, float y);
 
     /**
      * Gets the y-position of the Slope at the given x-position.
@@ -316,32 +367,34 @@ public abstract class Slope extends ForegroundTile
     @Override
     public void hitboxCollidedY(CollisionResult result) {
 
+        Hitbox hitbox = result.hitbox;
+
         // Collisions with Slopes are always in the y-axis,
         // but they affect the Hitbox speed in BOTH axes
 
-        Hitbox hitbox = result.hitbox;
         float prevSpeedX = hitbox.getSpeedX();
         float prevSpeedY = hitbox.getSpeedY();
 
         // The new y-speed is the old x-speed
         float newSpeedY = prevSpeedX
                 * hitbox.bounceCoefficient
-                * getBouceMultiplierY();
+                * getBounceMultiplierY();
         hitbox.setSpeedY(newSpeedY);
 
-        // The x-speed is only affected if a Hitbox supports slope traversal
+        // If a Hitbox does not support slope traversal,
+        // it should bounce off the slope
         if (!hitbox.getCollisionFlag(Hitbox.SUPPORTS_SLOPE_TRAVERSAL)) {
 
             // The new x-speed is the old y-speed
             float newSpeedX = prevSpeedY
                     * hitbox.bounceCoefficient
-                    * getBouceMultiplierX();
+                    * getBounceMultiplierX();
             hitbox.setSpeedX(newSpeedX);
         }
     }
 
-    protected abstract float getBouceMultiplierX();
+    protected abstract float getBounceMultiplierX();
 
-    protected abstract float getBouceMultiplierY();
+    protected abstract float getBounceMultiplierY();
 
 }

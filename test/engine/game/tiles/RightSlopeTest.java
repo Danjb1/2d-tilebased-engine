@@ -169,13 +169,13 @@ public class RightSlopeTest {
     @Test
     public void testPointInSlope() {
         // 4 corners of the Tile
-        assertEquals(false, slope.isPointInSlope(0, 0));
-        assertEquals(true, slope.isPointInSlope(Tile.WIDTH, 0));
-        assertEquals(true, slope.isPointInSlope(Tile.WIDTH, Tile.HEIGHT));
-        assertEquals(true, slope.isPointInSlope(0, Tile.HEIGHT));
+        assertEquals(false, slope.isPointInsideSolidArea(0, 0));
+        assertEquals(true, slope.isPointInsideSolidArea(Tile.WIDTH, 0));
+        assertEquals(true, slope.isPointInsideSolidArea(Tile.WIDTH, Tile.HEIGHT));
+        assertEquals(true, slope.isPointInsideSolidArea(0, Tile.HEIGHT));
 
         // Below the Tile
-        assertEquals(true, slope.isPointInSlope(0, 2 * Tile.HEIGHT));
+        assertEquals(true, slope.isPointInsideSolidArea(0, 2 * Tile.HEIGHT));
     }
 
     @Test

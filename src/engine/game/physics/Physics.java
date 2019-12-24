@@ -66,8 +66,7 @@ public abstract class Physics {
      * the Hitbox will be continually repositioned in the correct position atop
      * the ground tile.
      */
-    public static final float SMALLEST_DISTANCE =
-            GameUtils.worldUnits(0.0001f);
+    public static final float SMALLEST_DISTANCE = GameUtils.worldUnits(0.0001f);
 
     /**
      * Strength of gravity, in world units per second per second.
@@ -209,10 +208,9 @@ public abstract class Physics {
              * Move in each axis independently and resolve collisions along the
              * way.
              *
-             * If the Hitbox intersects a PostProcessingTile at any point during
-             * the movement, a PostProcessingCollision will be registered. After
-             * the movement is finished, all PostProcessingCollisions will be
-             * resolved.
+             * If the Hitbox intersects a PostProcessingTile at the destination,
+             * a PostProcessingCollision will be registered. After the movement
+             * is finished, all PostProcessingCollisions will be resolved.
              */
 
             // Move in the x-axis
@@ -229,57 +227,8 @@ public abstract class Physics {
                 detectCollisionsY(result, logic, hitbox.getBottomNodes());
             }
 
-            /*
-             * POST-PROCESSING COLLISION DETECTION.
-             *
-             * STAGE 1:
-             * Check for PostProcessingCollisions at the initial Hitbox
-             * position.
-             *
-             * It may be that the Hitbox is already intersecting a
-             * PostProcessingTile, which affects which collisions are permitted.
-             *
-             *  EXAMPLE:
-             *   - Hitbox is on a right slope, moving right.
-             *   - After the x-movement is applied, the Hitbox is no longer
-             *      intersecting the slope but is intersecting the floor tile at
-             *      the top of the slope.
-             *   - An x-collision is registered, but no PostProcessingCollision
-             *      is registered, so the x-collision never gets invalidated.
-             */
-            detectPostProcessCollisions(
-                    result, logic, hitbox.getAllNodes(), 0, 0);
-
-
-            /*
-             * STAGE 2:
-             * Check for PostProcessingCollisions after the x-movement is
-             * applied.
-             *
-             * It is possible that the x-movement could move the Hitbox into a
-             * PostProcessingTile, but the y-movement could move the Hitbox out
-             * of it, so we have to check for collisions before the y-movement
-             * is applied.
-             *
-             *  EXAMPLE:
-             *   - Hitbox is in the empty tile "between" 2 right slopes (above
-             *      one, and left of the other), moving right.
-             *   - After the x-movement is applied, the Hitbox intersects the
-             *      slope immediately to the right.
-             *   - Were we to apply the y-movement, the bottom node of the
-             *      Hitbox would fall into the solid block BELOW the slope,
-             *      therefore it would never be inside the slope.
-             */
-            if (dx != 0) {
-                detectPostProcessCollisions(
-                        result, logic, hitbox.getAllNodes(), dx, 0);
-            }
-
-            /*
-             * STAGE 3:
-             * Check for PostProcessingCollisions at the final Hitbox position.
-             */
-            if (dy != 0) {
+            // Check for PostProcessingCollisions
+            if (dx != 0  || dy != 0) {
                 detectPostProcessCollisions(
                         result, logic, hitbox.getAllNodes(), dx, dy);
             }
@@ -302,11 +251,16 @@ public abstract class Physics {
 
         Level level = logic.getLevel();
 
+        // Determine the position of the Hitbox to use in collision detection;
+        // we store this now because this function may return different values
+        // as more collisions are added!
+        float left = result.left();
+
         // Get collision results for each node along the Hitbox's edge
         for (CollisionNode node : nodesY) {
 
             // Find the new position of this CollisionNode
-            float nodeX = result.newNodeX(node);
+            float nodeX = left + node.x;
             float nodeY = result.initialNodeY(node);
 
             // Find the tile which this node will intersect
@@ -332,13 +286,19 @@ public abstract class Physics {
 
         Level level = logic.getLevel();
 
+        // Determine the position of the Hitbox to use in collision detection;
+        // we store this now because these functions may return different values
+        // as more collisions are added!
+        float left = result.left();
+        float top = result.top();
+
         // Get collision results for each node along the Hitbox's edge
         for (CollisionNode node : nodesX) {
 
             // Find the new position of this CollisionNode,
             // using the already-calculated x-collision result
-            float nodeX = result.newNodeX(node);
-            float nodeY = result.newNodeY(node);
+            float nodeX = left + node.x;
+            float nodeY = top + node.y;
 
             // Find the tile which this node will intersect
             int tileX = Tile.getTileX(nodeX);
