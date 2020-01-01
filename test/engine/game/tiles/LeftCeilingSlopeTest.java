@@ -133,7 +133,7 @@ public class LeftCeilingSlopeTest {
          * GIVEN:
          *
          * Slope is at (1, 1)
-         * Hitbox is at (2, 1) and moving by (-0.5f, -0.25f)
+         * Hitbox is at (2, 1) and moving by (-0.75f, -0.25f)
          *
          *   ####
          *   #/E`
@@ -141,7 +141,7 @@ public class LeftCeilingSlopeTest {
          */
         float hX = GameUtils.worldUnits(2);
         float hY = GameUtils.worldUnits(1);
-        float dx = GameUtils.worldUnits(-0.5f);
+        float dx = GameUtils.worldUnits(-0.75f);
         float dy = GameUtils.worldUnits(-0.25f);
         int slopeTileX = 1;
         int slopeTileY = 1;
@@ -154,11 +154,11 @@ public class LeftCeilingSlopeTest {
                 new PostProcessCollision(slope, slopeTileX, slopeTileY, node);
         slope.postProcessing(result, collision);
 
-        // THEN a collision is added at ceiling level
-        // (because the slope node has only just entered the Slope)
+        // THEN a collision is added 1/4 of the way down the Slope
+        // (moving 0.5 units would put the slope node at the top of the slope)
         assertEquals(1, result.getCollisionsY().size());
         assertEquals(
-                Tile.getTop(GameUtils.worldUnits(1)),
+                Tile.getTop(GameUtils.worldUnits(1)) + 0.25f,
                 result.getNearestCollisionY().collisionPos, 0.001);
     }
 

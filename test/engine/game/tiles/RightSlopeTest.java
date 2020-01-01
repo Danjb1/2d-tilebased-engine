@@ -148,22 +148,24 @@ public class RightSlopeTest {
 
         // AND the Hitbox has already collided with the ground
         CollisionResult result = new CollisionResult(hitbox, dx, dy);
-        CollisionNode node = hitbox.getBottomNodes()[1];
-        Collision groundCollision = Collision.create(
-                hY,
-                Tile.getTop(hY + GameUtils.worldUnits(1)),
-                node,
-                new SolidBlock(0));
-        result.addCollision_Y(groundCollision);
+        for (CollisionNode node : hitbox.getBottomNodes()) {
+            Collision groundCollision = Collision.create(
+                    hY,
+                    Tile.getTop(hY + GameUtils.worldUnits(1)),
+                    node,
+                    new SolidBlock(0));
+            result.addCollision_Y(groundCollision);
+        }
 
         // WHEN resolving collisions with this Slope
+        CollisionNode bottomLeft = hitbox.getBottomNodes()[0];
+        CollisionNode bottomRight = hitbox.getBottomNodes()[1];
         PostProcessCollision collision =
-                new PostProcessCollision(slope, slopeTileX, slopeTileY, node);
+                new PostProcessCollision(slope, slopeTileX, slopeTileY, bottomRight);
         slope.postProcessing(result, collision);
 
-        // THEN the ground collision is still present
-        assertEquals(1, result.getCollisionsY().size());
-        assertEquals(groundCollision, result.getNearestCollisionY());
+        // THEN the ground collision with the bottom-left node is still valid
+        assertEquals(bottomLeft, result.getNearestCollisionY().node);
     }
 
     @Test
