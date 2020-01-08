@@ -1,7 +1,9 @@
 package engine.game.physics;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import engine.game.physics.Hitbox.CollisionNode;
 
@@ -33,8 +35,7 @@ public class CollisionResult {
     /**
      * All PostProcessCollision that have occurred.
      */
-    private List<PostProcessCollision> postProcessCollisions
-            = new ArrayList<>();
+    private Set<PostProcessCollision> postProcessCollisions = new HashSet<>();
 
     /**
      * Nearest x-Collision detected by this CollisionResult.
@@ -192,6 +193,11 @@ public class CollisionResult {
 
     /**
      * Renders a Collision invalid.
+     *
+     * <p>It is important to note that if an x-collision is invalidated during
+     * or after the post-processing stage of collision detection, the results
+     * may not be entirely as expected, due to the fact that y-collisions will
+     * have already been calculated based on x-collisions.
      *
      * @param collision
      */

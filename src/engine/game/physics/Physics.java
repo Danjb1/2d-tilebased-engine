@@ -208,9 +208,10 @@ public abstract class Physics {
              * Move in each axis independently and resolve collisions along the
              * way.
              *
-             * If the Hitbox intersects a PostProcessingTile at the destination,
-             * a PostProcessingCollision will be registered. After the movement
-             * is finished, all PostProcessingCollisions will be resolved.
+             * If the Hitbox intersects a PostProcessingTile at any point during
+             * the movement, a PostProcessingCollision will be registered. After
+             * the movement is finished, all PostProcessingCollisions will be
+             * resolved.
              */
 
             // Move in the x-axis
@@ -227,8 +228,57 @@ public abstract class Physics {
                 detectCollisionsY(result, logic, hitbox.getBottomNodes());
             }
 
-            // Check for PostProcessingCollisions
-            if (dx != 0  || dy != 0) {
+            /*
+             * POST-PROCESSING COLLISION DETECTION.
+             *
+             * STAGE 1:
+             * Check for PostProcessingCollisions at the initial Hitbox
+             * position.
+             *
+             * It may be that the Hitbox is already intersecting a
+             * PostProcessingTile, which affects which collisions are permitted.
+             *
+             *  EXAMPLE:
+             *   - Hitbox is on a right slope, moving right.
+             *   - After the x-movement is applied, the Hitbox is no longer
+             *      intersecting the slope but is intersecting the floor tile at
+             *      the top of the slope.
+             *   - An x-collision is registered, but no PostProcessingCollision
+             *      is registered, so the x-collision never gets invalidated.
+             */
+            detectPostProcessCollisions(
+                    result, logic, hitbox.getAllNodes(), 0, 0);
+
+
+            /*
+             * STAGE 2:
+             * Check for PostProcessingCollisions after the x-movement is
+             * applied.
+             *
+             * It is possible that the x-movement could move the Hitbox into a
+             * PostProcessingTile, but the y-movement could move the Hitbox out
+             * of it, so we have to check for collisions before the y-movement
+             * is applied.
+             *
+             *  EXAMPLE:
+             *   - Hitbox is in the empty tile "between" 2 right slopes (above
+             *      one, and left of the other), moving right.
+             *   - After the x-movement is applied, the Hitbox intersects the
+             *      slope immediately to the right.
+             *   - Were we to apply the y-movement, the bottom node of the
+             *      Hitbox would fall into the solid block BELOW the slope,
+             *      therefore it would never be inside the slope.
+             */
+            if (dx != 0) {
+                detectPostProcessCollisions(
+                        result, logic, hitbox.getAllNodes(), dx, 0);
+            }
+
+            /*
+             * STAGE 3:
+             * Check for PostProcessingCollisions at the final Hitbox position.
+             */
+            if (dy != 0) {
                 detectPostProcessCollisions(
                         result, logic, hitbox.getAllNodes(), dx, dy);
             }
