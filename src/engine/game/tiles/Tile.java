@@ -84,7 +84,7 @@ public abstract class Tile {
      * @param x Position in world units.
      * @return Tile edge in world units.
      */
-    public static float getLeft(float x) {
+    public static int getLeft(float x) {
         return (int) (x / WIDTH);
     }
 
@@ -107,7 +107,7 @@ public abstract class Tile {
      * @param y Position in world units.
      * @return Tile edge in world units.
      */
-    public static float getTop(float y) {
+    public static int getTop(float y) {
         return (int) (y / HEIGHT);
     }
 

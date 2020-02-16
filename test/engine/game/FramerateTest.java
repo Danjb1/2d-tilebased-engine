@@ -24,7 +24,8 @@ public class FramerateTest {
                 "0 0 0",
                 "1 1 1"
         );
-        Logic logic = new Logic(level);
+        Logic logic = new Logic();
+        logic.setLevel(level);
         Entity e = new TestEntity(
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
@@ -51,7 +52,8 @@ public class FramerateTest {
                 "0 0 0",
                 "1 1 1"
         );
-        Logic logic = new Logic(level);
+        Logic logic = new Logic();
+        logic.setLevel(level);
         Entity e = new TestEntity(
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
@@ -81,7 +83,8 @@ public class FramerateTest {
         Entity entity = new TestEntity(
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
-        Logic logic = new Logic(level);
+        Logic logic = new Logic();
+        logic.setLevel(level);
         logic.addEntity(entity);
 
         // WHEN a lag spike occurs

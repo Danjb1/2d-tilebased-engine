@@ -55,16 +55,23 @@ public class Logic {
     protected List<Entity> entitiesToDelete = new ArrayList<>();
 
     /**
-     * Constructs the Logic using the given Level.
-     *
-     * @param level
+     * Constructs the Logic.
      */
-    public Logic(Level level) {
-        this.level = level;
-
+    public Logic() {
         // Add the always-available Tile types
         addTileType(new Air(ForegroundTile.ID_AIR));
         addTileType(new SolidBlock(ForegroundTile.ID_SOLID_BLOCK));
+    }
+
+    /**
+     * Sets the current level.
+     *
+     * <p>This must be called before {@link #update}.
+     *
+     * @param level
+     */
+    public void setLevel(Level level) {
+        this.level = level;
     }
 
     /**
@@ -73,6 +80,11 @@ public class Logic {
      * @param delta Number of milliseconds since the last update.
      */
     public void update(int delta) {
+
+        if (level == null) {
+            throw new IllegalStateException("No Level loaded");
+        }
+
         updateEntities(delta);
         processCollisions();
         deleteEntities();

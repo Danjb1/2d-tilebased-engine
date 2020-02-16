@@ -5,7 +5,6 @@ import engine.game.physics.Collision;
 import engine.game.physics.CollisionResult;
 import engine.game.physics.Hitbox;
 import engine.game.physics.Hitbox.CollisionNode;
-import engine.game.physics.Physics;
 import engine.game.physics.PostProcessCollision;
 
 /**
@@ -290,11 +289,10 @@ public abstract class Slope extends ForegroundTile
         // Keep this position within acceptable bounds
         yInSlopeCorrect = GameUtils.clamp(yInSlopeCorrect,
                 0,
-                Tile.HEIGHT - Physics.SMALLEST_DISTANCE);
+                getMaxCollisionY());
 
         // Find the absolute y-position of this point
         float collisionY = slopeCollision.getTileTop() + yInSlopeCorrect;
-
         // Calculate the initial and corrected position of the CollisionNode
         float yBefore = result.initialNodeY(slopeCollision.node);
         float yAfter = calculateNodeYAfterCollision(
@@ -307,6 +305,14 @@ public abstract class Slope extends ForegroundTile
                 slopeCollision.node,
                 this);
     }
+
+    /**
+     * Gets the maximum permitted y-distance of a collision, measured from the
+     * top of the slope tile.
+     *
+     * @return
+     */
+    protected abstract float getMaxCollisionY();
 
     /**
      * Given the point of a collision, calculates the new position of the
@@ -369,28 +375,48 @@ public abstract class Slope extends ForegroundTile
 
         Hitbox hitbox = result.hitbox;
 
-        // Collisions with Slopes are always in the y-axis,
-        // but they affect the Hitbox speed in BOTH axes
+        if (shouldBounceOffSlope(hitbox)) {
 
-        float prevSpeedX = hitbox.getSpeedX();
-        float prevSpeedY = hitbox.getSpeedY();
+            // Collisions with Slopes are always in the y-axis,
+            // but they affect the Hitbox speed in BOTH axes
+            float prevSpeedX = hitbox.getSpeedX();
+            float prevSpeedY = hitbox.getSpeedY();
 
-        // The new y-speed is the old x-speed
-        float newSpeedY = prevSpeedX
-                * hitbox.bounceCoefficient
-                * getBounceMultiplierY();
-        hitbox.setSpeedY(newSpeedY);
-
-        // If a Hitbox does not support slope traversal,
-        // it should bounce off the slope
-        if (!hitbox.getCollisionFlag(Hitbox.SUPPORTS_SLOPE_TRAVERSAL)) {
+            // The new y-speed is the old x-speed
+            float newSpeedY = prevSpeedX
+                    * hitbox.bounceCoefficient
+                    * getBounceMultiplierY();
+            hitbox.setSpeedY(newSpeedY);
 
             // The new x-speed is the old y-speed
             float newSpeedX = prevSpeedY
                     * hitbox.bounceCoefficient
                     * getBounceMultiplierX();
             hitbox.setSpeedX(newSpeedX);
+
+        } else if (shouldRemoveSpeedOnCollision(result)) {
+            hitbox.setSpeedY(0);
         }
+    }
+
+    /**
+     * Determines if a Hitbox should have its y-speed removed after a collision.
+     *
+     * @param result
+     * @return
+     */
+    protected abstract boolean shouldRemoveSpeedOnCollision(
+            CollisionResult result);
+
+    /**
+     * Determines if a Hitbox should bounce off this slope, as opposed to
+     * sliding up or down it.
+     *
+     * @param hitbox
+     * @return
+     */
+    private boolean shouldBounceOffSlope(Hitbox hitbox) {
+        return !hitbox.getCollisionFlag(Hitbox.SUPPORTS_SLOPE_TRAVERSAL);
     }
 
     protected abstract float getBounceMultiplierX();

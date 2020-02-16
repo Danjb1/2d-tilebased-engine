@@ -2,6 +2,8 @@
 
 A 2D tile-based game engine using axis-aligned bounding boxes.
 
+Used by [Abacus](http://www.danjb.com/abacus).
+
 ![Screenshot](docs/demo.png)
 
 ## Features
@@ -16,12 +18,12 @@ with no external dependencies.
 Supports 45 degree floor and ceiling slopes, and new tile types can easily be
 added.
 
-### **:electric_plug: Extendible component-based entity system**
+### **:electric_plug: Extensible**
 
 Entities can easily be extended with additional properties and behaviour using a
 flexible component-based system.
 
-### **:books: Easily integrate with any GUI / rendering / input library**
+### **:books: Library-agnostic**
 
 Window creation, rendering and input handling are abstracted; the engine is not
 tied to any existing libraries.

@@ -3,6 +3,7 @@ package engine.game.tiles;
 import engine.game.physics.Collision;
 import engine.game.physics.CollisionResult;
 import engine.game.physics.Hitbox.CollisionNode;
+import engine.game.physics.Physics;
 import engine.game.physics.PostProcessCollision;
 
 /**
@@ -77,6 +78,14 @@ public class LeftSlope extends Slope {
     }
 
     @Override
+    protected float getMaxCollisionY() {
+        // For floor slopes, we have to be careful that the collision does not
+        // occur outside the bounds of the tile, otherwise the Hitbox can
+        // become embedded in the floor
+        return Tile.HEIGHT - Physics.SMALLEST_DISTANCE;
+    }
+
+    @Override
     protected float calculateNodeYAfterCollision(
             CollisionResult result, CollisionNode node, float collisionY) {
         return (collisionY - result.hitbox.height) + node.y;
@@ -121,6 +130,13 @@ public class LeftSlope extends Slope {
     @Override
     protected float getBounceMultiplierY() {
         return 1;
+    }
+
+    @Override
+    protected boolean shouldRemoveSpeedOnCollision(CollisionResult result) {
+        // Remove y-speed if the Hitbox was moving down
+        // (but not when hitting the slope on the ascent of a jump)
+        return result.getAttemptedDy() > 0;
     }
 
 }

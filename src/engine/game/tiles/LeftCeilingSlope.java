@@ -67,6 +67,12 @@ public class LeftCeilingSlope extends Slope {
     }
 
     @Override
+    protected float getMaxCollisionY() {
+        // See comments in RightCeilingSlope
+        return Tile.HEIGHT;
+    }
+
+    @Override
     protected float calculateNodeYAfterCollision(
             CollisionResult result, CollisionNode node, float collisionY) {
         return collisionY + node.y;
@@ -111,6 +117,13 @@ public class LeftCeilingSlope extends Slope {
     @Override
     protected float getBounceMultiplierY() {
         return -1;
+    }
+
+    @Override
+    protected boolean shouldRemoveSpeedOnCollision(CollisionResult result) {
+        // Remove y-speed if the Hitbox was moving up
+        // (but not when hitting the slope while falling)
+        return result.getAttemptedDy() < 0;
     }
 
 }

@@ -1,11 +1,10 @@
 package engine.game;
 
-import java.awt.geom.Rectangle2D;
-
 import engine.game.entities.CameraSettings;
 import engine.game.entities.Entity;
 import engine.game.physics.Hitbox;
 import engine.game.tiles.Tile;
+import engine.util.Rectangle;
 
 /**
  * Camera capable of tracking an Entity within the game world.
@@ -40,7 +39,7 @@ public class Camera {
     /**
      * Rectangle of the world that is visible to this camera, in world units.
      */
-    private Rectangle2D.Float visibleRegion = new Rectangle2D.Float();
+    private Rectangle visibleRegion = new Rectangle();
 
     /**
      * Entity this Camera is tracking.
@@ -132,8 +131,8 @@ public class Camera {
         settings.entityTeleported();
         float targetX = hitbox.centreX() + settings.getTargetOffsetX();
         float targetY = hitbox.centreY() + settings.getTargetOffsetY();
-        float x = (float) (targetX - visibleRegion.getWidth() / 2);
-        float y = (float) (targetY - visibleRegion.getHeight() / 2);
+        float x = targetX - visibleRegion.width / 2;
+        float y = targetY - visibleRegion.height / 2;
         setPos(x, y);
     }
 
@@ -182,14 +181,14 @@ public class Camera {
     private float getDistToTargetX() {
 
         // If the full width of the level is visible, there is no need to move
-        if (level.getWorldWidth() <= visibleRegion.getWidth()) {
+        if (level.getWorldWidth() <= visibleRegion.width) {
             return 0;
         }
 
         // Calculate how far the camera is from the target
         Hitbox hitbox = targetEntity.hitbox;
         float targetPos = hitbox.centreX() + settings.getTargetOffsetX();
-        return (float) (targetPos - visibleRegion.getCenterX());
+        return targetPos - visibleRegion.getCenterX();
     }
 
     /**
@@ -200,14 +199,14 @@ public class Camera {
     private float getDistToTargetY() {
 
         // If the full height of the level is visible, there is no need to move
-        if (level.getWorldHeight() <= visibleRegion.getHeight()) {
+        if (level.getWorldHeight() <= visibleRegion.height) {
             return 0;
         }
 
         // Calculate how far the camera is from the target
         Hitbox hitbox = targetEntity.hitbox;
         float targetPos = hitbox.centreY() + settings.getTargetOffsetY();
-        return (float) (targetPos - visibleRegion.getCenterY());
+        return targetPos - visibleRegion.getCenterY();
     }
 
     /**
@@ -260,7 +259,7 @@ public class Camera {
         float maxVisibleX = minVisibleX + level.getNumTilesX() * Tile.WIDTH;
         float maxCameraX = maxVisibleX - visibleRegion.width;
 
-        if (level.getWorldWidth() <= visibleRegion.getWidth()) {
+        if (level.getWorldWidth() <= visibleRegion.width) {
             // The full width of the level is visible; keep camera at left edge
             cameraX = minVisibleX;
         } else if (cameraX < minVisibleX) {
@@ -285,7 +284,7 @@ public class Camera {
         float maxVisibleY = minVisibleY + level.getNumTilesY() * Tile.HEIGHT;
         float maxCameraY = maxVisibleY - visibleRegion.height;
 
-        if (level.getWorldHeight() <= visibleRegion.getHeight()) {
+        if (level.getWorldHeight() <= visibleRegion.height) {
             // The full height of the level is visible; keep camera at top edge
             cameraY = minVisibleY;
         } else if (cameraY < minVisibleY) {
@@ -380,7 +379,7 @@ public class Camera {
         return (int) (visibleRegion.height / Tile.HEIGHT) + 2;
     }
 
-    public Rectangle2D.Float getVisibleRegion() {
+    public Rectangle getVisibleRegion() {
         return visibleRegion;
     }
 

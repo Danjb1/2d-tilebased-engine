@@ -67,6 +67,39 @@ public class RightCeilingSlope extends Slope {
     }
 
     @Override
+    protected float getMaxCollisionY() {
+        // For ceiling slopes, we have to ensure that when a collision occurs
+        // at the bottom of the slope, the Hitbox will end up strictly below
+        // the slope tile when the collision resolves, otherwise the Hitbox
+        // may become embedded in the ceiling.
+        //
+        // Technically it is more correct to say that the collision occurs at
+        // (Tile.HEIGHT - Physics.SMALLEST_DISTANCE), as that signifies the far
+        // edge of the tile. We add Physics.SMALLEST_DISTANCE back on later in
+        // `Hitbox.resolveCollisions_Y()`, which should result in the Hitbox
+        // being placed below the tile.
+        //
+        // However, rounding errors can occur when working with such precise
+        // values, leading to the Hitbox becoming embedded in the ceiling, so
+        // we err on the side of caution instead.
+        //
+        // Example (buggy):
+        //  - Slope tile is at y=3
+        //  - Physics.SMALLEST_DISTANCE is 0.0001f
+        //  - getMaxCollisionY() returns 0.9999f
+        //  - collisionY = 3.0f + 0.9999f = 3.9998999f (rounding error)
+        //  - Hitbox is placed at 3.9998999f + 0.0001f = 3.9999998f (bug)
+        //
+        // Example (fixed):
+        //  - Slope tile is at y=3
+        //  - Physics.SMALLEST_DISTANCE is 0.0001f
+        //  - getMaxCollisionY() returns 1.0f
+        //  - collisionY = 3.0f + 1.0f = 4.0f
+        //  - Hitbox is placed at 4.0f + 0.0001f = 4.0001f (ok!)
+        return Tile.HEIGHT;
+    }
+
+    @Override
     protected float calculateNodeYAfterCollision(
             CollisionResult result, CollisionNode node, float collisionY) {
         return collisionY + node.y;
@@ -111,6 +144,13 @@ public class RightCeilingSlope extends Slope {
     @Override
     protected float getBounceMultiplierY() {
         return 1;
+    }
+
+    @Override
+    protected boolean shouldRemoveSpeedOnCollision(CollisionResult result) {
+        // Remove y-speed if the Hitbox was moving up
+        // (but not when hitting the slope while falling)
+        return result.getAttemptedDy() < 0;
     }
 
 }

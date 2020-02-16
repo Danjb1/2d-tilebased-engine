@@ -317,4 +317,15 @@ public class GameUtils {
         return val;
     }
 
+    /**
+     * Determines if 2 values have the same sign.
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public static boolean sameSign(int a, float b) {
+        return a == b || (a > 0) == (b > 0);
+    }
+
 }

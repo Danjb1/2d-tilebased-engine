@@ -34,8 +34,9 @@ public class DemoLauncher extends Launcher implements KeyListener,
 
             DemoLauncher launcher = new DemoLauncher();
 
+            Logic logic = new Logic();
             Level level = createLevel();
-            Logic logic = new Logic(level);
+            logic.setLevel(level);
             launcher.setState(new GameState(launcher, logic));
 
             launcher.start();

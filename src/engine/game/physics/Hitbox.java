@@ -93,7 +93,10 @@ public class Hitbox {
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Collision flag that allows a Hitbox to walk up and down slopes.
+     * Collision flag that allows a Hitbox to slide up and down slopes.
+     *
+     * <p>Hitboxes that do not have this flag set will bounce off slopes
+     * instead. This is the default behaviour.
      */
     public static final int SUPPORTS_SLOPE_TRAVERSAL = 0;
 
