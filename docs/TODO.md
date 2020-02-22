@@ -11,8 +11,7 @@
 ## Bugs
 
  - Slopes:
-    - Hitbox can clip through a right ceiling slope if jumping into the very top of it
-    - Hitbox can drop off a right slope and land on the solid block 2 tiles below it
+    - Hitbox goes crazy when colliding with the corners of a slope "diamond"
     - Hitbox clips through solid blocks if "wedged" between a slope and a solid block
     - Hitbox can clip through the "back" of a slope (not yet supported)
 
