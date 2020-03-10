@@ -10,12 +10,12 @@
 
 ## Bugs
 
- - Slopes:
+ - Slopes (see Slope class):
     - Hitbox behaves strangely in very tight sloped tunnels
     - Hitbox clips through solid blocks if "wedged" between a slope and a solid block
     - Hitbox can clip through the "back" of a slope (not yet supported)
     - Hitbox can fall through a slope if there is no solid tile immediately below it
-    - Hitboxes with width > height can clip through a wall at the top of a slope
+    - Wide Hitboxes can clip through a wall at the top of a slope
 
 ## Tech Debt
 

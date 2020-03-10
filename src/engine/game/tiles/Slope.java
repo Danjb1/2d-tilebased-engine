@@ -13,58 +13,139 @@ import engine.game.physics.PostProcessCollision;
 /**
  * Base class for Slopes.
  *
- * <h1>Problems</h1>
+ * <!-------------------------------------------------------------------------->
+ * <h1>Problems Faced</h1>
+ * <!-------------------------------------------------------------------------->
  *
  * <p>There are a lot of problems with implementing slopes in a tile-based game:
  *
- * 1) Hitboxes may at times intersect the tile behind or below a slope.
+ * <ol>
+ * <li>
+ *     Hitboxes may at times intersect the tile behind or below a slope.
  *     Collisions with such tiles must be disabled.
+ * </li>
  *
- * 2) Regular collisions must still be respected outside the slope, for example,
+ * <li>
+ *     Regular collisions must still be respected outside the slope, for example,
  *     if a slope leads into a wall.
+ * </li>
  *
- * 3) It looks strange if a Hitbox is positioned such that only its corner sits
+ * <li>
+ *     It looks strange if a Hitbox is positioned such that only its corner sits
  *     on the slope, as the rest of the Hitbox will be floating. Thus, when a
  *     Hitbox collides with a slope, it should be positioned such that its
  *     horizontal centre sits atop the slope.
+ * </li>
  *
- * 4) Unlike regular collisions which affect the speed of a Hitbox, collisions
+ * <li>
+ *     Unlike regular collisions which affect the speed of a Hitbox, collisions
  *     with ceiling slopes should not slow a falling Hitbox.
+ * </li>
  *
- * 5) Hitboxes that do not support slope traversal (for example, projectiles)
+ * <li>
+ *     Hitboxes that do not support slope traversal (for example, projectiles)
  *     should take into account the angle of the slope when bouncing off the
  *     slope.
+ * </li>
  *
- * 6) By default, fast-moving Hitboxes will fly off the slope, instead of
+ * <li>
+ *     By default, fast-moving Hitboxes will fly off the slope, instead of
  *     sliding down it.
+ * </li>
+ * </ol>
  *
- * These problems are addressed herein.
+ * These problems, and others, are addressed herein.
  *
+ * <!-------------------------------------------------------------------------->
  * <h1>Approach</h1>
+ * <!-------------------------------------------------------------------------->
  *
- * The approach used is described here:
+ * <p>The approach used is described here:<br>
  * http://www.danjb.com/game_dev/tilebased_platformer_slopes_2
  *
- * However, there is one extra case covered here which that article naively
+ * <p>It sounds simple in theory, but the task quickly becomes very complex as
+ * more corner cases are discovered. The solution laid out here works, for the
+ * most part, but it is difficult to understand and covers a lot of special
+ * cases.
+ *
+ * <p>A simpler and more robust solution would be preferable.
+ *
+ * <h2>Caveat</h2>
+ *
+ * <p>There is one extra case (at least) covered here which that article naively
  * omits...
  *
- * The article suggests that each slope can effectively ignore collisions that
- * occur when the slope node is outside of its "region", or column. This is
+ * <p>The article suggests that each slope can effectively ignore collisions
+ * that occur when the slope node is outside of its "region", or column. This is
  * true when slopes are connected to other slopes and floor tiles, but consider
  * the case where a slope tile leads to a vertical drop; in this case, if a
  * hitbox is right on the edge of the slope, its slope node will not be in the
- * region of ANY slope, and will therefore fall right through the tile.
+ * region of ANY slope, and will therefore fall right through the tile:
  *
- * To fix this, we allow slopes to generate collisions if the slope node is
+ * <pre>
+ *    \   _____
+ *     \ |     |
+ *      \|__.__|
+ *       \
+ *        |
+ *        |
+ * </pre>
+ *
+ * <p>To fix this, we allow slopes to generate collisions if the slope node is
  * outside of its column, but we define a notion of priority; if a Hitbox
  * collides with multiple slope tiles, the one whose column contains the slope
  * node takes priority.
  *
- *     BUG:
- *     If a Hitbox collides with multiple slope tiles that all share this
- *     priority (i.e. multiple slope tiles in the same column), the last tile
- *     processed will take precedence. Ideally, all such tiles should be allowed
- *     to generate collisions, and the nearest collision should be preferred.
+ * <!-------------------------------------------------------------------------->
+ * <h1>Known Issues</h1>
+ * <!-------------------------------------------------------------------------->
+ *
+ * <h2>Conflicting Priorities</h2>
+ *
+ * <p>If a Hitbox collides with multiple slope tiles that all have priority
+ * (i.e. multiple slope tiles in the same column), the last tile processed will
+ * take precedence. This causes noticeably strange behaviour in thin sloped
+ * tunnels.
+ *
+ * <p>To fix this, we should allow all such tiles to generate collisions, and
+ * the nearest collision should be preferred.
+ *
+ * <h2>Wide Hitboxes</h2>
+ *
+ * <p>Wide Hitboxes can clip into walls, if atop a slope that leads to a wall.
+ *
+ * <p>This happens because the edge of the Hitbox is already inside the wall
+ * by the time it is high enough to collide with it.
+ *
+ * <pre>
+ *         |  <-- Hitbox is too short to collide with this wall.
+ *        _\___
+ *    A  |__.__|
+ *           \
+ *       <-->
+ *        B
+ * </pre>
+ *
+ * <p>This is the case when length B is greater than length A
+ *      (hitbox.width / 2 > hitbox.height).
+ *
+ * <p>To fix this, we would have to add additional CollisionNodes above the
+ * Hitbox, that can generate collisions only when the Hitbox is on a slope.
+ *
+ * <h2>Wedged Hitboxes</h2>
+ *
+ * <p>A Hitbox wedged between a slope and a solid floor / ceiling tile will be
+ * forced into the solid block.
+ *
+ * <h2>Back of Slopes</h2>
+ *
+ * <p>A Hitbox can travel straight through the back of a slope. Ideally these
+ * should be treated as solid edges.
+ *
+ * <h2>Falling through Slopes</h2>
+ *
+ * <p>A Hitbox will sometimes fall through a slope if there is no solid block
+ * beneath it.
  *
  * @author Dan Bryce
  */
@@ -511,37 +592,12 @@ public abstract class Slope extends ForegroundTile
         Hitbox hitbox = result.hitbox;
 
         if (shouldBounceOffSlope(hitbox)) {
-
-            // Collisions with Slopes are always in the y-axis,
-            // but they affect the Hitbox speed in BOTH axes
-            float prevSpeedX = hitbox.getSpeedX();
-            float prevSpeedY = hitbox.getSpeedY();
-
-            // The new y-speed is the old x-speed
-            float newSpeedY = prevSpeedX
-                    * hitbox.bounceCoefficient
-                    * getBounceMultiplierY();
-            hitbox.setSpeedY(newSpeedY);
-
-            // The new x-speed is the old y-speed
-            float newSpeedX = prevSpeedY
-                    * hitbox.bounceCoefficient
-                    * getBounceMultiplierX();
-            hitbox.setSpeedX(newSpeedX);
+            rebound(hitbox);
 
         } else if (shouldRemoveSpeedOnCollision(result)) {
             hitbox.setSpeedY(0);
         }
     }
-
-    /**
-     * Determines if a Hitbox should have its y-speed removed after a collision.
-     *
-     * @param result
-     * @return
-     */
-    protected abstract boolean shouldRemoveSpeedOnCollision(
-            CollisionResult result);
 
     /**
      * Determines if a Hitbox should bounce off this slope, as opposed to
@@ -554,8 +610,52 @@ public abstract class Slope extends ForegroundTile
         return !hitbox.getCollisionFlag(Hitbox.SUPPORTS_SLOPE_TRAVERSAL);
     }
 
+    /**
+     * Causes a Hitbox to rebound off this Slope.
+     *
+     * @param hitbox
+     */
+    private void rebound(Hitbox hitbox) {
+
+        // Collisions with Slopes are always in the y-axis,
+        // but they affect the Hitbox speed in BOTH axes
+        float prevSpeedX = hitbox.getSpeedX();
+        float prevSpeedY = hitbox.getSpeedY();
+
+        // The new y-speed is the old x-speed
+        float newSpeedY = prevSpeedX
+                * hitbox.bounceCoefficient
+                * getBounceMultiplierY();
+        hitbox.setSpeedY(newSpeedY);
+
+        // The new x-speed is the old y-speed
+        float newSpeedX = prevSpeedY
+                * hitbox.bounceCoefficient
+                * getBounceMultiplierX();
+        hitbox.setSpeedX(newSpeedX);
+    }
+
+    /**
+     * Gets the multiplier applied to a Hitbox's x-speed after a bounce.
+     *
+     * @return
+     */
     protected abstract float getBounceMultiplierX();
 
+    /**
+     * Gets the multiplier applied to a Hitbox's y-speed after a bounce.
+     *
+     * @return
+     */
     protected abstract float getBounceMultiplierY();
+
+    /**
+     * Determines if a Hitbox should have its y-speed removed after a collision.
+     *
+     * @param result
+     * @return
+     */
+    protected abstract boolean shouldRemoveSpeedOnCollision(
+            CollisionResult result);
 
 }
