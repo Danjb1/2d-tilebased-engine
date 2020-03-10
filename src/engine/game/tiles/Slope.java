@@ -92,6 +92,11 @@ public abstract class Slope extends ForegroundTile
     public void postProcessing(
             CollisionResult result, PostProcessCollision slopeCollision) {
 
+        // Ignore CollisionNodes that are not relevant to this Slope
+        if (!isNodeValidForSlope(slopeCollision.node)) {
+            return;
+        }
+
         // Prevent slopes from interfering with each other;
         // the slope containing the slope node takes precedence over others
         boolean hasPriority = doesSlopeHavePriority(result, slopeCollision);
@@ -126,6 +131,18 @@ public abstract class Slope extends ForegroundTile
             addSlopeCollision(result, slopeCollision);
         }
     }
+
+    /**
+     * Determines if a CollisionNode can generate a collision for this slope.
+     *
+     * <p>The collision generated is always relative to the node involved in
+     * the collision, so considering nodes on the wrong side of the Hitbox (or
+     * in the middle of a tall Hitbox) can result in strange behaviour.
+     *
+     * @param node
+     * @return
+     */
+    protected abstract boolean isNodeValidForSlope(CollisionNode node);
 
     /**
      * Determines if a slope collision should take priority over collisions

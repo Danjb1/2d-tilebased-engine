@@ -11,15 +11,15 @@
 ## Bugs
 
  - Slopes:
-    - Hitbox behaves strangely when colliding with 2 slope tiles in the same column
-        - Corners of a slope "diamond"
-        - Very tight sloped tunnels (especially when jumping!)
+    - Hitbox behaves strangely in very tight sloped tunnels
     - Hitbox clips through solid blocks if "wedged" between a slope and a solid block
     - Hitbox can clip through the "back" of a slope (not yet supported)
     - Hitbox can fall through a slope if there is no solid tile immediately below it
     - Hitboxes with width > height can clip through a wall at the top of a slope
 
 ## Tech Debt
+
+ - Rename package to something less generic
 
  - Don't log to System.out
 

@@ -22,6 +22,11 @@ public class RightSlope extends Slope {
     }
 
     @Override
+    protected boolean isNodeValidForSlope(CollisionNode node) {
+        return node.isOnBottomEdge();
+    }
+
+    @Override
     protected boolean isCollisionValid_Y(
             CollisionResult result,
             PostProcessCollision slopeCollision,

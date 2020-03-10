@@ -51,12 +51,30 @@ public class Hitbox {
         }
 
         /**
+         * Determines if this Node is on the right edge of a Hitbox.
+         *
+         * @return
+         */
+        public boolean isOnRightEdge() {
+            return x == Hitbox.this.width - Physics.SMALLEST_DISTANCE;
+        }
+
+        /**
          * Determines if this Node is on the top edge of a Hitbox.
          *
          * @return
          */
         public boolean isOnTopEdge() {
             return y == 0;
+        }
+
+        /**
+         * Determines if this Node is on the top edge of a Hitbox.
+         *
+         * @return
+         */
+        public boolean isOnBottomEdge() {
+            return y == Hitbox.this.height - Physics.SMALLEST_DISTANCE;
         }
 
         // Auto-generated
@@ -69,21 +87,17 @@ public class Hitbox {
             return result;
         }
 
-        // Auto-generated
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
-            if (getClass() != obj.getClass())
-                return false;
+            }
             CollisionNode other = (CollisionNode) obj;
-            if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
-                return false;
-            if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
-                return false;
-            return true;
+            return x == other.x
+                    && y == other.y;
         }
 
     }
