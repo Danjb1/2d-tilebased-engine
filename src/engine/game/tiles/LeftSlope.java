@@ -111,6 +111,11 @@ public class LeftSlope extends Slope {
     }
 
     @Override
+    protected boolean isPointInsideBase(float xInSlope, float yInSlope) {
+        return xInSlope > Tile.WIDTH && yInSlope > Tile.HEIGHT;
+    }
+
+    @Override
     protected float calculateY(float distIntoTileX) {
         /*
          *      A

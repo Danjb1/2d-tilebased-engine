@@ -111,6 +111,11 @@ public class RightSlope extends Slope {
     }
 
     @Override
+    protected boolean isPointInsideBase(float xInSlope, float yInSlope) {
+        return xInSlope < 0 && yInSlope > Tile.HEIGHT;
+    }
+
+    @Override
     protected float calculateY(float distIntoTileX) {
         /*
          *            B

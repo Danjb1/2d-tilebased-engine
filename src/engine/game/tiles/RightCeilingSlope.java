@@ -124,6 +124,11 @@ public class RightCeilingSlope extends Slope {
     }
 
     @Override
+    protected boolean isPointInsideBase(float xInSlope, float yInSlope) {
+        return xInSlope < 0 && yInSlope < 0;
+    }
+
+    @Override
     protected float calculateY(float distIntoTileX) {
         /*
          *     A _____
