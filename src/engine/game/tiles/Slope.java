@@ -142,11 +142,6 @@ import engine.game.physics.PostProcessCollision;
  * <p>A Hitbox can travel straight through the back of a slope. Ideally these
  * should be treated as solid edges.
  *
- * <h2>Falling through Slopes</h2>
- *
- * <p>A Hitbox will sometimes fall through a slope if there is no solid block
- * beneath it.
- *
  * @author Dan Bryce
  */
 public abstract class Slope extends ForegroundTile
