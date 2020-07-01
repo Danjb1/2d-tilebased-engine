@@ -12,7 +12,7 @@ import com.danjb.engine.application.Application;
 import com.danjb.engine.application.Input;
 
 /**
- * Example Launcher implementation.
+ * Example Application implementation.
  *
  * @author Dan Bryce
  */

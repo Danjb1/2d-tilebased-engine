@@ -1,11 +1,11 @@
 package com.danjb.engine.application;
 
 /**
- * Class responsible for initialising and managing the application as a whole.
+ * Class responsible for managing the lifecycle of the game.
  *
  * @author Dan Bryce
  */
-public abstract class Application implements StateSwitcher {
+public abstract class Application implements StateContext {
 
     /**
      * Flag to tell the game to exit cleanly.
@@ -131,7 +131,7 @@ public abstract class Application implements StateSwitcher {
      */
     protected void exit() {
 
-        Logger.log("Exiting with status: %d", exitStatus);
+        Logger.get().log("Exiting with status: %d", exitStatus);
 
         // Clean up the current State
         if (state != null) {
@@ -160,6 +160,7 @@ public abstract class Application implements StateSwitcher {
      *
      * @return
      */
+    @Override
     public State getState() {
         return state;
     }

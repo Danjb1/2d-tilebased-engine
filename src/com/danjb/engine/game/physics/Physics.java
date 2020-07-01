@@ -183,7 +183,7 @@ public abstract class Physics {
              * Currently our solution is just to move as far as possible while
              * preserving the x:y ratio of the movement.
              */
-            Logger.log("Trying to move too far in the x-axis: %f", dx);
+            Logger.get().log("Trying to move too far in the x-axis: %f", dx);
             if (dx > dy) {
                 float ratio = dy / dx;
                 dx = Math.copySign(Tile.WIDTH - Physics.SMALLEST_DISTANCE, dx);
@@ -193,7 +193,7 @@ public abstract class Physics {
 
         if (Math.abs(dy) > MAX_MOVE_DISTANCE) {
             // See comment above
-            Logger.log("Trying to move too far in the y-axis: %f", dy);
+            Logger.get().log("Trying to move too far in the y-axis: %f", dy);
             float ratio = dx / dy;
             dy = Math.copySign(Tile.HEIGHT - Physics.SMALLEST_DISTANCE, dy);
             dx = ratio * dy;

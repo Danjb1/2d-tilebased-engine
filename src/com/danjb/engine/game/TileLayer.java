@@ -57,7 +57,7 @@ public class TileLayer {
             usedTileIds.add(tileId);
         } catch (ArrayIndexOutOfBoundsException ex) {
             // Somehow, we are trying to set a tile that's out of bounds
-            Logger.log("Trying to set invalid tile: %d, %d", tileX, tileY);
+            Logger.get().log("Trying to set invalid tile: %d, %d", tileX, tileY);
         }
     }
 

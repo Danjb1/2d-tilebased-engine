@@ -19,13 +19,11 @@
 
 ## Tech Debt
 
- - Don't log to System.out
-
- - Move more code from demo project to engine?
-
  - Reduce duplication between the various slope classes
 
  - Improve test coverage (use reflection to test private methods)
+
+ - Split GameUtils into more specific utility classes
 
 ## Demo
 

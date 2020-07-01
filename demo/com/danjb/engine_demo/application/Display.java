@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import com.danjb.engine.application.State;
+import com.danjb.engine.application.StateContext;
 
 /**
  * JPanel to which we render the current State.
@@ -21,9 +22,9 @@ public class Display extends JPanel {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The launcher.
+     * The context that holds the current State.
      */
-    private DemoApplication launcher;
+    private StateContext context;
 
     /**
      * Graphics context used during rendering.
@@ -33,12 +34,12 @@ public class Display extends JPanel {
     /**
      * Creates a Display with the given dimensions.
      *
-     * @param launcher
+     * @param context
      * @param width
      * @param height
      */
-    public Display(DemoApplication launcher, int width, int height) {
-        this.launcher = launcher;
+    public Display(StateContext context, int width, int height) {
+        this.context = context;
 
         setPreferredSize(new Dimension(width, height));
     }
@@ -56,7 +57,7 @@ public class Display extends JPanel {
         gfx = (Graphics2D) g;
 
         // Render the current State
-        State currentState = launcher.getState();
+        State currentState = context.getState();
         if (currentState != null) {
             currentState.render();
         }

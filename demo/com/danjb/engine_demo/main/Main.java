@@ -15,6 +15,7 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
+
         try {
 
             DemoApplication app = new DemoApplication();
@@ -25,7 +26,7 @@ public class Main {
             app.start(new GameState(app, logic));
 
         } catch (Exception ex) {
-            Logger.log(ex);
+            Logger.get().log(ex);
             System.exit(-1);
         }
     }
