@@ -19,8 +19,6 @@
 
 ## Tech Debt
 
- - Rename package to something less generic
-
  - Don't log to System.out
 
  - Move more code from demo project to engine?
