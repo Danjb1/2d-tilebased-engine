@@ -2,9 +2,9 @@ package engine.game.tiles;
 
 import engine.game.physics.Collision;
 import engine.game.physics.CollisionResult;
-import engine.game.physics.Hitbox.CollisionNode;
 import engine.game.physics.Physics;
 import engine.game.physics.PostProcessCollision;
+import engine.game.physics.Hitbox.CollisionNode;
 
 /**
  * Right Slope.

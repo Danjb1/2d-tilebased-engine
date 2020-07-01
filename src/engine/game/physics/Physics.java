@@ -5,7 +5,6 @@ import java.util.Set;
 import engine.game.GameUtils;
 import engine.game.Level;
 import engine.game.Logic;
-import engine.game.TileLayer;
 import engine.game.physics.Hitbox.CollisionNode;
 import engine.game.tiles.ForegroundTile;
 import engine.game.tiles.PostProcessingTile;

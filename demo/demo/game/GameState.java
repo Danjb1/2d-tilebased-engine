@@ -3,13 +3,15 @@ package demo.game;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
-import demo.game.entities.Player;
+import demo.game.entities.EntityGraphic;
+import demo.game.entities.player.Player;
+import demo.game.entities.player.PlayerCameraControllerComponent;
 import demo.launcher.DemoLauncher;
 import demo.render.GameRenderer;
-import engine.game.Camera;
 import engine.game.GameUtils;
-import engine.game.GameUtils.DirectionX;
 import engine.game.Logic;
+import engine.game.GameUtils.DirectionX;
+import engine.game.camera.Camera;
 import engine.game.tiles.ForegroundTile;
 import engine.launcher.Input;
 import engine.launcher.State;
@@ -75,11 +77,8 @@ public class GameState extends State {
         // Add our Player
         player = new Player(GameUtils.worldUnits(5), GameUtils.worldUnits(5));
         player.attach(new EntityGraphic(Color.RED));
+        player.attach(new PlayerCameraControllerComponent(camera));
         logic.addEntity(player);
-
-        // Track the Player
-        camera.trackEntity(player);
-        camera.teleportToDestination();
     }
 
     @Override

@@ -7,8 +7,11 @@ import org.junit.Test;
 import engine.game.GameUtils;
 import engine.game.physics.CollisionResult;
 import engine.game.physics.Hitbox;
-import engine.game.physics.Hitbox.CollisionNode;
 import engine.game.physics.PostProcessCollision;
+import engine.game.physics.Hitbox.CollisionNode;
+import engine.game.tiles.LeftCeilingSlope;
+import engine.game.tiles.Slope;
+import engine.game.tiles.Tile;
 
 /**
  * Left Ceiling Slope.

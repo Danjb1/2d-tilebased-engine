@@ -39,6 +39,9 @@ public abstract class Launcher {
 
     /**
      * Constructs the Launcher.
+     *
+     * @param width
+     * @param height
      */
     protected Launcher(int width, int height) {
         createDisplay(width, height);
@@ -46,6 +49,9 @@ public abstract class Launcher {
 
     /**
      * Creates the display.
+     *
+     * @param width
+     * @param height
      */
     protected abstract void createDisplay(int width, int height);
 

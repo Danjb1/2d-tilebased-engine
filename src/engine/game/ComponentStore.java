@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ComponentStore<T extends Component> {
 
@@ -45,8 +46,22 @@ public class ComponentStore<T extends Component> {
      * @param component
      */
     public void remove(T component) {
-        List<T> componentsWithKey = getAll(component.getKey());
+        components.remove(component);
+        List<T> componentsWithKey = componentsByKey.get(component.getKey());
         componentsWithKey.remove(component);
+    }
+
+    /**
+     * Removes all {@link Component}s with the given key.
+     *
+     * @param key
+     */
+    public void removeAll(String key) {
+        componentsByKey.remove(key);
+        components = components
+                .stream()
+                .filter(c -> !c.key.equals(key))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -56,7 +71,18 @@ public class ComponentStore<T extends Component> {
      * @param event
      */
     public void notifyAll(String key, ComponentEvent event) {
-        List<T> components = getAll(key);
+        List<T> componentsWithKey = getAll(key);
+        for (T component : componentsWithKey) {
+            component.notify(event);
+        }
+    }
+
+    /**
+     * Sends an event to all Components.
+     *
+     * @param event
+     */
+    public void notifyAll(ComponentEvent event) {
         for (T component : components) {
             component.notify(event);
         }

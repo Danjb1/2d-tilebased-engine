@@ -105,7 +105,7 @@ public abstract class Entity implements HitboxListener {
     public void teleport(float x, float y) {
         hitbox.setPos(x, y);
 
-        components.notifyAll(CameraSettings.KEY, new EntityTeleported());
+        components.notifyAll(new EntityTeleported());
     }
 
     /**
@@ -140,7 +140,9 @@ public abstract class Entity implements HitboxListener {
     }
 
     /**
-     * Updates this Entity (should be called each frame).
+     * Updates this Entity.
+     *
+     * <p>This is called every frame, BEFORE physics is applied.
      *
      * <p>This should only be called after the Entity has been added to the
      * world, since it is dependent on the logic.
@@ -151,6 +153,23 @@ public abstract class Entity implements HitboxListener {
         // Update Components
         for (EntityComponent component : components.asList()) {
             component.update(logic, delta);
+        }
+    }
+
+    /**
+     * Updates this Entity.
+     *
+     * <p>This is called every frame, AFTER physics is applied.
+     *
+     * <p>This should only be called after the Entity has been added to the
+     * world, since it is dependent on the logic.
+     *
+     * @param delta
+     */
+    public void lateUpdate(int delta) {
+        // Update Components
+        for (EntityComponent component : components.asList()) {
+            component.lateUpdate(logic, delta);
         }
     }
 

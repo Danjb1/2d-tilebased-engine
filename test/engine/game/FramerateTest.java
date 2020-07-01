@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import engine.game.GameUtils;
+import engine.game.Level;
+import engine.game.Logic;
 import engine.game.entities.Entity;
 import engine.game.physics.Hitbox;
 import engine.game.physics.Physics;
@@ -92,9 +95,9 @@ public class FramerateTest {
 
         // THEN the Entity has not moved
         Hitbox hitbox = entity.hitbox;
-        assertEquals(GameUtils.worldUnits(1), hitbox.top(),
+        assertEquals(GameUtils.worldUnits(1), hitbox.y,
                 Physics.SMALLEST_DISTANCE);
-        assertEquals(GameUtils.worldUnits(1), hitbox.left(),
+        assertEquals(GameUtils.worldUnits(1), hitbox.x,
                 Physics.SMALLEST_DISTANCE);
     }
 

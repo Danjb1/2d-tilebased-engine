@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import engine.game.GameUtils;
+
 /**
  * Tests of the static methods in the GameUtils class.
  *

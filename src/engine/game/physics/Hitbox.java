@@ -123,6 +123,15 @@ public class Hitbox {
     public static final int CUSTOM_FLAG_INDEX = 1;
 
     /**
+     * Delta time used when determining if a bounce is successful.
+     *
+     * <p>If the upward speed after a bounce is not enough to keep the Hitbox
+     * moving up for this amount of time (in milliseconds), then the Hitbox is
+     * considered to have landed.
+     */
+    private static final int BOUNCE_SIMULATION_DELTA = 16;
+
+    /**
      * Listener to inform whenever significant events occur.
      */
     private HitboxListener listener;
@@ -325,6 +334,7 @@ public class Hitbox {
      * might go straight through them!
      *
      * @param edgeLength Length of the collision edge, in world units.
+     * @return
      */
     private float[] getCollisionNodesPositions(float edgeLength) {
 
@@ -473,8 +483,35 @@ public class Hitbox {
      * @return
      */
     private boolean hasLanded(CollisionResult result) {
-        // Hitbox has landed if it has hit the ground and stopped
-        return result.getAttemptedDy() > 0 && !isMovingY();
+
+        // Hitbox can only land if it was falling
+        if (result.getAttemptedDy() <= 0) {
+            return false;
+        }
+
+        // Hitbox has landed if it hit the ground and stopped
+        if (!isMovingY()) {
+            return true;
+        }
+
+        // Hitbox has landed if it has bounced, but without enough speed to
+        // overcome gravity (as it would hit the ground again immediately)
+        if (speedY < 0 && getSpeedYAfter(BOUNCE_SIMULATION_DELTA) > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the y-speed after applying gravity for some time.
+     *
+     * @param delta
+     * @return
+     */
+    private float getSpeedYAfter(int delta) {
+        return Physics.applyGravity(speedY, delta, gravityCoefficient);
+
     }
 
     /**
@@ -732,24 +769,6 @@ public class Hitbox {
      */
     public void setCentre(float x, float y) {
         setPos(x - width / 2, y - height / 2);
-    }
-
-    /**
-     * Gets the x-position of the left edge of this Hitbox, in world units.
-     *
-     * @return
-     */
-    public float left() {
-        return x;
-    }
-
-    /**
-     * Gets the y-position of the top edge of this Hitbox, in world units.
-     *
-     * @return
-     */
-    public float top() {
-        return y;
     }
 
     /**

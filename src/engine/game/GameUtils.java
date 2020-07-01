@@ -234,6 +234,18 @@ public class GameUtils {
     }
 
     /**
+     * Multiplies the given value by either -1 or 1 at random, using the given
+     * random number generator.
+     *
+     * @param i
+     * @param random
+     * @return
+     */
+    public static float randomSign(float i, Random random) {
+        return i * (random.nextDouble() < 0.5 ? -1 : 1);
+    }
+
+    /**
      * Returns a random double between the 2 limits.
      *
      * @param min
@@ -280,6 +292,10 @@ public class GameUtils {
     public static int randBetween(int min, int max, Random random) {
         return min + (int)(random.nextDouble() * ((max - min) + 1));
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Math
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Clamps an integer between 2 limits.

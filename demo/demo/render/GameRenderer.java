@@ -3,15 +3,15 @@ package demo.render;
 import java.awt.Graphics2D;
 import java.util.Collection;
 
-import demo.game.EntityGraphic;
 import demo.game.GameState;
 import demo.game.TileGraphic;
+import demo.game.entities.EntityGraphic;
 import demo.launcher.Display;
-import engine.game.Camera;
 import engine.game.GameUtils;
 import engine.game.Level;
 import engine.game.Logic;
 import engine.game.TileLayer;
+import engine.game.camera.Camera;
 import engine.game.entities.Entity;
 import engine.game.physics.Hitbox;
 import engine.game.tiles.Tile;
@@ -189,8 +189,8 @@ public class GameRenderer {
             gfx.setColor(entityGfx.getColour());
 
             Hitbox hitbox = entity.hitbox;
-            int drawX = worldToDisplayX(hitbox.left());
-            int drawY = worldToDisplayY(hitbox.top());
+            int drawX = worldToDisplayX(hitbox.x);
+            int drawY = worldToDisplayY(hitbox.y);
             int width = worldToDisplay(hitbox.width);
             int height = worldToDisplay(hitbox.height);
 

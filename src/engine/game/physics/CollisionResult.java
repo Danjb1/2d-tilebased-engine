@@ -257,7 +257,7 @@ public class CollisionResult {
                 .orElse(null);
 
         if (nearestCollisionX == null) {
-            newX = hitbox.left() + attempted_dx;
+            newX = hitbox.x + attempted_dx;
             return;
         }
 
@@ -286,7 +286,7 @@ public class CollisionResult {
                 .orElse(null);
 
         if (nearestCollisionY == null) {
-            newY = hitbox.top() + attempted_dy;
+            newY = hitbox.y + attempted_dy;
             return;
         }
 

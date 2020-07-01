@@ -1,7 +1,6 @@
-package engine.game;
+package engine.game.camera;
 
-import engine.game.entities.CameraSettings;
-import engine.game.entities.Entity;
+import engine.game.Level;
 import engine.game.physics.Hitbox;
 import engine.game.tiles.Tile;
 import engine.util.Rectangle;
@@ -12,19 +11,6 @@ import engine.util.Rectangle;
  * @author Dan Bryce
  */
 public class Camera {
-
-    public enum TrackingMode {
-
-        /**
-         * TrackingMode used to make the Camera follow an Entity.
-         */
-        FOLLOW,
-
-        /**
-         * TrackingMode used to keep the Camera centred on an Entity.
-         */
-        CENTRED
-    }
 
     /**
      * Distance of the Camera from the game.
@@ -42,19 +28,9 @@ public class Camera {
     private Rectangle visibleRegion = new Rectangle();
 
     /**
-     * Entity this Camera is tracking.
+     * Controller responsible for moving the Camera.
      */
-    private Entity targetEntity;
-
-    /**
-     * TrackingMode used to determine the Camera's tracking behaviour.
-     */
-    private TrackingMode trackingMode = TrackingMode.FOLLOW;
-
-    /**
-     * Settings used to control the Camera.
-     */
-    private CameraSettings settings;
+    private CameraController controller;
 
     /**
      * Creates a Camera to fill the given area of the display.
@@ -118,35 +94,18 @@ public class Camera {
     }
 
     /**
-     * Centres the camera immediately on the target Entity.
+     * Teleports the camera immediately to the target Entity.
      */
     public void teleportToDestination() {
 
-        if (targetEntity == null) {
+        if (controller == null) {
             return;
         }
 
-        // Centre immediately on the tracked Entity
-        Hitbox hitbox = targetEntity.hitbox;
-        settings.entityTeleported();
-        float targetX = hitbox.centreX() + settings.getTargetOffsetX();
-        float targetY = hitbox.centreY() + settings.getTargetOffsetY();
-        float x = targetX - visibleRegion.width / 2;
-        float y = targetY - visibleRegion.height / 2;
-        setPos(x, y);
-    }
+        float x = controller.getCameraCentreX(this);
+        float y = controller.getCameraCentreY(this);
 
-    /**
-     * Instructs the Camera to track the given Entity.
-     *
-     * @param entity
-     */
-    public void trackEntity(Entity entity) {
-        targetEntity = entity;
-        settings = (CameraSettings) entity.components.get(CameraSettings.KEY);
-        if (settings == null) {
-            settings = new CameraSettings();
-        }
+        setCentre(x, y);
     }
 
     /**
@@ -156,57 +115,28 @@ public class Camera {
      */
     public void update(int delta) {
 
-        if (targetEntity == null) {
+        if (controller == null) {
             return;
         }
 
-        // Determine how far the Camera "should" move
-        float dx = getDistToTargetX();
-        float dy = getDistToTargetY();
+        float dx;
+        float dy;
 
-        // Keep the Camera speed within permitted limits
-        if (trackingMode == TrackingMode.FOLLOW) {
-            dx = settings.limitDx(dx);
-            dy = settings.limitDy(dy);
+        if (level.getWorldWidth() <= visibleRegion.width) {
+            // No need to move if the whole level is visible
+            dx = 0;
+        } else {
+            dx = controller.getCameraUpdateX(this, delta);
+        }
+
+        if (level.getWorldHeight() <= visibleRegion.height) {
+            // No need to move if the whole level is visible
+            dy = 0;
+        } else {
+            dy = controller.getCameraUpdateY(this, delta);
         }
 
         move(dx, dy);
-    }
-
-    /**
-     * Determines how fast the camera should move in the x-axis this frame.
-     *
-     * @return
-     */
-    private float getDistToTargetX() {
-
-        // If the full width of the level is visible, there is no need to move
-        if (level.getWorldWidth() <= visibleRegion.width) {
-            return 0;
-        }
-
-        // Calculate how far the camera is from the target
-        Hitbox hitbox = targetEntity.hitbox;
-        float targetPos = hitbox.centreX() + settings.getTargetOffsetX();
-        return targetPos - visibleRegion.getCenterX();
-    }
-
-    /**
-     * Determines how fast the camera should move in the y-axis this frame.
-     *
-     * @return
-     */
-    private float getDistToTargetY() {
-
-        // If the full height of the level is visible, there is no need to move
-        if (level.getWorldHeight() <= visibleRegion.height) {
-            return 0;
-        }
-
-        // Calculate how far the camera is from the target
-        Hitbox hitbox = targetEntity.hitbox;
-        float targetPos = hitbox.centreY() + settings.getTargetOffsetY();
-        return targetPos - visibleRegion.getCenterY();
     }
 
     /**
@@ -226,12 +156,8 @@ public class Camera {
      * @param y
      */
     public void setCentre(float x, float y) {
-        /*
-         * We cast the target dimensions to integers, otherwise jitter occurs
-         * due to the way the final result is rounded during rendering.
-         */
-        setPos(x - (int)(visibleRegion.width / 2),
-                y - (int)(visibleRegion.height / 2));
+        setPos(x - (visibleRegion.width / 2),
+                y - (visibleRegion.height / 2));
     }
 
     /**
@@ -275,7 +201,7 @@ public class Camera {
      * Keeps the given camera co-ordinate within the visible portion of the
      * level.
      *
-     * @param cameraX
+     * @param cameraY
      * @return
      */
     private float keepWithinBoundsY(float cameraY) {
@@ -303,9 +229,9 @@ public class Camera {
      * @return
      */
     public boolean isOnscreen(Hitbox hitbox) {
-        return visibleRegion.contains(hitbox.left(), hitbox.top()) ||
-                visibleRegion.contains(hitbox.left(), hitbox.bottom()) ||
-                visibleRegion.contains(hitbox.right(), hitbox.top()) ||
+        return visibleRegion.contains(hitbox.x, hitbox.y) ||
+                visibleRegion.contains(hitbox.x, hitbox.bottom()) ||
+                visibleRegion.contains(hitbox.right(), hitbox.y) ||
                 visibleRegion.contains(hitbox.right(), hitbox.bottom());
     }
 
@@ -375,7 +301,7 @@ public class Camera {
      * @return
      */
     private int getNumVisibleTilesY() {
-        // See comment in getNumVisibleTilesX().
+        // See comment in getNumVisibleTilesX()
         return (int) (visibleRegion.height / Tile.HEIGHT) + 2;
     }
 
@@ -383,12 +309,12 @@ public class Camera {
         return visibleRegion;
     }
 
-    public Entity getTargetEntity() {
-        return targetEntity;
+    public void setController(CameraController controller) {
+        this.controller = controller;
     }
 
-    public void setTrackingMode(TrackingMode trackingMode) {
-        this.trackingMode = trackingMode;
+    public CameraController getController() {
+        return controller;
     }
 
 }

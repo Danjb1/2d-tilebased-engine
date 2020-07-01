@@ -29,7 +29,8 @@ public abstract class ForegroundTile extends Tile {
      * ID that is always mapped to an air tile.
      *
      * <p>This ensures that we can always retrieve an air tile for when entities
-     * are falling out of the world.
+     * are falling out of the world, or to use in place of tiles that can't be
+     * loaded.
      */
     public static final int ID_AIR = 0;
 

@@ -1,6 +1,6 @@
-package demo.game.entities;
+package demo.game.entities.player;
 
-import demo.game.DemoEntity;
+import demo.game.entities.DemoEntity;
 import engine.game.GameUtils;
 import engine.game.GameUtils.DirectionX;
 import engine.game.physics.Physics;

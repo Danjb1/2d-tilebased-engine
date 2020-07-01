@@ -1,5 +1,6 @@
 package engine.game;
 
+import engine.game.GameUtils;
 import engine.game.entities.Entity;
 
 /**

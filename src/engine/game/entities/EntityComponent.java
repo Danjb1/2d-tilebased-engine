@@ -12,9 +12,9 @@ public abstract class EntityComponent extends Component {
     }
 
     /**
-     * Called when this Component is successfully attached to a ComponentOwner.
+     * Called when this Component is successfully attached to a Entity.
      *
-     * <p>To avoid repeated casting, subclasses should cast the ComponentOwner
+     * <p>To avoid repeated casting, subclasses should cast the Entity
      * to the desired type from within this method and store it to a field.
      *
      * @param parent
@@ -35,13 +35,24 @@ public abstract class EntityComponent extends Component {
     /**
      * Updates this Component.
      *
-     * <p>This should be called every frame by the ComponentOwner, if such
-     * functionality is desired.
+     * <p>This is called every frame, BEFORE physics is applied.
      *
      * @param logic
      * @param delta
      */
     public void update(Logic logic, int delta) {
+        // Do nothing by default
+    }
+
+    /**
+     * Updates this Component.
+     *
+     * <p>This is called every frame, AFTER physics is applied.
+     *
+     * @param logic
+     * @param delta
+     */
+    public void lateUpdate(Logic logic, int delta) {
         // Do nothing by default
     }
 

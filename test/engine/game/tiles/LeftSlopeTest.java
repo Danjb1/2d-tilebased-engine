@@ -8,8 +8,12 @@ import engine.game.GameUtils;
 import engine.game.physics.Collision;
 import engine.game.physics.CollisionResult;
 import engine.game.physics.Hitbox;
-import engine.game.physics.Hitbox.CollisionNode;
 import engine.game.physics.PostProcessCollision;
+import engine.game.physics.Hitbox.CollisionNode;
+import engine.game.tiles.LeftSlope;
+import engine.game.tiles.Slope;
+import engine.game.tiles.SolidBlock;
+import engine.game.tiles.Tile;
 
 /**
  * Left Slope.

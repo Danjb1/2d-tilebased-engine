@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import engine.game.GameUtils;
+import engine.game.Level;
+import engine.game.Logic;
 import engine.game.entities.Entity;
 import engine.game.physics.CollisionResult;
 import engine.game.physics.Physics;
