@@ -3,7 +3,6 @@ package com.danjb.engine_demo.render;
 import java.awt.Graphics2D;
 import java.util.Collection;
 
-import com.danjb.engine.game.GameUtils;
 import com.danjb.engine.game.Level;
 import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.TileLayer;
@@ -61,7 +60,7 @@ public class GameRenderer {
         this.logic = logic;
         this.camera = camera;
 
-        drawScale = GameUtils.pxToWorld(display.getWidth())
+        drawScale = RenderUtils.pxToWorld(display.getWidth())
                 / camera.getVisibleRegion().width;
     }
 
@@ -99,7 +98,7 @@ public class GameRenderer {
      * @return
      */
     public int worldToDisplay(float worldUnits) {
-        return (int) (GameUtils.worldToPx(worldUnits) * drawScale);
+        return (int) (RenderUtils.worldToPx(worldUnits) * drawScale);
     }
 
     /**

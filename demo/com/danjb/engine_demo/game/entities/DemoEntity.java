@@ -2,7 +2,7 @@ package com.danjb.engine_demo.game.entities;
 
 import com.danjb.engine.game.entities.Entity;
 
-public class DemoEntity extends Entity {
+public abstract class DemoEntity extends Entity {
 
     public static final int TYPE_PLAYER = 0;
 
@@ -11,9 +11,7 @@ public class DemoEntity extends Entity {
      */
     protected int type;
 
-    public DemoEntity(float x, float y, float width, float height, int type) {
-        super(x, y, width, height);
-
+    public DemoEntity(int type) {
         this.type = type;
     }
 

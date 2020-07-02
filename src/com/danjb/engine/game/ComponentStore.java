@@ -19,6 +19,16 @@ public class ComponentStore<T extends Component> {
     private Map<String, List<T>> componentsByKey = new HashMap<>();
 
     /**
+     * Destroys all Components in the store.
+     */
+    public void destroy() {
+        components.stream()
+                .forEach(c -> c.destroy());
+        components.clear();
+        componentsByKey.clear();
+    }
+
+    /**
      * Adds a {@link Component} to this ComponentStore.
      *
      * @param component
@@ -41,27 +51,13 @@ public class ComponentStore<T extends Component> {
     }
 
     /**
-     * Removes a {@link Component} from this ComponentStore.
-     *
-     * @param component
+     * Removes any Components that have been marked for deletion.
      */
-    public void remove(T component) {
-        components.remove(component);
-        List<T> componentsWithKey = componentsByKey.get(component.getKey());
-        componentsWithKey.remove(component);
-    }
-
-    /**
-     * Removes all {@link Component}s with the given key.
-     *
-     * @param key
-     */
-    public void removeAll(String key) {
-        componentsByKey.remove(key);
-        components = components
-                .stream()
-                .filter(c -> !c.key.equals(key))
-                .collect(Collectors.toList());
+    public void removeDeleted() {
+        components.removeAll(components.stream()
+                .filter(comp -> comp.isDeleted())
+                .peek(comp -> comp.destroy())
+                .collect(Collectors.toList()));
     }
 
     /**

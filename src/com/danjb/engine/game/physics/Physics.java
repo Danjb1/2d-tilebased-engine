@@ -3,13 +3,13 @@ package com.danjb.engine.game.physics;
 import java.util.Set;
 
 import com.danjb.engine.application.Logger;
-import com.danjb.engine.game.GameUtils;
 import com.danjb.engine.game.Level;
 import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.physics.Hitbox.CollisionNode;
 import com.danjb.engine.game.tiles.ForegroundTile;
 import com.danjb.engine.game.tiles.PostProcessingTile;
 import com.danjb.engine.game.tiles.Tile;
+import com.danjb.engine.util.GameUtils;
 
 /**
  * Class containing static methods and fields pertaining to the game's physics.

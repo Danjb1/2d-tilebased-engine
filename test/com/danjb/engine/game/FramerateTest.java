@@ -7,6 +7,7 @@ import org.junit.Test;
 import com.danjb.engine.game.entities.Entity;
 import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.physics.Physics;
+import com.danjb.engine.util.GameUtils;
 
 /**
  * Tests related to the game's handling of inconsistent framerates.
@@ -28,11 +29,11 @@ public class FramerateTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity e = new TestEntity(
+        Entity e = new TestEntity();
+        Hitbox hitbox = e.hitbox;
+        logic.addEntity(e,
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
-        Hitbox hitbox = e.hitbox;
-        logic.addEntity(e);
 
         // WHEN 2 seconds have passed
         int msPerFrame = 15;
@@ -56,11 +57,11 @@ public class FramerateTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity e = new TestEntity(
+        Entity e = new TestEntity();
+        Hitbox hitbox = e.hitbox;
+        logic.addEntity(e,
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
-        Hitbox hitbox = e.hitbox;
-        logic.addEntity(e);
 
         // WHEN 2 seconds have passed
         int msPerFrame = 45;
@@ -82,12 +83,12 @@ public class FramerateTest {
                 "0 0 0",
                 "1 1 1"
         );
-        Entity entity = new TestEntity(
-                GameUtils.worldUnits(1),
-                GameUtils.worldUnits(1));
+        Entity entity = new TestEntity();
         Logic logic = new Logic();
         logic.setLevel(level);
-        logic.addEntity(entity);
+        logic.addEntity(entity,
+                GameUtils.worldUnits(1),
+                GameUtils.worldUnits(1));
 
         // WHEN a lag spike occurs
         entity.update(1000);

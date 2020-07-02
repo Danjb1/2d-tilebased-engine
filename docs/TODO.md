@@ -23,7 +23,7 @@
 
  - Improve test coverage (use reflection to test private methods)
 
- - Split GameUtils into more specific utility classes
+ - Decouple Logic and Tile retrieval
 
 ## Demo
 

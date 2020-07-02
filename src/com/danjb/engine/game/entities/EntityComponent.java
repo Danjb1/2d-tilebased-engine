@@ -28,7 +28,7 @@ public abstract class EntityComponent extends Component {
      *
      * @param logic
      */
-    public void entityAddedToWorld(Logic logic) {
+    public void onSpawn(Logic logic) {
         // Do nothing by default
     }
 
@@ -53,13 +53,6 @@ public abstract class EntityComponent extends Component {
      * @param delta
      */
     public void lateUpdate(Logic logic, int delta) {
-        // Do nothing by default
-    }
-
-    /**
-     * Performs any clean-up before this Component is deleted.
-     */
-    public void destroy() {
         // Do nothing by default
     }
 

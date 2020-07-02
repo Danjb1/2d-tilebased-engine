@@ -3,12 +3,12 @@ package com.danjb.engine.game.tiles;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.danjb.engine.game.GameUtils;
 import com.danjb.engine.game.physics.Collision;
 import com.danjb.engine.game.physics.CollisionResult;
 import com.danjb.engine.game.physics.Hitbox;
-import com.danjb.engine.game.physics.PostProcessCollision;
 import com.danjb.engine.game.physics.Hitbox.CollisionNode;
+import com.danjb.engine.game.physics.PostProcessCollision;
+import com.danjb.engine.util.MathUtils;
 
 /**
  * Base class for Slopes.
@@ -509,7 +509,7 @@ public abstract class Slope extends ForegroundTile
         // Keep this position within acceptable bounds; without this, a hitbox
         // standing on the edge of a slope might get moved into the tile below,
         // bypassing the collision properties of that tile
-        yInSlopeCorrect = GameUtils.clamp(yInSlopeCorrect,
+        yInSlopeCorrect = MathUtils.clampf(yInSlopeCorrect,
                 0,
                 getMaxCollisionY());
 

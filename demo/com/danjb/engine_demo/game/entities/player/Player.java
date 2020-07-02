@@ -1,8 +1,9 @@
 package com.danjb.engine_demo.game.entities.player;
 
-import com.danjb.engine.game.GameUtils;
-import com.danjb.engine.game.GameUtils.DirectionX;
+import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.physics.Physics;
+import com.danjb.engine.util.GameUtils;
+import com.danjb.engine.util.Directions.DirectionX;
 import com.danjb.engine_demo.game.entities.DemoEntity;
 
 /**
@@ -43,18 +44,20 @@ public class Player extends DemoEntity {
     private DirectionX movementDirection = DirectionX.NONE;
 
     /**
-     * Creates a Player at the given position.
-     *
-     * @param x
-     * @param y
+     * Creates a Player.
      */
-    public Player(float x, float y) {
-        super(x, y, WIDTH, HEIGHT, DemoEntity.TYPE_PLAYER);
+    public Player() {
+        super(DemoEntity.TYPE_PLAYER);
 
         // Player should slow down dramatically in the air
         hitbox.airFrictionCoefficient = 10f;
 
         hitbox.setMaxSpeedX(MAX_SPEED_X);
+    }
+
+    @Override
+    protected Hitbox createHitbox(float x, float y) {
+        return new Hitbox(x, y, WIDTH, HEIGHT, this);
     }
 
     @Override

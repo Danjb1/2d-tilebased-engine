@@ -13,6 +13,11 @@ public abstract class Component {
     protected String key;
 
     /**
+     * Whether this Component is pending deletion.
+     */
+    protected boolean deleted;
+
+    /**
      * Creates a Component.
      *
      * @param key
@@ -30,6 +35,29 @@ public abstract class Component {
      * @param eventBeforeCast
      */
     public void notify(ComponentEvent eventBeforeCast) {
+        // Do nothing by default
+    }
+
+    /**
+     * Marks this Component for deletion.
+     */
+    public void delete() {
+        deleted = true;
+    }
+
+    /**
+     * Determines if this Component has been deleted.
+     *
+     * @return
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * Performs any necessary clean-up after this Component is deleted.
+     */
+    protected void destroy() {
         // Do nothing by default
     }
 

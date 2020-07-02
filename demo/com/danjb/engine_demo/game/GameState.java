@@ -6,11 +6,11 @@ import java.awt.event.KeyEvent;
 import com.danjb.engine.application.Application;
 import com.danjb.engine.application.Input;
 import com.danjb.engine.application.State;
-import com.danjb.engine.game.GameUtils;
-import com.danjb.engine.game.GameUtils.DirectionX;
 import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.camera.Camera;
 import com.danjb.engine.game.tiles.ForegroundTile;
+import com.danjb.engine.util.GameUtils;
+import com.danjb.engine.util.Directions.DirectionX;
 import com.danjb.engine_demo.application.DemoApplication;
 import com.danjb.engine_demo.game.entities.EntityGraphic;
 import com.danjb.engine_demo.game.entities.player.Player;
@@ -83,10 +83,12 @@ public class GameState extends State {
         renderer = new GameRenderer(demoApp.getGamePanel(), logic, camera);
 
         // Add our Player
-        player = new Player(GameUtils.worldUnits(5), GameUtils.worldUnits(5));
+        player = new Player();
         player.attach(new EntityGraphic(Color.RED));
         player.attach(new PlayerCameraControllerComponent(camera));
-        logic.addEntity(player);
+        logic.addEntity(player,
+                GameUtils.worldUnits(5),
+                GameUtils.worldUnits(5));
     }
 
     @Override

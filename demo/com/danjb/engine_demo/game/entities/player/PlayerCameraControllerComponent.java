@@ -22,7 +22,7 @@ public class PlayerCameraControllerComponent extends EntityComponent {
     }
 
     @Override
-    public void entityAddedToWorld(Logic logic) {
+    public void onSpawn(Logic logic) {
         controller = new BasicCameraController(entity);
         camera.setController(controller);
         camera.teleportToDestination();

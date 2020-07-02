@@ -1,7 +1,8 @@
 package com.danjb.engine.game;
 
-import com.danjb.engine.game.GameUtils;
 import com.danjb.engine.game.entities.Entity;
+import com.danjb.engine.game.physics.Hitbox;
+import com.danjb.engine.util.GameUtils;
 
 /**
  * Sample Entity used by unit tests.
@@ -20,8 +21,9 @@ public class TestEntity extends Entity {
      */
     private static final float HEIGHT = GameUtils.worldUnits(1);
 
-    public TestEntity(float x, float y) {
-        super(x, y, WIDTH, HEIGHT);
+    @Override
+    protected Hitbox createHitbox(float x, float y) {
+        return new Hitbox(x, y, WIDTH, HEIGHT, this);
     }
 
 }

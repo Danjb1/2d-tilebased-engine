@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.danjb.engine.game.GameUtils;
 import com.danjb.engine.game.physics.CollisionResult;
 import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.physics.PostProcessCollision;
@@ -12,6 +11,7 @@ import com.danjb.engine.game.physics.Hitbox.CollisionNode;
 import com.danjb.engine.game.tiles.RightCeilingSlope;
 import com.danjb.engine.game.tiles.Slope;
 import com.danjb.engine.game.tiles.Tile;
+import com.danjb.engine.util.GameUtils;
 
 /**
  * Right Ceiling Slope.

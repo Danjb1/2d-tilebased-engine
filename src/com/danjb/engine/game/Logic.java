@@ -55,6 +55,15 @@ public class Logic {
     protected List<Entity> entitiesToDelete = new ArrayList<>();
 
     /**
+     * Entities that have just been added to the game world.
+     *
+     * <p>We collect these in a separate list to prevent a
+     * ConcurrentModificationException during entity processing. These are then
+     * added to {@link #entities} each frame.
+     */
+    private List<Entity> pendingEntities = new ArrayList<>();
+
+    /**
      * Constructs the Logic.
      */
     public Logic() {
@@ -85,9 +94,20 @@ public class Logic {
             throw new IllegalStateException("No Level loaded");
         }
 
+        addPendingEntities();
         updateEntities(delta);
         processCollisions();
         deleteEntities();
+    }
+
+    /**
+     * Adds any newly-spawned Entities to our {@link #entities} map.
+     */
+    protected void addPendingEntities() {
+        for (Entity entity : pendingEntities) {
+            entities.put(entity.getEntityId(), entity);
+        }
+        pendingEntities.clear();
     }
 
     /**
@@ -220,18 +240,19 @@ public class Logic {
     }
 
     /**
-     * Adds the given Entity to the world.
+     * Adds an Entity to the game world.
      *
-     * <p><b>This should not be called during Entity processing.</b> Adding an
-     * Entity from within an Entity's {@link Entity#update} method can cause a
-     * ConcurrentModificationException.
+     * <p>Results in a callback to
+     * {@link Entity#addedToWorld(int, float, float, Logic)}.
      *
+     * @param x
+     * @param y
      * @param entity
      */
-    public void addEntity(Entity entity) {
+    public void addEntity(Entity entity, float x, float y) {
         int entityId = requestEntityId();
-        entities.put(entityId, entity);
-        entity.addedToWorld(entityId, this);
+        pendingEntities.add(entity);
+        entity.addedToWorld(entityId, x, y, this);
     }
 
     /**

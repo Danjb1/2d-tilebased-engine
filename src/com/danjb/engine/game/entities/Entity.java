@@ -56,18 +56,6 @@ public abstract class Entity implements HitboxListener {
      */
     protected Logic logic;
 
-    /**
-     * Creates a new Entity with the given position and size.
-     *
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     */
-    public Entity(float x, float y, float width, float height) {
-        hitbox = new Hitbox(x, y, width, height, this);
-    }
-
     ////////////////////////////////////////////////////////////////////////////
     // Getters
     ////////////////////////////////////////////////////////////////////////////
@@ -120,40 +108,60 @@ public abstract class Entity implements HitboxListener {
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Callback for when this Entity is added to the world.
+     * Called when this Entity is added to the game world.
+     *
+     * <p>This should be used for any initialisation that depends upon the
+     * Entity having a physical presence in the game world.
      *
      * <p>If this is overridden, it may be necessary to also override the
      * {@link Entity#delete} method to clean up the Logic when this Entity is
      * removed.
      *
+     * @param y
+     * @param x
      * @param id
      * @param logic
      */
-    public void addedToWorld(int id, Logic logic) {
+    public void addedToWorld(int id, float x, float y, Logic logic) {
         this.id = id;
         this.logic = logic;
 
+        hitbox = createHitbox(x, y);
+
         // Inform Components
         for (EntityComponent component : components.asList()) {
-            component.entityAddedToWorld(logic);
+            component.onSpawn(logic);
         }
     }
 
     /**
-     * Updates this Entity.
+     * Creates this Entity's Hitbox, thus defining its position and size.
+     *
+     * @param y
+     * @param x
+     * @return
+     */
+    protected abstract Hitbox createHitbox(float x, float y);
+
+    /**
+     * Updates this Entity using the given delta value.
      *
      * <p>This is called every frame, BEFORE physics is applied.
      *
      * <p>This should only be called after the Entity has been added to the
      * world, since it is dependent on the logic.
      *
-     * @param delta
+     * @param delta Milliseconds passed since the last frame.
      */
     public void update(int delta) {
+
         // Update Components
         for (EntityComponent component : components.asList()) {
             component.update(logic, delta);
         }
+
+        // Remove any Components marked for deletion
+        components.removeDeleted();
     }
 
     /**
@@ -167,21 +175,21 @@ public abstract class Entity implements HitboxListener {
      * @param delta
      */
     public void lateUpdate(int delta) {
+
         // Update Components
         for (EntityComponent component : components.asList()) {
             component.lateUpdate(logic, delta);
         }
+
+        // Remove any Components marked for deletion
+        components.removeDeleted();
     }
 
     /**
      * Performs any final clean-up before deletion.
      */
     public void destroy() {
-        // Destroy Components
-        for (EntityComponent component : components.asList()) {
-            component.destroy();
-        }
-        components.clear();
+        components.destroy();
         hitbox.destroy();
     }
 

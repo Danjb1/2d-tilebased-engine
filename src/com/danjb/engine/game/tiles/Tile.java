@@ -1,8 +1,8 @@
 package com.danjb.engine.game.tiles;
 
 import com.danjb.engine.game.ComponentStore;
-import com.danjb.engine.game.GameUtils;
 import com.danjb.engine.game.physics.Physics;
+import com.danjb.engine.util.GameUtils;
 
 /**
  * Class representing a Tile type.

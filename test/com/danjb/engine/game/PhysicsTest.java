@@ -4,12 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.danjb.engine.game.GameUtils;
-import com.danjb.engine.game.Level;
-import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.entities.Entity;
 import com.danjb.engine.game.physics.CollisionResult;
 import com.danjb.engine.game.physics.Physics;
+import com.danjb.engine.util.GameUtils;
 
 /**
  * Tests of the game's Physics.
@@ -32,7 +30,8 @@ public class PhysicsTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity entity = new TestEntity(
+        Entity entity = new TestEntity();
+        logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
@@ -59,7 +58,8 @@ public class PhysicsTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity entity = new TestEntity(
+        Entity entity = new TestEntity();
+        logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
@@ -87,7 +87,8 @@ public class PhysicsTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity entity = new TestEntity(
+        Entity entity = new TestEntity();
+        logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
@@ -115,7 +116,8 @@ public class PhysicsTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity entity = new TestEntity(
+        Entity entity = new TestEntity();
+        logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
@@ -143,7 +145,8 @@ public class PhysicsTest {
         );
         Logic logic = new Logic();
         logic.setLevel(level);
-        Entity entity = new TestEntity(
+        Entity entity = new TestEntity();
+        logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
