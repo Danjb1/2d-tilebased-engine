@@ -71,7 +71,7 @@ public class Logic {
      *
      * @param newLevel
      */
-    private void changeLevel(Level newLevel) {
+    protected void changeLevel(Level newLevel) {
         if (level != null) {
             level.destroy();
         }
@@ -89,10 +89,24 @@ public class Logic {
             throw new IllegalStateException("No Level loaded");
         }
 
-        addPendingEntities();
+        entityCleanup();
         updateEntities(delta);
         processCollisions();
+    }
+
+    /**
+     * Adds or removes any new or deleted Entities.
+     *
+     * <p>To prevent ConcurrentModificationExceptions, this should never be
+     * called during Entity processing.
+     */
+    protected void entityCleanup() {
+        // It is important that we always call `deleteEntities` before adding
+        // any pending Entities, because if one of the pending Entities
+        // OVERWRITES an existing Entity, we will lose the reference to the
+        // overwritten Entity, so it will never get destroyed.
         deleteEntities();
+        addPendingEntities();
     }
 
     /**
@@ -103,6 +117,17 @@ public class Logic {
             entities.put(entity.getEntityId(), entity);
         }
         pendingEntities.clear();
+    }
+
+    /**
+     * Remove all Entities that have been marked for deletion.
+     */
+    protected void deleteEntities() {
+        for (Entity e : entitiesToDelete) {
+            e.destroy();
+            entities.remove(e.getEntityId());
+        }
+        entitiesToDelete.clear();
     }
 
     /**
@@ -224,17 +249,6 @@ public class Logic {
     }
 
     /**
-     * Remove all Entities that have been marked for deletion.
-     */
-    protected void deleteEntities() {
-        for (Entity e : entitiesToDelete) {
-            e.destroy();
-            entities.remove(e.getEntityId());
-        }
-        entitiesToDelete.clear();
-    }
-
-    /**
      * Adds an Entity to the game world.
      *
      * <p>Results in a callback to
@@ -246,6 +260,28 @@ public class Logic {
      */
     public void addEntity(Entity entity, float x, float y) {
         int entityId = requestEntityId();
+        addEntity(entityId, entity, x, y);
+    }
+
+    /**
+     * Adds an Entity to the game world with a predefined ID.
+     *
+     * <p>Results in a callback to
+     * {@link Entity#addedToWorld(int, float, float, Logic)}.
+     *
+     * @param entityId
+     * @param x
+     * @param y
+     * @param entity
+     */
+    public void addEntity(int entityId, Entity entity, float x, float y) {
+
+        // Delete any Entity that is being overwritten
+        Entity previousEntity = entities.get(entityId);
+        if (previousEntity != null) {
+            previousEntity.delete();
+        }
+
         pendingEntities.add(entity);
         entity.addedToWorld(entityId, x, y, this);
     }

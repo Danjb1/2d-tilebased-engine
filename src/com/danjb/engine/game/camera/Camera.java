@@ -102,8 +102,8 @@ public class Camera {
             return;
         }
 
-        float x = controller.getCameraCentreX(this);
-        float y = controller.getCameraCentreY(this);
+        float x = controller.getCameraCentreX();
+        float y = controller.getCameraCentreY();
 
         setCentre(x, y);
     }
@@ -126,14 +126,14 @@ public class Camera {
             // No need to move if the whole level is visible
             dx = 0;
         } else {
-            dx = controller.getCameraUpdateX(this, delta);
+            dx = controller.getCameraUpdateX(delta);
         }
 
         if (level.getWorldHeight() <= visibleRegion.height) {
             // No need to move if the whole level is visible
             dy = 0;
         } else {
-            dy = controller.getCameraUpdateY(this, delta);
+            dy = controller.getCameraUpdateY(delta);
         }
 
         move(dx, dy);

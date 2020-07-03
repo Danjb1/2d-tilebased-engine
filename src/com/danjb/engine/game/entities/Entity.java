@@ -157,7 +157,7 @@ public abstract class Entity implements HitboxListener {
 
         // Update Components
         for (EntityComponent component : components.asList()) {
-            component.update(logic, delta);
+            component.update(delta);
         }
 
         // Remove any Components marked for deletion
@@ -178,7 +178,7 @@ public abstract class Entity implements HitboxListener {
 
         // Update Components
         for (EntityComponent component : components.asList()) {
-            component.lateUpdate(logic, delta);
+            component.lateUpdate(delta);
         }
 
         // Remove any Components marked for deletion

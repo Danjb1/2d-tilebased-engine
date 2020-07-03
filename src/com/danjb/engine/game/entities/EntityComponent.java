@@ -6,6 +6,7 @@ import com.danjb.engine.game.Logic;
 public abstract class EntityComponent extends Component {
 
     protected Entity entity;
+    protected Logic logic;
 
     public EntityComponent(String key) {
         super(key);
@@ -29,7 +30,7 @@ public abstract class EntityComponent extends Component {
      * @param logic
      */
     public void onSpawn(Logic logic) {
-        // Do nothing by default
+        this.logic = logic;
     }
 
     /**
@@ -37,10 +38,9 @@ public abstract class EntityComponent extends Component {
      *
      * <p>This is called every frame, BEFORE physics is applied.
      *
-     * @param logic
      * @param delta
      */
-    public void update(Logic logic, int delta) {
+    public void update(int delta) {
         // Do nothing by default
     }
 
@@ -49,10 +49,9 @@ public abstract class EntityComponent extends Component {
      *
      * <p>This is called every frame, AFTER physics is applied.
      *
-     * @param logic
      * @param delta
      */
-    public void lateUpdate(Logic logic, int delta) {
+    public void lateUpdate(int delta) {
         // Do nothing by default
     }
 

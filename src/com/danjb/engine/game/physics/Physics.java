@@ -253,7 +253,6 @@ public abstract class Physics {
             detectPostProcessCollisions(
                     result, level, tileProvider, hitbox.getAllNodes(), 0, 0);
 
-
             /*
              * STAGE 2:
              * Check for PostProcessingCollisions after the x-movement is

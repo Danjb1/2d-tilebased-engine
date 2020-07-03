@@ -18,6 +18,13 @@ public class TileProvider {
     protected Map<Integer, Map<Integer, Tile>> tiles = new HashMap<>();
 
     /**
+     * Resets this TileProvider to its initial state.
+     */
+    public void reset() {
+        tiles.clear();
+    }
+
+    /**
      * Gets the available tile types for the given layer.
      *
      * @param layer

@@ -1,42 +1,49 @@
 package com.danjb.engine.game.camera;
 
-import com.danjb.engine.game.entities.Entity;
-
 /**
- * CameraSettings that remains permanently centred on the target Entity.
+ * CameraController that remains permanently centred on a target.
  *
  * @author Dan Bryce
  */
 public class BasicCameraController implements CameraController {
 
-    private Entity targetEntity;
+    protected Camera camera;
+    protected float targetX;
+    protected float targetY;
 
-    public BasicCameraController(Entity targetEntity) {
-        this.targetEntity = targetEntity;
+    public BasicCameraController(Camera camera, float targetX, float targetY) {
+        this.camera = camera;
+        this.targetX = targetX;
+        this.targetY = targetY;
     }
 
     @Override
-    public float getCameraUpdateX(Camera camera, int delta) {
-        // Move such that the target Entity is centred
-        return targetEntity.hitbox.centreX() - camera.getVisibleRegion().getCenterX();
+    public float getCameraUpdateX(int delta) {
+        // Move such that the target is centred
+        return targetX - camera.getVisibleRegion().getCenterX();
     }
 
     @Override
-    public float getCameraUpdateY(Camera camera, int delta) {
-        // Move such that the target Entity is centred
-        return targetEntity.hitbox.centreY() - camera.getVisibleRegion().getCenterY();
+    public float getCameraUpdateY(int delta) {
+        // Move such that the target is centred
+        return targetY - camera.getVisibleRegion().getCenterY();
     }
 
     @Override
-    public float getCameraCentreX(Camera camera) {
-        // Centre on the target Entity
-        return targetEntity.hitbox.centreX();
+    public float getCameraCentreX() {
+        // Centre on the target
+        return targetX;
     }
 
     @Override
-    public float getCameraCentreY(Camera camera) {
-        // Centre on the target Entity
-        return targetEntity.hitbox.centreY();
+    public float getCameraCentreY() {
+        // Centre on the target
+        return targetY;
+    }
+
+    public void setTarget(float targetX, float targetY) {
+        this.targetX = targetX;
+        this.targetY = targetY;
     }
 
 }

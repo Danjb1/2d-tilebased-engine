@@ -60,8 +60,10 @@ public class Level {
 
     /**
      * Recalculates the size of the world based on the number of tiles.
+     *
+     * <p>This should be called if the size of the default TileLayer changes.
      */
-    private void recalculateWorldSize() {
+    public void recalculateWorldSize() {
         worldWidth = getNumTilesX() * Tile.WIDTH;
         worldHeight = getNumTilesY() * Tile.HEIGHT;
     }

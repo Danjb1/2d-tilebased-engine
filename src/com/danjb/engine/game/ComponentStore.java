@@ -51,6 +51,30 @@ public class ComponentStore<T extends Component> {
     }
 
     /**
+     * Deletes the Component with the given key.
+     *
+     * @param key
+     */
+    public void delete(String key) {
+        Component c = get(key);
+        if (c != null) {
+            c.delete();
+        }
+    }
+
+    /**
+     * Deletes all Components with the given key.
+     *
+     * @param key
+     */
+    public void deleteAll(String key) {
+        List<T> components = getAll(key);
+        for (Component c : components) {
+            c.delete();
+        }
+    }
+
+    /**
      * Removes any Components that have been marked for deletion.
      */
     public void removeDeleted() {

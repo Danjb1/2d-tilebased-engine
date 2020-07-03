@@ -1,6 +1,8 @@
 package com.danjb.engine.game.level;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.danjb.engine.application.Logger;
@@ -13,6 +15,20 @@ import com.danjb.engine.game.tiles.Tile;
  * @author Dan Bryce
  */
 public class TileLayer {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // TileLayerListener interface
+    ////////////////////////////////////////////////////////////////////////////
+
+    public static interface TileLayerListener {
+
+        void tileDataChanged(TileLayer layer, int x, int y);
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // TileLayer class
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Identifier for this TileLayer.
@@ -30,6 +46,11 @@ public class TileLayer {
     private Set<Integer> usedTileIds = new HashSet<>();
 
     /**
+     * Listeners to inform when this TileLayer changes.
+     */
+    private List<TileLayerListener> listeners = new ArrayList<>();
+
+    /**
      * Constructs a TileLayer.
      *
      * @param layerId
@@ -37,9 +58,20 @@ public class TileLayer {
      */
     public TileLayer(int layerId, int[][] tiles) {
         this.layerId = layerId;
+
+        initialise(tiles);
+    }
+
+    /**
+     * (Re-)initialises this TileLayer based on the given tiles.
+     *
+     * @param tiles
+     */
+    private void initialise(int[][] tiles) {
         this.tiles = tiles;
 
         // Keep track of all used tile IDs
+        usedTileIds = new HashSet<>();
         for (int y = 0; y < tiles[0].length; y++) {
             for (int x = 0; x < tiles.length; x++) {
                 usedTileIds.add(tiles[x][y]);
@@ -62,10 +94,25 @@ public class TileLayer {
         try {
             tiles[tileX][tileY] = tileId;
             usedTileIds.add(tileId);
+
+            // Inform listeners
+            for (TileLayerListener listener : listeners) {
+                listener.tileDataChanged(this, tileX, tileY);
+            }
+
         } catch (ArrayIndexOutOfBoundsException ex) {
             // Somehow, we are trying to set a tile that's out of bounds
             Logger.get().log("Trying to set invalid tile: %d, %d", tileX, tileY);
         }
+    }
+
+    /**
+     * Sets all the tiles in this TileLayer.
+     *
+     * @param newTiles
+     */
+    public void setTiles(int[][] newTiles) {
+        initialise(newTiles);
     }
 
     /**
@@ -115,6 +162,24 @@ public class TileLayer {
     public boolean contains(int tileX, int tileY) {
         return 0 <= tileX && tileX < tiles.length &&
                 0 <= tileY && tileY < tiles[0].length;
+    }
+
+    /**
+     * Adds a TileLayerListener.
+     *
+     * @param listener
+     */
+    public void addListener(TileLayerListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a TileLayerListener, if present.
+     *
+     * @param listener
+     */
+    public void removeListener(TileLayerListener listener) {
+        listeners.remove(listener);
     }
 
     /**
