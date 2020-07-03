@@ -144,7 +144,7 @@ import com.danjb.engine.util.MathUtils;
  *
  * @author Dan Bryce
  */
-public abstract class Slope extends ForegroundTile
+public abstract class Slope extends PhysicsTile
         implements PostProcessingTile {
 
     /**

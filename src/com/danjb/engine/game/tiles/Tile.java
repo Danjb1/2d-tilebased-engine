@@ -12,7 +12,7 @@ import com.danjb.engine.util.GameUtils;
  *
  * @author Dan Bryce
  */
-public abstract class Tile {
+public class Tile {
 
     /**
      * The size (width or height) of one Tile, in world units.

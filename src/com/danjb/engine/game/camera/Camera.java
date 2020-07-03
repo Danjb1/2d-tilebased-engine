@@ -1,6 +1,6 @@
 package com.danjb.engine.game.camera;
 
-import com.danjb.engine.game.Level;
+import com.danjb.engine.game.level.Level;
 import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.tiles.Tile;
 import com.danjb.engine.util.Rectangle;

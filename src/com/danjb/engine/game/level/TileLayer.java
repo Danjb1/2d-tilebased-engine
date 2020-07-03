@@ -1,10 +1,10 @@
-package com.danjb.engine.game;
+package com.danjb.engine.game.level;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import com.danjb.engine.application.Logger;
-import com.danjb.engine.game.tiles.ForegroundTile;
+import com.danjb.engine.game.tiles.PhysicsTile;
 import com.danjb.engine.game.tiles.Tile;
 
 /**
@@ -13,6 +13,11 @@ import com.danjb.engine.game.tiles.Tile;
  * @author Dan Bryce
  */
 public class TileLayer {
+
+    /**
+     * Identifier for this TileLayer.
+     */
+    private int layerId;
 
     /**
      * Tiles that make up this TileLayer.
@@ -27,9 +32,11 @@ public class TileLayer {
     /**
      * Constructs a TileLayer.
      *
+     * @param layerId
      * @param tiles
      */
-    public TileLayer(int[][] tiles) {
+    public TileLayer(int layerId, int[][] tiles) {
+        this.layerId = layerId;
         this.tiles = tiles;
 
         // Keep track of all used tile IDs
@@ -76,9 +83,9 @@ public class TileLayer {
          */
         int tileId;
         if (tileX < 0 || tileX >= getNumTilesX() || tileY < 0) {
-            tileId = ForegroundTile.ID_SOLID_BLOCK;
+            tileId = PhysicsTile.ID_SOLID_BLOCK;
         } else if (tileY >= getNumTilesY()) {
-            tileId = ForegroundTile.ID_AIR;
+            tileId = PhysicsTile.ID_AIR;
         } else {
             tileId = tiles[tileX][tileY];
         }
@@ -108,6 +115,15 @@ public class TileLayer {
     public boolean contains(int tileX, int tileY) {
         return 0 <= tileX && tileX < tiles.length &&
                 0 <= tileY && tileY < tiles[0].length;
+    }
+
+    /**
+     * Gets this TileLayer's identifier.
+     *
+     * @return
+     */
+    public int getLayerId() {
+        return layerId;
     }
 
     /**

@@ -5,14 +5,11 @@ import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.physics.Hitbox.CollisionNode;
 
 /**
- * Class representing a Tile within the foreground layer of the Level.
- *
- * <p>ForegroundTiles support collision, whereas Tiles exist at a purely
- * abstract level.
+ * Class representing a Tile with some collisions.
  *
  * @author Dan Bryce
  */
-public abstract class ForegroundTile extends Tile {
+public abstract class PhysicsTile extends Tile {
 
     /*
      * Tile types.
@@ -47,7 +44,7 @@ public abstract class ForegroundTile extends Tile {
      *
      * @param id
      */
-    public ForegroundTile(int id) {
+    public PhysicsTile(int id) {
         super(id);
     }
 
@@ -115,7 +112,7 @@ public abstract class ForegroundTile extends Tile {
     /**
      * Called when a Hitbox collides with this Tile in the y-axis.
      *
-     * @see ForegroundTile#hitboxCollidedX(CollisionResult)
+     * @see PhysicsTile#hitboxCollidedX(CollisionResult)
      * @param result
      */
     public void hitboxCollidedY(CollisionResult result) {

@@ -23,7 +23,11 @@
 
  - Improve test coverage (use reflection to test private methods)
 
- - Decouple Logic and Tile retrieval
+ - Allow Level to be subclassed instead of relying exclusively on components to add functionality?
+
+ - Tile type constants in PhysicsTile are not extensible
+
+ - ComponentStore.getAll() returns a very generic list which cannot be cast
 
 ## Demo
 

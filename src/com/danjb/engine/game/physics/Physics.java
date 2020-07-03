@@ -3,10 +3,10 @@ package com.danjb.engine.game.physics;
 import java.util.Set;
 
 import com.danjb.engine.application.Logger;
-import com.danjb.engine.game.Level;
-import com.danjb.engine.game.Logic;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine.game.physics.Hitbox.CollisionNode;
-import com.danjb.engine.game.tiles.ForegroundTile;
+import com.danjb.engine.game.tiles.PhysicsTile;
 import com.danjb.engine.game.tiles.PostProcessingTile;
 import com.danjb.engine.game.tiles.Tile;
 import com.danjb.engine.util.GameUtils;
@@ -165,14 +165,19 @@ public abstract class Physics {
      * Gets the CollisionResult of attempting to moving the given Hitbox the
      * given distance.
      *
-     * @param logic
+     * @param level
+     * @param tileProvider
      * @param hitbox
      * @param dx Attempted distance travelled in x-direction.
      * @param dy Attempted distance travelled in y-direction.
      * @return
      */
     public static CollisionResult getCollisionResult(
-            Logic logic, Hitbox hitbox, float dx, float dy) {
+            Level level,
+            TileProvider tileProvider,
+            Hitbox hitbox,
+            float dx,
+            float dy) {
 
         if (Math.abs(dx) > MAX_MOVE_DISTANCE) {
             /*
@@ -215,16 +220,16 @@ public abstract class Physics {
 
             // Move in the x-axis
             if (dx < 0) {
-                detectCollisionsX(result, logic, hitbox.getLeftNodes());
+                detectCollisionsX(result, level, tileProvider, hitbox.getLeftNodes());
             } else if (dx > 0) {
-                detectCollisionsX(result, logic, hitbox.getRightNodes());
+                detectCollisionsX(result, level, tileProvider, hitbox.getRightNodes());
             }
 
             // Move in the y-axis
             if (dy < 0) {
-                detectCollisionsY(result, logic, hitbox.getTopNodes());
+                detectCollisionsY(result, level, tileProvider, hitbox.getTopNodes());
             } else if (dy > 0) {
-                detectCollisionsY(result, logic, hitbox.getBottomNodes());
+                detectCollisionsY(result, level, tileProvider, hitbox.getBottomNodes());
             }
 
             /*
@@ -246,7 +251,7 @@ public abstract class Physics {
              *      is registered, so the x-collision never gets invalidated.
              */
             detectPostProcessCollisions(
-                    result, logic, hitbox.getAllNodes(), 0, 0);
+                    result, level, tileProvider, hitbox.getAllNodes(), 0, 0);
 
 
             /*
@@ -270,7 +275,7 @@ public abstract class Physics {
              */
             if (dx != 0) {
                 detectPostProcessCollisions(
-                        result, logic, hitbox.getAllNodes(), dx, 0);
+                        result, level, tileProvider, hitbox.getAllNodes(), dx, 0);
             }
 
             /*
@@ -279,7 +284,7 @@ public abstract class Physics {
              */
             if (dy != 0) {
                 detectPostProcessCollisions(
-                        result, logic, hitbox.getAllNodes(), dx, dy);
+                        result, level, tileProvider, hitbox.getAllNodes(), dx, dy);
             }
 
             result.finish();
@@ -292,13 +297,15 @@ public abstract class Physics {
      * Detects collisions in the x-direction.
      *
      * @param result CollisionResult to update after detecting collisions.
-     * @param logic
+     * @param level
+     * @param tileProvider
      * @param nodesY
      */
     private static void detectCollisionsX(
-            CollisionResult result, Logic logic, CollisionNode[] nodesY) {
-
-        Level level = logic.getLevel();
+            CollisionResult result,
+            Level level,
+            TileProvider tileProvider,
+            CollisionNode[] nodesY) {
 
         // Determine the position of the Hitbox to use in collision detection;
         // we store this now because this function may return different values
@@ -315,8 +322,9 @@ public abstract class Physics {
             // Find the tile which this node will intersect
             int tileX = Tile.getTileX(nodeX);
             int tileY = Tile.getTileY(nodeY);
-            int tileId = level.getForeground().getTile(tileX, tileY);
-            ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
+            int tileId = level.getDefaultLayer().getTile(tileX, tileY);
+            PhysicsTile tile = (PhysicsTile) tileProvider.getTile(
+                    level.getDefaultLayer().getLayerId(), tileId);
 
             // Let the tile handle this collision
             tile.checkForCollision_X(result, nodeX, node);
@@ -327,13 +335,15 @@ public abstract class Physics {
      * Detects collisions in the y-direction.
      *
      * @param result CollisionResult to update after detecting collisions.
-     * @param logic
+     * @param level
+     * @param tileProvider
      * @param nodesX
      */
     private static void detectCollisionsY(
-            CollisionResult result, Logic logic, CollisionNode[] nodesX) {
-
-        Level level = logic.getLevel();
+            CollisionResult result,
+            Level level,
+            TileProvider tileProvider,
+            CollisionNode[] nodesX) {
 
         // Determine the position of the Hitbox to use in collision detection;
         // we store this now because these functions may return different values
@@ -352,8 +362,9 @@ public abstract class Physics {
             // Find the tile which this node will intersect
             int tileX = Tile.getTileX(nodeX);
             int tileY = Tile.getTileY(nodeY);
-            int tileId = level.getForeground().getTile(tileX, tileY);
-            ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
+            int tileId = level.getDefaultLayer().getTile(tileX, tileY);
+            PhysicsTile tile = (PhysicsTile) tileProvider.getTile(
+                    level.getDefaultLayer().getLayerId(), tileId);
 
             // Let the tile handle this collision
             tile.checkForCollision_Y(result, nodeY, node);
@@ -367,19 +378,19 @@ public abstract class Physics {
      * should be informed of the collision.
      *
      * @param result CollisionResult to update after detecting collisions.
-     * @param logic
+     * @param level
+     * @param tileProvider
      * @param nodes
      * @param dx
      * @param dy
      */
     private static void detectPostProcessCollisions(
             CollisionResult result,
-            Logic logic,
+            Level level,
+            TileProvider tileProvider,
             Set<CollisionNode> nodes,
             float dx,
             float dy) {
-
-        Level level = logic.getLevel();
 
         for (CollisionNode node : nodes) {
 
@@ -392,8 +403,9 @@ public abstract class Physics {
             // Find the tile which this node will intersect
             int tileX = Tile.getTileX(nodeX);
             int tileY = Tile.getTileY(nodeY);
-            int tileId = level.getForeground().getTile(tileX, tileY);
-            ForegroundTile tile = (ForegroundTile) logic.getTile(tileId);
+            int tileId = level.getDefaultLayer().getTile(tileX, tileY);
+            PhysicsTile tile = (PhysicsTile) tileProvider.getTile(
+                    level.getDefaultLayer().getLayerId(), tileId);
 
             // If it is a PostProcessingTile, add a PostProcessCollision
             if (tile instanceof PostProcessingTile) {

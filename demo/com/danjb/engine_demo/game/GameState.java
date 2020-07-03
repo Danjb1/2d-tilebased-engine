@@ -8,13 +8,15 @@ import com.danjb.engine.application.Input;
 import com.danjb.engine.application.State;
 import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.camera.Camera;
-import com.danjb.engine.game.tiles.ForegroundTile;
-import com.danjb.engine.util.GameUtils;
+import com.danjb.engine.game.level.TileProvider;
+import com.danjb.engine.game.tiles.PhysicsTile;
 import com.danjb.engine.util.Directions.DirectionX;
+import com.danjb.engine.util.GameUtils;
 import com.danjb.engine_demo.application.DemoApplication;
 import com.danjb.engine_demo.game.entities.EntityGraphic;
 import com.danjb.engine_demo.game.entities.player.Player;
 import com.danjb.engine_demo.game.entities.player.PlayerCameraControllerComponent;
+import com.danjb.engine_demo.game.tiles.TileLayers;
 import com.danjb.engine_demo.render.GameRenderer;
 
 /**
@@ -65,10 +67,13 @@ public class GameState extends State {
         DemoApplication demoApp = (DemoApplication) app;
 
         // Initialise Tile graphics
-        logic.getTile(ForegroundTile.ID_AIR).components.add(
-                new TileGraphic(Color.BLACK));
-        logic.getTile(ForegroundTile.ID_SOLID_BLOCK).components.add(
-                new TileGraphic(Color.WHITE));
+        TileProvider tileProvider = logic.getTileProvider();
+        tileProvider.getTile(TileLayers.DEFAULT, PhysicsTile.ID_AIR)
+                .components
+                .add(new TileGraphic(Color.BLACK));
+        tileProvider.getTile(TileLayers.DEFAULT, PhysicsTile.ID_SOLID_BLOCK)
+                .components
+                .add(new TileGraphic(Color.WHITE));
 
         // Initialise Camera
         float aspectRatio = (float)

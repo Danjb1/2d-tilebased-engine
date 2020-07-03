@@ -1,18 +1,15 @@
 package com.danjb.engine.game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.danjb.engine.game.entities.CollisionListener;
 import com.danjb.engine.game.entities.Entity;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine.game.physics.Hitbox;
-import com.danjb.engine.game.tiles.Air;
-import com.danjb.engine.game.tiles.ForegroundTile;
-import com.danjb.engine.game.tiles.SolidBlock;
-import com.danjb.engine.game.tiles.Tile;
 
 /**
  * The game logic.
@@ -30,9 +27,9 @@ public class Logic {
     protected Level level;
 
     /**
-     * All available Tile types, by ID.
+     * TileProvider that holds our tile types.
      */
-    protected Map<Integer, Tile> tiles = new HashMap<>();
+    protected TileProvider tileProvider;
 
     /**
      * The next available Entity ID.
@@ -63,24 +60,22 @@ public class Logic {
      */
     private List<Entity> pendingEntities = new ArrayList<>();
 
-    /**
-     * Constructs the Logic.
-     */
-    public Logic() {
-        // Add the always-available Tile types
-        addTileType(new Air(ForegroundTile.ID_AIR));
-        addTileType(new SolidBlock(ForegroundTile.ID_SOLID_BLOCK));
+    public Logic(Level level, TileProvider tileProvider) {
+        this.tileProvider = tileProvider;
+
+        changeLevel(level);
     }
 
     /**
-     * Sets the current level.
+     * Changes the current Level.
      *
-     * <p>This must be called before {@link #update}.
-     *
-     * @param level
+     * @param newLevel
      */
-    public void setLevel(Level level) {
-        this.level = level;
+    private void changeLevel(Level newLevel) {
+        if (level != null) {
+            level.destroy();
+        }
+        level = newLevel;
     }
 
     /**
@@ -146,7 +141,7 @@ public class Logic {
 
         // Movement
         if (entity.canMove()) {
-            hitbox.moveWithCollision(this, delta);
+            hitbox.moveWithCollision(level, tileProvider, delta);
         }
 
         // Friction
@@ -295,22 +290,12 @@ public class Logic {
     }
 
     /**
-     * Adds the given ForegroundTile to the list of available tile types.
+     * Gets the TileProvider that holds the available tile types.
      *
-     * @param tile
-     */
-    public void addTileType(ForegroundTile tile) {
-        tiles.put(tile.getId(), tile);
-    }
-
-    /**
-     * Gets the Tile with the given ID.
-     *
-     * @param tileId
      * @return
      */
-    public Tile getTile(int tileId) {
-        return tiles.get(tileId);
+    public TileProvider getTileProvider() {
+        return tileProvider;
     }
 
 }

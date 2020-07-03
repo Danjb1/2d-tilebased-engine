@@ -5,8 +5,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.danjb.engine.game.entities.Entity;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.physics.Physics;
+import com.danjb.engine.game.tiles.TestTileProvider;
 import com.danjb.engine.util.GameUtils;
 
 /**
@@ -27,19 +30,19 @@ public class FramerateTest {
                 "0 0 0",
                 "1 1 1"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity e = new TestEntity();
-        Hitbox hitbox = e.hitbox;
         logic.addEntity(e,
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
+        Hitbox hitbox = e.hitbox;
 
         // WHEN 2 seconds have passed
         int msPerFrame = 15;
         for (int msPassed = 0; msPassed < 2000; msPassed += msPerFrame) {
             hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
-            logic.updateEntities(msPerFrame);
+            hitbox.moveWithCollision(level, tileProvider, msPerFrame);
         }
 
         // THEN the Entity has moved approximately 1 world unit
@@ -55,19 +58,19 @@ public class FramerateTest {
                 "0 0 0",
                 "1 1 1"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity e = new TestEntity();
-        Hitbox hitbox = e.hitbox;
         logic.addEntity(e,
                 GameUtils.worldUnits(0),
                 GameUtils.worldUnits(1));
+        Hitbox hitbox = e.hitbox;
 
         // WHEN 2 seconds have passed
         int msPerFrame = 45;
         for (int msPassed = 0; msPassed < 2000; msPassed += msPerFrame) {
             hitbox.setSpeedX(GameUtils.worldUnits(0.5f));
-            logic.updateEntities(msPerFrame);
+            hitbox.moveWithCollision(level, tileProvider, msPerFrame);
         }
 
         // THEN the Entity has moved approximately 1 world unit
@@ -84,8 +87,8 @@ public class FramerateTest {
                 "1 1 1"
         );
         Entity entity = new TestEntity();
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));

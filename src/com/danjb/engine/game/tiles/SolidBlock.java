@@ -9,7 +9,7 @@ import com.danjb.engine.game.physics.Hitbox.CollisionNode;
  *
  * @author Dan Bryce
  */
-public class SolidBlock extends ForegroundTile {
+public class SolidBlock extends PhysicsTile {
 
     public SolidBlock(int id) {
         super(id);

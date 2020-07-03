@@ -1,11 +1,15 @@
 package com.danjb.engine_demo.main;
 
 import com.danjb.engine.application.Logger;
-import com.danjb.engine.game.Level;
+import com.danjb.engine.application.Logger.SimpleLogger;
 import com.danjb.engine.game.Logic;
-import com.danjb.engine.game.TileLayer;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileLayer;
+import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine_demo.application.DemoApplication;
 import com.danjb.engine_demo.game.GameState;
+import com.danjb.engine_demo.game.tiles.DemoTileProvider;
+import com.danjb.engine_demo.game.tiles.TileLayers;
 
 public class Main {
 
@@ -16,13 +20,14 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        try {
+        Logger.use(new SimpleLogger());
 
+        try {
             DemoApplication app = new DemoApplication();
 
-            Logic logic = new Logic();
             Level level = createLevel();
-            logic.setLevel(level);
+            TileProvider tileProvider = new DemoTileProvider();
+            Logic logic = new Logic(level, tileProvider);
             app.start(new GameState(app, logic));
 
         } catch (Exception ex) {
@@ -37,21 +42,22 @@ public class Main {
      * @return
      */
     private static Level createLevel() {
-        TileLayer foreground = new TileLayer(new int[40][30]);
+        TileLayer layer =
+                new TileLayer(TileLayers.DEFAULT, new int[40][30]);
 
         // Generate a floor
-        for (int x = 0; x < foreground.getNumTilesX(); x++) {
-            foreground.setTile(x, foreground.getNumTilesY() - 1, 1);
+        for (int x = 0; x < layer.getNumTilesX(); x++) {
+            layer.setTile(x, layer.getNumTilesY() - 1, 1);
         }
 
         // Generate some random blocks
         for (int i = 0; i < 50; i++) {
-            int x = (int) (Math.random() * foreground.getNumTilesX());
-            int y = (int) (Math.random() * foreground.getNumTilesY());
-            foreground.setTile(x, y, 1);
+            int x = (int) (Math.random() * layer.getNumTilesX());
+            int y = (int) (Math.random() * layer.getNumTilesY());
+            layer.setTile(x, y, 1);
         }
 
-        return new Level(foreground);
+        return new Level(layer);
     }
 
 }

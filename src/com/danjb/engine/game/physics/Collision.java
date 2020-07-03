@@ -1,7 +1,7 @@
 package com.danjb.engine.game.physics;
 
 import com.danjb.engine.game.physics.Hitbox.CollisionNode;
-import com.danjb.engine.game.tiles.ForegroundTile;
+import com.danjb.engine.game.tiles.PhysicsTile;
 
 /**
  * Class that holds information about a single collision in the x- or y-axis.
@@ -28,7 +28,7 @@ public class Collision implements Comparable<Collision> {
     /**
      * Tile with which the collision occurred.
      */
-    public final ForegroundTile tile;
+    public final PhysicsTile tile;
 
     /**
      * Whether this Collision is valid.
@@ -46,7 +46,7 @@ public class Collision implements Comparable<Collision> {
     private Collision(
             float collisionPos,
             CollisionNode node,
-            ForegroundTile tile,
+            PhysicsTile tile,
             float distanceToCollision) {
         this.collisionPos = collisionPos;
         this.node = node;
@@ -86,7 +86,7 @@ public class Collision implements Comparable<Collision> {
             float posBefore,
             float posAfter,
             CollisionNode node,
-            ForegroundTile tile) {
+            PhysicsTile tile) {
         float distanceToCollision = posAfter - posBefore;
         return new Collision(posAfter, node, tile, distanceToCollision);
     }

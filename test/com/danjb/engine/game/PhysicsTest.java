@@ -5,8 +5,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.danjb.engine.game.entities.Entity;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine.game.physics.CollisionResult;
 import com.danjb.engine.game.physics.Physics;
+import com.danjb.engine.game.tiles.TestTileProvider;
 import com.danjb.engine.util.GameUtils;
 
 /**
@@ -28,16 +31,16 @@ public class PhysicsTest {
                 "0 0 0",
                 "0 0 0"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
         // WHEN trying to move down by half a tile, right by half a tile
-        CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.hitbox, 0.5f, 0.5f);
+        CollisionResult collision = Physics.getCollisionResult(
+                level, tileProvider, entity.hitbox, 0.5f, 0.5f);
 
         // THEN no collision is detected
         assertEquals(false, collision.hasCollisionOccurredX());
@@ -56,16 +59,16 @@ public class PhysicsTest {
                 "0 0 0",
                 "1 1 1"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
         // WHEN trying to move down by half a tile
-        CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.hitbox, 0, 0.5f);
+        CollisionResult collision = Physics.getCollisionResult(
+                level, tileProvider, entity.hitbox, 0, 0.5f);
 
         // THEN the nearest collision detected is at the top of the floor
         assertEquals(GameUtils.worldUnits(2),
@@ -85,16 +88,16 @@ public class PhysicsTest {
                 "0 0 0",
                 "0 0 0"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
         // WHEN trying to move up by half a tile
-        CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.hitbox, 0, -0.5f);
+        CollisionResult collision = Physics.getCollisionResult(
+                level, tileProvider, entity.hitbox, 0, -0.5f);
 
         // THEN the nearest collision detected is at the bottom of the ceiling
         assertEquals(GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE,
@@ -114,16 +117,16 @@ public class PhysicsTest {
                 "1 0 0",
                 "1 0 0"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
         // WHEN trying to move left by half a tile
-        CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.hitbox, -0.5f, 0);
+        CollisionResult collision = Physics.getCollisionResult(
+                level, tileProvider, entity.hitbox, -0.5f, 0);
 
         // THEN the nearest collision detected is at the right edge of the wall
         assertEquals(GameUtils.worldUnits(1) - Physics.SMALLEST_DISTANCE,
@@ -143,16 +146,16 @@ public class PhysicsTest {
                 "0 0 1",
                 "0 0 1"
         );
-        Logic logic = new Logic();
-        logic.setLevel(level);
+        TileProvider tileProvider = new TestTileProvider();
+        Logic logic = new Logic(level, tileProvider);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));
 
         // WHEN trying to move left by half a tile
-        CollisionResult collision =
-                Physics.getCollisionResult(logic, entity.hitbox, 0.5f, 0);
+        CollisionResult collision = Physics.getCollisionResult(
+                level, tileProvider, entity.hitbox, 0.5f, 0);
 
         // THEN the nearest collision detected is at the left edge of the wall
         assertEquals(GameUtils.worldUnits(2),

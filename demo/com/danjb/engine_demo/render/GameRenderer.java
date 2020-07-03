@@ -3,17 +3,18 @@ package com.danjb.engine_demo.render;
 import java.awt.Graphics2D;
 import java.util.Collection;
 
-import com.danjb.engine.game.Level;
 import com.danjb.engine.game.Logic;
-import com.danjb.engine.game.TileLayer;
 import com.danjb.engine.game.camera.Camera;
 import com.danjb.engine.game.entities.Entity;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileLayer;
 import com.danjb.engine.game.physics.Hitbox;
 import com.danjb.engine.game.tiles.Tile;
 import com.danjb.engine_demo.application.Display;
 import com.danjb.engine_demo.game.GameState;
 import com.danjb.engine_demo.game.TileGraphic;
 import com.danjb.engine_demo.game.entities.EntityGraphic;
+import com.danjb.engine_demo.game.tiles.TileLayers;
 
 /**
  * Class responsible for rendering the GameState.
@@ -122,7 +123,7 @@ public class GameRenderer {
      */
     private void renderLevel(Level level) {
 
-        TileLayer foreground = level.getForeground();
+        TileLayer foreground = level.getDefaultLayer();
         int[][] tiles = foreground.getTiles();
 
         // Determine which tiles are on-screen
@@ -147,7 +148,7 @@ public class GameRenderer {
      */
     private void renderTile(int x, int y, int tileId) {
 
-        Tile tile = logic.getTile(tileId);
+        Tile tile = logic.getTileProvider().getTile(TileLayers.DEFAULT, tileId);
         TileGraphic tileGfx = (TileGraphic)
                 tile.components.get(TileGraphic.KEY);
 

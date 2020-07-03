@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.danjb.engine.game.Logic;
+import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine.game.tiles.Tile;
 
 /**
@@ -415,10 +416,14 @@ public class Hitbox {
      * Moves this Hitbox according to its current speed, and handles any
      * collisions with the Level along the way.
      *
-     * @param logic
+     * @param level
+     * @param tileProvider
      * @param delta
      */
-    public void moveWithCollision(Logic logic, int delta) {
+    public void moveWithCollision(
+            Level level,
+            TileProvider tileProvider,
+            int delta) {
 
         if (!grounded) {
             msSinceGrounded += delta;
@@ -430,14 +435,14 @@ public class Hitbox {
 
         // Move to the nearest collision
         CollisionResult result =
-                Physics.getCollisionResult(logic, this, dx, dy);
+                Physics.getCollisionResult(level, tileProvider, this, dx, dy);
 
         apply(result);
 
         // Check if this Hitbox is now out-of-bounds
-        if (y > logic.getLevel().getWorldHeight()) {
+        if (y > level.getWorldHeight()) {
             listener.hitboxFallenOutOfBounds();
-        } else if (bottom() > logic.getLevel().getWorldHeight()) {
+        } else if (bottom() > level.getWorldHeight()) {
             listener.hitboxFallingOutOfBounds();
         }
 
