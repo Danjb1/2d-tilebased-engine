@@ -60,7 +60,6 @@ public class ComponentStore<T extends Component> {
         if (c != null) {
             c.delete();
         }
-        System.out.println("deleting component: " + c);
     }
 
     /**
