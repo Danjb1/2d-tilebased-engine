@@ -31,7 +31,8 @@ public class FramerateTest {
                 "1 1 1"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity e = new TestEntity();
         logic.addEntity(e,
                 GameUtils.worldUnits(0),
@@ -59,7 +60,8 @@ public class FramerateTest {
                 "1 1 1"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity e = new TestEntity();
         logic.addEntity(e,
                 GameUtils.worldUnits(0),
@@ -88,7 +90,8 @@ public class FramerateTest {
         );
         Entity entity = new TestEntity();
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
                 GameUtils.worldUnits(1));

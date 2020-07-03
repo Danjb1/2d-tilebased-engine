@@ -18,7 +18,7 @@ public class Level {
     /**
      * {@link LevelComponent}s attached to this Level.
      */
-    public ComponentStore<LevelComponent> components;
+    public ComponentStore<LevelComponent> components = new ComponentStore<>();
 
     /**
      * Width of the world, in world units.
@@ -47,6 +47,8 @@ public class Level {
      */
     public Level(TileLayer defaultLayer) {
         this.defaultLayer = defaultLayer;
+
+        addLayer(defaultLayer);
 
         recalculateWorldSize();
     }

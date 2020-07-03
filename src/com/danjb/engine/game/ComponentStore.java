@@ -56,10 +56,11 @@ public class ComponentStore<T extends Component> {
      * @param key
      */
     public void delete(String key) {
-        Component c = get(key);
+        T c = get(key);
         if (c != null) {
             c.delete();
         }
+        System.out.println("deleting component: " + c);
     }
 
     /**
@@ -69,7 +70,7 @@ public class ComponentStore<T extends Component> {
      */
     public void deleteAll(String key) {
         List<T> components = getAll(key);
-        for (Component c : components) {
+        for (T c : components) {
             c.delete();
         }
     }
@@ -78,10 +79,18 @@ public class ComponentStore<T extends Component> {
      * Removes any Components that have been marked for deletion.
      */
     public void removeDeleted() {
-        components.removeAll(components.stream()
+
+        // Remove (and destroy) the Component
+        List<T> componentsToDelete = components.stream()
                 .filter(comp -> comp.isDeleted())
                 .peek(comp -> comp.destroy())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+
+        // Also remove the Component from our map
+        for (T component : componentsToDelete) {
+            List<T> componentList = componentsByKey.get(component.key);
+            componentList.remove(component);
+        }
     }
 
     /**

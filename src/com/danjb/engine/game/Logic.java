@@ -47,31 +47,41 @@ public class Logic {
     protected Map<Integer, Entity> entities = new LinkedHashMap<>();
 
     /**
-     * List of Entities flagged for deletion.
-     */
-    protected List<Entity> entitiesToDelete = new ArrayList<>();
-
-    /**
      * Entities that have just been added to the game world.
      *
      * <p>We collect these in a separate list to prevent a
      * ConcurrentModificationException during entity processing. These are then
      * added to {@link #entities} each frame.
      */
-    private List<Entity> pendingEntities = new ArrayList<>();
+    private Map<Integer, Entity> pendingEntities = new LinkedHashMap<>();
 
-    public Logic(Level level, TileProvider tileProvider) {
+    /**
+     * List of Entities flagged for deletion.
+     */
+    protected List<Entity> entitiesToDelete = new ArrayList<>();
+
+    /**
+     * Milliseconds passed since the previous frame.
+     */
+    protected int delta;
+
+    /**
+     * Constructs the Logic.
+     *
+     * @param tileProvider
+     */
+    public Logic(TileProvider tileProvider) {
         this.tileProvider = tileProvider;
-
-        changeLevel(level);
     }
 
     /**
      * Changes the current Level.
      *
+     * <p>This must be called before {@link #update}.
+     *
      * @param newLevel
      */
-    protected void changeLevel(Level newLevel) {
+    public void changeLevel(Level newLevel) {
         if (level != null) {
             level.destroy();
         }
@@ -89,7 +99,9 @@ public class Logic {
             throw new IllegalStateException("No Level loaded");
         }
 
-        entityCleanup();
+        this.delta = delta;
+
+        refreshEntities();
         updateEntities(delta);
         processCollisions();
     }
@@ -100,7 +112,7 @@ public class Logic {
      * <p>To prevent ConcurrentModificationExceptions, this should never be
      * called during Entity processing.
      */
-    protected void entityCleanup() {
+    protected void refreshEntities() {
         // It is important that we always call `deleteEntities` before adding
         // any pending Entities, because if one of the pending Entities
         // OVERWRITES an existing Entity, we will lose the reference to the
@@ -113,9 +125,7 @@ public class Logic {
      * Adds any newly-spawned Entities to our {@link #entities} map.
      */
     protected void addPendingEntities() {
-        for (Entity entity : pendingEntities) {
-            entities.put(entity.getEntityId(), entity);
-        }
+        entities.putAll(pendingEntities);
         pendingEntities.clear();
     }
 
@@ -137,15 +147,25 @@ public class Logic {
      * @param delta
      */
     protected void updateEntities(int delta) {
-        for (Entity entity : entities.values()) {
 
+        // First update all Entities
+        for (Entity entity : entities.values()) {
             entity.update(delta);
+        }
+
+        // Then apply physics to all Entities
+        for (Entity entity : entities.values()) {
 
             applyPhysics(entity, delta);
 
             if (entity.isDeleted()) {
                 entitiesToDelete.add(entity);
             }
+        }
+
+        // Finally give our Entities another update
+        for (Entity entity : entities.values()) {
+            entity.lateUpdate(delta);
         }
     }
 
@@ -251,8 +271,7 @@ public class Logic {
     /**
      * Adds an Entity to the game world.
      *
-     * <p>Results in a callback to
-     * {@link Entity#addedToWorld(int, float, float, Logic)}.
+     * <p>Results in a callback to {@link Entity#addedToWorld}.
      *
      * @param x
      * @param y
@@ -266,8 +285,7 @@ public class Logic {
     /**
      * Adds an Entity to the game world with a predefined ID.
      *
-     * <p>Results in a callback to
-     * {@link Entity#addedToWorld(int, float, float, Logic)}.
+     * <p>Results in a callback to {@link Entity#addedToWorld}.
      *
      * @param entityId
      * @param x
@@ -282,7 +300,7 @@ public class Logic {
             previousEntity.delete();
         }
 
-        pendingEntities.add(entity);
+        pendingEntities.put(entityId, entity);
         entity.addedToWorld(entityId, x, y, this);
     }
 
@@ -313,16 +331,25 @@ public class Logic {
      * @return
      */
     public Entity getEntity(int entityId) {
-        return entities.get(entityId);
+        Entity e = entities.get(entityId);
+        if (e == null) {
+            // Newly-added Entities will still be in the pending list
+            e = pendingEntities.get(entityId);
+        }
+        return e;
     }
 
     /**
      * Gets the collection of Entities present in the game world.
      *
+     * <p>Changes to this collection will have no effect.
+     *
      * @return
      */
     public Map<Integer, Entity> getEntities() {
-        return entities;
+        Map<Integer, Entity> allEntities = new LinkedHashMap<>(entities);
+        allEntities.putAll(pendingEntities);
+        return allEntities;
     }
 
     /**
@@ -332,6 +359,10 @@ public class Logic {
      */
     public TileProvider getTileProvider() {
         return tileProvider;
+    }
+
+    public int getDelta() {
+        return delta;
     }
 
 }

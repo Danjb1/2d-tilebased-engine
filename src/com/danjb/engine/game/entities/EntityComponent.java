@@ -2,10 +2,12 @@ package com.danjb.engine.game.entities;
 
 import com.danjb.engine.game.Component;
 import com.danjb.engine.game.Logic;
+import com.danjb.engine.game.physics.Hitbox;
 
 public abstract class EntityComponent extends Component {
 
     protected Entity entity;
+    protected Hitbox hitbox;
     protected Logic logic;
 
     public EntityComponent(String key) {
@@ -27,10 +29,15 @@ public abstract class EntityComponent extends Component {
     /**
      * Called when the parent Entity is added to the world.
      *
+     * <p>If a Component is added to an Entity when the Entity is already
+     * present in the world, this will be called immediately.
+     *
      * @param logic
      */
     public void onSpawn(Logic logic) {
         this.logic = logic;
+
+        hitbox = entity.hitbox;
     }
 
     /**

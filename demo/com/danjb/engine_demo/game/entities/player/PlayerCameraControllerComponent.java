@@ -4,7 +4,6 @@ import com.danjb.engine.game.ComponentEvent;
 import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.camera.BasicCameraController;
 import com.danjb.engine.game.camera.Camera;
-import com.danjb.engine.game.camera.CameraController;
 import com.danjb.engine.game.entities.EntityComponent;
 import com.danjb.engine.game.entities.EntityTeleported;
 
@@ -13,7 +12,7 @@ public class PlayerCameraControllerComponent extends EntityComponent {
     private static final String KEY = "player_camera_controller";
 
     private Camera camera;
-    private CameraController controller;
+    private BasicCameraController controller;
 
     public PlayerCameraControllerComponent(Camera camera) {
         super(KEY);
@@ -23,9 +22,20 @@ public class PlayerCameraControllerComponent extends EntityComponent {
 
     @Override
     public void onSpawn(Logic logic) {
-        controller = new BasicCameraController(entity);
+        super.onSpawn(logic);
+
+        controller = new BasicCameraController(
+                camera, hitbox.centreX(), hitbox.centreY());
         camera.setController(controller);
         camera.teleportToDestination();
+    }
+
+    @Override
+    public void update(int delta) {
+        super.update(delta);
+
+        // Update the target based on the player position
+        controller.setTarget(hitbox.centreX(), hitbox.centreY());
     }
 
     @Override

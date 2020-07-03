@@ -263,7 +263,9 @@ public abstract class Entity implements HitboxListener {
     /**
      * Attaches an {@link EntityComponent} to this Entity.
      *
-     * <p>Results in a callback to {@link EntityComponent#onAttach(Entity)}.
+     * <p>Results in a callback to {@link EntityComponent#onAttach},
+     * and, if the Entity is already in the world,
+     * {@link EntityComponent#onSpawn}.
      *
      * @param component
      */
@@ -273,6 +275,9 @@ public abstract class Entity implements HitboxListener {
 
         // Inform the new component
         component.onAttach(this);
+        if (logic != null) {
+            component.onSpawn(logic);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////

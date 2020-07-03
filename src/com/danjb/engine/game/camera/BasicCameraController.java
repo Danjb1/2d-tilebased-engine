@@ -20,13 +20,13 @@ public class BasicCameraController implements CameraController {
     @Override
     public float getCameraUpdateX(int delta) {
         // Move such that the target is centred
-        return targetX - camera.getVisibleRegion().getCenterX();
+        return getCameraCentreX() - camera.getVisibleRegion().getCenterX();
     }
 
     @Override
     public float getCameraUpdateY(int delta) {
         // Move such that the target is centred
-        return targetY - camera.getVisibleRegion().getCenterY();
+        return getCameraCentreY() - camera.getVisibleRegion().getCenterY();
     }
 
     @Override

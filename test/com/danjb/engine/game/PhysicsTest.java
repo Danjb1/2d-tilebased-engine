@@ -32,7 +32,8 @@ public class PhysicsTest {
                 "0 0 0"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
@@ -60,7 +61,8 @@ public class PhysicsTest {
                 "1 1 1"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
@@ -89,7 +91,8 @@ public class PhysicsTest {
                 "0 0 0"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
@@ -118,7 +121,8 @@ public class PhysicsTest {
                 "1 0 0"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),
@@ -147,7 +151,8 @@ public class PhysicsTest {
                 "0 0 1"
         );
         TileProvider tileProvider = new TestTileProvider();
-        Logic logic = new Logic(level, tileProvider);
+        Logic logic = new Logic(tileProvider);
+        logic.changeLevel(level);
         Entity entity = new TestEntity();
         logic.addEntity(entity,
                 GameUtils.worldUnits(1),

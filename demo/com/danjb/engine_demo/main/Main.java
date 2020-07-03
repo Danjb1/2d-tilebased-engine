@@ -27,7 +27,8 @@ public class Main {
 
             Level level = createLevel();
             TileProvider tileProvider = new DemoTileProvider();
-            Logic logic = new Logic(level, tileProvider);
+            Logic logic = new Logic(tileProvider);
+            logic.changeLevel(level);
             app.start(new GameState(app, logic));
 
         } catch (Exception ex) {
