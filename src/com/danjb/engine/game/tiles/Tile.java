@@ -69,6 +69,17 @@ public class Tile {
     }
 
     /**
+     * Updates this Tile.
+     *
+     * <p>Should be called every frame.
+     *
+     * @param delta
+     */
+    public void update(int delta) {
+        components.update(delta);
+    }
+
+    /**
      * Gets this Tile's unique identifier.
      *
      * @return

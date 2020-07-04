@@ -154,14 +154,7 @@ public abstract class Entity implements HitboxListener {
      * @param delta Milliseconds passed since the last frame.
      */
     public void update(int delta) {
-
-        // Update Components
-        for (EntityComponent component : components.asList()) {
-            component.update(delta);
-        }
-
-        // Remove any Components marked for deletion
-        components.removeDeleted();
+        components.update(delta);
     }
 
     /**
@@ -175,14 +168,9 @@ public abstract class Entity implements HitboxListener {
      * @param delta
      */
     public void lateUpdate(int delta) {
-
-        // Update Components
         for (EntityComponent component : components.asList()) {
             component.lateUpdate(delta);
         }
-
-        // Remove any Components marked for deletion
-        components.removeDeleted();
     }
 
     /**

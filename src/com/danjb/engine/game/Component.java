@@ -27,6 +27,17 @@ public abstract class Component {
     }
 
     /**
+     * Updates this Component.
+     *
+     * <p>This is called by {@link ComponentStore#update}.
+     *
+     * @param delta
+     */
+    public void update(int delta) {
+        // Do nothing by default
+    }
+
+    /**
      * Notifies this Component of an event.
      *
      * <p>This is a generic message-passing mechanism that can be used to signal

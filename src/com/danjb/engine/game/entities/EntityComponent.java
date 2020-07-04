@@ -43,17 +43,6 @@ public abstract class EntityComponent extends Component {
     /**
      * Updates this Component.
      *
-     * <p>This is called every frame, BEFORE physics is applied.
-     *
-     * @param delta
-     */
-    public void update(int delta) {
-        // Do nothing by default
-    }
-
-    /**
-     * Updates this Component.
-     *
      * <p>This is called every frame, AFTER physics is applied.
      *
      * @param delta

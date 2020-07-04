@@ -29,6 +29,25 @@ public class ComponentStore<T extends Component> {
     }
 
     /**
+     * Updates all Components within the store.
+     *
+     * <p>This should be called every frame so that regular clean-up operations
+     * can be performed.
+     *
+     * @param delta
+     */
+    public void update(int delta) {
+
+        // Update Components
+        for (Component component : components) {
+            component.update(delta);
+        }
+
+        // Remove any Components marked for deletion
+        removeDeleted();
+    }
+
+    /**
      * Adds a {@link Component} to this ComponentStore.
      *
      * @param component
@@ -77,15 +96,15 @@ public class ComponentStore<T extends Component> {
     /**
      * Removes any Components that have been marked for deletion.
      */
-    public void removeDeleted() {
+    private void removeDeleted() {
 
-        // Remove (and destroy) the Component
+        // Remove (and destroy) deleted Components
         List<T> componentsToDelete = components.stream()
                 .filter(comp -> comp.isDeleted())
                 .peek(comp -> comp.destroy())
                 .collect(Collectors.toList());
 
-        // Also remove the Component from our map
+        // Also remove these Component from our map
         for (T component : componentsToDelete) {
             List<T> componentList = componentsByKey.get(component.key);
             componentList.remove(component);

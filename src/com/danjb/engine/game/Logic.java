@@ -1,6 +1,7 @@
 package com.danjb.engine.game;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,10 @@ import java.util.Map;
 import com.danjb.engine.game.entities.CollisionListener;
 import com.danjb.engine.game.entities.Entity;
 import com.danjb.engine.game.level.Level;
+import com.danjb.engine.game.level.TileLayer;
 import com.danjb.engine.game.level.TileProvider;
 import com.danjb.engine.game.physics.Hitbox;
+import com.danjb.engine.game.tiles.Tile;
 
 /**
  * The game logic.
@@ -103,6 +106,8 @@ public class Logic {
 
         refreshEntities();
         updateEntities(delta);
+        updateLevel(delta);
+        updateTiles(delta);
         processCollisions();
     }
 
@@ -265,6 +270,30 @@ public class Logic {
                 e2CollisionListener.canCollideWith(e1) &&
                 (collision || e2.hitbox.intersects(e1.hitbox))) {
             e2CollisionListener.collidedWith(e1);
+        }
+    }
+
+    /**
+     * Updates the Level using the given delta value.
+     *
+     * @param delta Number of milliseconds since the last update.
+     */
+    protected void updateLevel(int delta) {
+        level.update(delta);
+    }
+
+    /**
+     * Updates all Tile types using the given delta value.
+     *
+     * @param delta Number of milliseconds since the last update.
+     */
+    protected void updateTiles(int delta) {
+        for (TileLayer layer : level.getLayers()) {
+            Collection<Tile> tilesForLayer =
+                    tileProvider.getTiles(layer.getLayerId()).values();
+            for (Tile tile : tilesForLayer) {
+                tile.update(delta);
+            }
         }
     }
 

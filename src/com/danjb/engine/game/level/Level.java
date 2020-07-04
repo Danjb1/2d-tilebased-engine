@@ -54,10 +54,36 @@ public class Level {
     }
 
     /**
+     * Attaches an {@link LevelComponent} to this Level.
+     *
+     * <p>Results in a callback to {@link LevelComponent#onAttach}.
+     *
+     * @param component
+     */
+    public void attach(LevelComponent component) {
+
+        components.add(component);
+
+        // Inform the new component
+        component.onAttach(this);
+    }
+
+    /**
      * Cleans up this Level when it is no longer needed.
      */
     public void destroy() {
         components.destroy();
+    }
+
+    /**
+     * Updates this Level using the given delta value.
+     *
+     * <p>This is called every frame.
+     *
+     * @param delta Milliseconds passed since the last frame.
+     */
+    public void update(int delta) {
+        components.update(delta);
     }
 
     /**

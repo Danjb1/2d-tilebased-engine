@@ -29,6 +29,8 @@
 
  - ComponentStore.getAll() returns a very generic list which cannot be cast
 
+ - Should Components be destroyed immediately when deleted?
+
 ## Demo
 
  - Slopes
