@@ -125,10 +125,17 @@ public class ComponentStore<T extends Component> {
      * @return
      */
     public List<T> getAll(String key) {
+
         List<T> components = componentsByKey.get(key);
-        return components == null ?
-                new ArrayList<>() :
-                new ArrayList<>(components);
+
+        if (components == null) {
+            return new ArrayList<>();
+        }
+
+        // Return all matching Components, excluding any that have been deleted
+        return components.stream()
+                .filter(c -> !c.deleted)
+                .collect(Collectors.toList());
     }
 
     /**
