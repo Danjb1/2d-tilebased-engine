@@ -76,7 +76,7 @@ public abstract class Entity implements HitboxListener {
      *
      * @return
      */
-    public int getEntityId() {
+    public int getId() {
         return id;
     }
 
@@ -127,11 +127,6 @@ public abstract class Entity implements HitboxListener {
         this.logic = logic;
 
         hitbox = createHitbox(x, y);
-
-        // Inform Components
-        for (EntityComponent component : components.asList()) {
-            component.onSpawn(logic);
-        }
     }
 
     /**
@@ -251,9 +246,10 @@ public abstract class Entity implements HitboxListener {
     /**
      * Attaches an {@link EntityComponent} to this Entity.
      *
-     * <p>Results in a callback to {@link EntityComponent#onAttach},
-     * and, if the Entity is already in the world,
-     * {@link EntityComponent#onSpawn}.
+     * <p>This should only be called after the Entity has been added to the
+     * world.
+     *
+     * <p>Results in a callback to {@link EntityComponent#onAttach}.
      *
      * @param component
      */
@@ -262,10 +258,7 @@ public abstract class Entity implements HitboxListener {
         components.add(component);
 
         // Inform the new component
-        component.onAttach(this);
-        if (logic != null) {
-            component.onSpawn(logic);
-        }
+        component.onAttach(this, logic);
     }
 
     ////////////////////////////////////////////////////////////////////////////

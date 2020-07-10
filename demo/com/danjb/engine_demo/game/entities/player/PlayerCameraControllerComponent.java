@@ -4,6 +4,7 @@ import com.danjb.engine.game.ComponentEvent;
 import com.danjb.engine.game.Logic;
 import com.danjb.engine.game.camera.BasicCameraController;
 import com.danjb.engine.game.camera.Camera;
+import com.danjb.engine.game.entities.Entity;
 import com.danjb.engine.game.entities.EntityComponent;
 import com.danjb.engine.game.entities.EntityTeleported;
 
@@ -21,8 +22,8 @@ public class PlayerCameraControllerComponent extends EntityComponent {
     }
 
     @Override
-    public void onSpawn(Logic logic) {
-        super.onSpawn(logic);
+    public void onAttach(Entity parent, Logic logic) {
+        super.onAttach(parent, logic);
 
         controller = new BasicCameraController(
                 camera, hitbox.centreX(), hitbox.centreY());

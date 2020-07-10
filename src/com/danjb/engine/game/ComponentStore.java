@@ -98,11 +98,14 @@ public class ComponentStore<T extends Component> {
      */
     private void removeDeleted() {
 
-        // Remove (and destroy) deleted Components
+        // Destroy deleted Components
         List<T> componentsToDelete = components.stream()
                 .filter(comp -> comp.isDeleted())
                 .peek(comp -> comp.destroy())
                 .collect(Collectors.toList());
+
+        // Remove deleted Components from our list
+        components.removeAll(componentsToDelete);
 
         // Also remove these Component from our map
         for (T component : componentsToDelete) {

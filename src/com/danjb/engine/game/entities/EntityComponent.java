@@ -21,23 +21,13 @@ public abstract class EntityComponent extends Component {
      * to the desired type from within this method and store it to a field.
      *
      * @param parent
-     */
-    public void onAttach(Entity parent) {
-        entity = parent;
-    }
-
-    /**
-     * Called when the parent Entity is added to the world.
-     *
-     * <p>If a Component is added to an Entity when the Entity is already
-     * present in the world, this will be called immediately.
-     *
      * @param logic
      */
-    public void onSpawn(Logic logic) {
-        this.logic = logic;
-
+    public void onAttach(Entity parent, Logic logic) {
+        entity = parent;
         hitbox = entity.hitbox;
+
+        this.logic = logic;
     }
 
     /**

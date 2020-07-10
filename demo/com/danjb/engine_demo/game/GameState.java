@@ -89,11 +89,11 @@ public class GameState extends State {
 
         // Add our Player
         player = new Player();
-        player.attach(new EntityGraphic(Color.RED));
-        player.attach(new PlayerCameraControllerComponent(camera));
         logic.addEntity(player,
                 GameUtils.worldUnits(5),
                 GameUtils.worldUnits(5));
+        player.attach(new EntityGraphic(Color.RED));
+        player.attach(new PlayerCameraControllerComponent(camera));
     }
 
     @Override

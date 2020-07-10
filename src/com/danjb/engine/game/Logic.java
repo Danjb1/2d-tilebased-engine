@@ -140,7 +140,7 @@ public class Logic {
     protected void deleteEntities() {
         for (Entity e : entitiesToDelete) {
             e.destroy();
-            entities.remove(e.getEntityId());
+            entities.remove(e.getId());
         }
         entitiesToDelete.clear();
     }
