@@ -93,7 +93,7 @@ public class DemoApplication extends Application
     }
 
     @Override
-    protected void yield() {
+    protected void yieldThread() {
 
         /*
          * This is not the most sophisticated game loop in the world, but it

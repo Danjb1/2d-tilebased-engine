@@ -62,7 +62,7 @@ public abstract class Application implements StateContext {
         while (!exiting) {
             int delta = calculateDelta();
             tick(delta);
-            yield();
+            yieldThread();
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class Application implements StateContext {
     /**
      * Yields the Thread until the next frame is due.
      */
-    protected abstract void yield();
+    protected abstract void yieldThread();
 
     /**
      * Processes and renders the current frame.

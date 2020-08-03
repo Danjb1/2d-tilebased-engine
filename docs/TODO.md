@@ -8,6 +8,10 @@
 
  - Support large entities on slopes (currently untested)
 
+ - Hitbox should have a list of listeners
+
+ - HitboxListener should inform listeners when the Hitbox goes out of bounds in any direction
+
 ## Bugs
 
  - Slopes (see Slope class):
@@ -27,9 +31,11 @@
 
  - Tile type constants in PhysicsTile are not extensible
 
- - ComponentStore.getAll() returns a very generic list which cannot be cast
-
  - Should Components be destroyed immediately when deleted?
+
+ - Move HitboxListener functionality out of Entity class into components?
+
+ - Try to simplify slope physics
 
 ## Demo
 

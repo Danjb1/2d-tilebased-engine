@@ -1,6 +1,7 @@
 package com.danjb.engine.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class ComponentStore<T extends Component> {
      * @param key
      */
     public void deleteAll(String key) {
-        List<T> components = getAll(key);
+        List<? extends T> components = getAll(key);
         for (T c : components) {
             c.delete();
         }
@@ -121,7 +122,7 @@ public class ComponentStore<T extends Component> {
      * @param event
      */
     public void notifyAll(String key, ComponentEvent event) {
-        List<T> componentsWithKey = getAll(key);
+        List<? extends T> componentsWithKey = getAll(key);
         for (T component : componentsWithKey) {
             component.notify(event);
         }
@@ -146,7 +147,7 @@ public class ComponentStore<T extends Component> {
      * @param key
      * @return
      */
-    public List<T> getAll(String key) {
+    public List<? extends T> getAll(String key) {
 
         List<T> components = componentsByKey.get(key);
 
@@ -167,7 +168,7 @@ public class ComponentStore<T extends Component> {
      * @return
      */
     public T get(String key) {
-        List<T> components = getAll(key);
+        List<? extends T> components = getAll(key);
         return components.isEmpty() ? null : components.get(0);
     }
 
@@ -179,7 +180,7 @@ public class ComponentStore<T extends Component> {
      * @return
      */
     public List<T> asList() {
-        return new ArrayList<>(components);
+        return Collections.unmodifiableList(components);
     }
 
     /**

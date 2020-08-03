@@ -56,7 +56,7 @@ public class Logic {
      * ConcurrentModificationException during entity processing. These are then
      * added to {@link #entities} each frame.
      */
-    private Map<Integer, Entity> pendingEntities = new LinkedHashMap<>();
+    protected Map<Integer, Entity> pendingEntities = new LinkedHashMap<>();
 
     /**
      * List of Entities flagged for deletion.
@@ -155,22 +155,26 @@ public class Logic {
 
         // First update all Entities
         for (Entity entity : entities.values()) {
-            entity.update(delta);
+            if (!entity.isDeleted()) {
+                entity.update(delta);
+            }
         }
 
         // Then apply physics to all Entities
         for (Entity entity : entities.values()) {
-
-            applyPhysics(entity, delta);
-
-            if (entity.isDeleted()) {
-                entitiesToDelete.add(entity);
+            if (!entity.isDeleted()) {
+                applyPhysics(entity, delta);
             }
         }
 
         // Finally give our Entities another update
+        // (and keep track of any that are due for deletion)
         for (Entity entity : entities.values()) {
-            entity.lateUpdate(delta);
+            if (!entity.isDeleted()) {
+                entity.lateUpdate(delta);
+            } else {
+                entitiesToDelete.add(entity);
+            }
         }
     }
 
